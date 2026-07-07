@@ -1,101 +1,91 @@
 # ChattyDuck — Duckburg Smart City
 
-Assistente del cittadino su fonte certificata via **MCP** (Model Context Protocol).
-L'ente possiede la fonte, non l'assistente: un server MCP espone i contenuti certificati
-del Comune di Paperopoli (immaginario) e i modelli AI rispondono usando **solo** quei
-contenuti, citando sempre id e versione dei passaggi.
+Prototipo di assistente al cittadino basato su fonte certificata, esposta tramite **Model Context Protocol (MCP)**.
 
-> Prototipo dimostrativo.
+Il principio architetturale è la separazione tra contenuto e modello: l'ente pubblica i propri contenuti certificati attraverso un server MCP e i modelli AI rispondono esclusivamente sulla base di quei contenuti, citando id e versione dei passaggi recuperati. Il caso di studio è il Comune di Paperopoli (fittizio).
 
 ## Architettura
 
+La solution è composta da cinque progetti:
+
 | Progetto | Ruolo |
 |---|---|
-| `Duckburg.Registry` | Server MCP dell'ente (porta 5000). Minimal API, trasporto Streamable HTTP su `/mcp`. Carica `corpus/out/corpus.json` in memoria (`CorpusService`, sola lettura). Espone il tool `cerca(query, limite)` e le risorse del corpus. Token di accesso opzionale. |
-| `Duckburg.Portal` | Portale del Comune (porta 5100). Razor Pages in stile Designers Italia; monta l'assistente su tutte le pagine come widget e su `/assistente` a pagina intera. |
-| `ChattyDuck.Quack` | Libreria RCL dell'assistente: UI chat (pagina + widget), endpoint `POST /chat`, `GET /chat/usage`, `GET /debug/tools`, orchestratore dei modelli. |
-| `ChattyDuck.Models` | Servizi modello intercambiabili (`IModelService`): Gemini e Claude. Include il tracker d'uso (`ModelUsageTracker`) e la cattura degli header rate-limit Anthropic. |
-| `ChattyDuck.Mcp` | Client MCP verso il Registry (`McpGateway`), usato dal ponte Gemini. |
+| `Duckburg.Registry` | Server MCP dell'ente (porta 5000). Minimal API con trasporto Streamable HTTP su `/mcp`. Carica `corpus/out/corpus.json` in memoria tramite `CorpusService` (sola lettura) ed espone il tool `cerca(query, limite)` e le risorse del corpus. Supporta un access token opzionale. |
+| `Duckburg.Portal` | Portale del Comune (porta 5100). Razor Pages conformi alle linee guida Designers Italia. L'assistente è disponibile come widget su tutte le pagine e a pagina intera su `/assistente`. |
+| `ChattyDuck.Quack` | Razor Class Library dell'assistente: UI chat (pagina e widget), endpoint `POST /chat`, `GET /chat/usage`, `GET /debug/tools`, orchestrazione dei modelli. |
+| `ChattyDuck.Models` | Implementazioni intercambiabili di `IModelService` per Gemini e Claude. Include `ModelUsageTracker` e la cattura degli header di rate limit Anthropic. |
+| `ChattyDuck.Mcp` | Client MCP verso il Registry (`McpGateway`), utilizzato dal bridge Gemini. |
 
-### L'asimmetria del ponte (il punto della demo)
+### Integrazione MCP: due percorsi
 
-- **Percorso Gemini** (`GeminiModelService`): Gemini NON è MCP-nativo. Il ponte sta nel
-  portale: `McpGateway` elenca i tool del Registry, il servizio li traduce in
-  `functionDeclarations` per Gemini ed esegue le chiamate riportando i risultati
-  come `functionResponse`.
-- **Percorso Claude** (`ClaudeModelService`): Claude È MCP-nativo. Si passa l'endpoint
-  pubblico del server nel parametro `mcp_servers` della Messages API (connettore MCP,
-  beta `mcp-client-2025-11-20`): il modello si collega da solo. Niente ponte.
+I due modelli si collegano al corpus con modalità diverse, a seconda del supporto nativo al protocollo.
 
-Il prompt di sistema (`SystemPrompt.cs`) impone solo il comportamento: il contenuto
-sta SOLO nel corpus, mai nel prompt.
+- **Gemini** (`GeminiModelService`) — Gemini non supporta MCP nativamente. Il bridge risiede nel portale: `McpGateway` enumera i tool del Registry, il servizio li traduce in `functionDeclarations`, esegue le chiamate e restituisce i risultati come `functionResponse`.
+- **Claude** (`ClaudeModelService`) — Claude supporta MCP nativamente tramite il connettore MCP della Messages API (header beta `mcp-client-2025-11-20`). L'endpoint pubblico del server viene passato nel parametro `mcp_servers` e il modello si collega direttamente, senza bridge lato applicazione.
 
-### Stato d'uso dei modelli
+Il system prompt (`SystemPrompt.cs`) definisce esclusivamente il comportamento del modello; i contenuti risiedono nel solo corpus e non vengono mai inseriti nel prompt.
 
-Il pannello "Limiti di utilizzo" sotto la chat mostra consumo e residuo:
+### Monitoraggio dei consumi
 
-- **Claude**: valori reali dagli header `anthropic-ratelimit-*` delle risposte API,
-  catturati da un `DelegatingHandler` (`AnthropicRateLimitHandler`).
-- **Gemini**: token da `usageMetadata` delle risposte; il residuo è una stima locale
-  (Google non espone la quota via API, si verifica in AI Studio).
+Il pannello "Limiti di utilizzo" sotto la chat riporta consumo e quota residua per modello:
 
-Il tracker è in memoria e si azzera al riavvio.
+- **Claude** — valori reali letti dagli header `anthropic-ratelimit-*` delle risposte API, intercettati da un `DelegatingHandler` (`AnthropicRateLimitHandler`).
+- **Gemini** — token conteggiati da `usageMetadata` delle risposte; la quota residua è una stima locale, poiché Google non espone la quota via API (verificabile in AI Studio).
 
-## Configurazione (chiavi MAI nel repository)
+Il tracker è in memoria e viene azzerato al riavvio dell'applicazione.
 
-I file `appsettings*.json` reali sono esclusi da git: in remoto vanno solo i template.
-Al primo avvio copia i template e inserisci i valori:
+## Configurazione
+
+I file `appsettings*.json` reali sono esclusi dal versioning; nel repository sono presenti solo i template. Al primo avvio copiare i template e valorizzare le chiavi:
 
 ```powershell
 Copy-Item Duckburg.Portal\appsettings.template.json Duckburg.Portal\appsettings.json
 Copy-Item Duckburg.Registry\appsettings.template.json Duckburg.Registry\appsettings.json
 ```
 
-| Chiave (Portal) | Env | Note |
+| Chiave (Portal) | Variabile d'ambiente | Note |
 |---|---|---|
 | `Gemini:ApiKey` | `Gemini__ApiKey` | Google AI Studio, free tier |
 | `Gemini:Model` | — | default `gemini-2.5-flash` |
-| `Anthropic:ApiKey` | `Anthropic__ApiKey` | console Anthropic, a consumo |
+| `Anthropic:ApiKey` | `Anthropic__ApiKey` | Anthropic Console, a consumo |
 | `Anthropic:Model` | — | es. `claude-haiku-4-5` |
-| `Anthropic:McpEndpoint` | `Anthropic__McpEndpoint` | **URL pubblico** del server MCP (es. ngrok). I server Anthropic devono raggiungerlo: localhost non funziona. |
-| `Registry:McpEndpoint` | — | endpoint MCP del ponte Gemini (default `http://localhost:5000/mcp`) |
+| `Anthropic:McpEndpoint` | `Anthropic__McpEndpoint` | URL pubblico del server MCP (es. tunnel ngrok). Deve essere raggiungibile dai server Anthropic: un endpoint localhost non è utilizzabile. |
+| `Registry:McpEndpoint` | — | endpoint MCP usato dal bridge Gemini (default `http://localhost:5000/mcp`) |
 
 | Chiave (Registry) | Note |
 |---|---|
 | `Corpus:Path` | percorso di `corpus.json` (default `../corpus/out/corpus.json`) |
-| `Registry:AccessToken` | opzionale; se valorizzato richiede `Authorization: Bearer <token>` o `X-Access-Token` |
+| `Registry:AccessToken` | opzionale; se valorizzato, le richieste devono includere `Authorization: Bearer <token>` oppure `X-Access-Token` |
 
-In alternativa ai file: variabili d'ambiente o `dotnet user-secrets`.
+In alternativa ai file di configurazione è possibile usare variabili d'ambiente o `dotnet user-secrets`.
 
 ## Avvio
 
 ```powershell
-# 1. Server MCP (porta 5000)
+# Server MCP (porta 5000)
 dotnet run --project Duckburg.Registry
 
-# 2. Portale (porta 5100) -> http://localhost:5100
+# Portale (porta 5100) -> http://localhost:5100
 dotnet run --project Duckburg.Portal
 ```
 
-In Visual Studio: profilo di avvio multiplo "Portal + MCP" (`DuckburgSmartCity.slnLaunch`).
+In Visual Studio è disponibile il profilo di avvio multiplo "Portal + MCP" (`DuckburgSmartCity.slnLaunch`).
 
-Verifica rapida senza chiavi:
+Verifiche di base, senza API key configurate:
 
-- `GET http://localhost:5100/debug/tools` → elenco tool MCP visti dal ponte
-- `GET http://localhost:5100/chat/usage` → stato d'uso dei modelli
+- `GET http://localhost:5100/debug/tools` — elenco dei tool MCP visibili al bridge
+- `GET http://localhost:5100/chat/usage` — stato dei consumi per modello
 
 ## Esposizione del server MCP
 
 Il percorso Claude e i client MCP esterni richiedono un endpoint pubblico:
 
-- Sviluppo: `ngrok http 5000` → endpoint `https://<sottodominio>.ngrok-free.dev/mcp`
-  (da riportare in `Anthropic:McpEndpoint`; cambia a ogni riavvio del tunnel).
-- Produzione: dominio dedicato dietro reverse proxy, ambienti separati.
+- **Sviluppo** — `ngrok http 5000`, endpoint risultante `https://<sottodominio>.ngrok-free.dev/mcp`, da riportare in `Anthropic:McpEndpoint`. L'URL cambia a ogni riavvio del tunnel.
+- **Produzione** — dominio dedicato dietro reverse proxy, con ambienti separati.
 
-## Collegare un chatbot esterno (zero codice)
+## Client MCP esterni
 
-Qualunque client MCP può usare il corpus. Dalla pagina `/assistente`, la voce
-"⚙ Configura il tuo chatbot" del selettore modello mostra endpoint e configurazione:
+Qualunque client MCP può consumare il corpus senza codice aggiuntivo. Nella pagina `/assistente`, la voce "Configura il tuo chatbot" del selettore modello mostra endpoint e configurazione di riferimento:
 
 ```json
 {
@@ -108,17 +98,17 @@ Qualunque client MCP può usare il corpus. Dalla pagina `/assistente`, la voce
 }
 ```
 
-## Scene di verifica
+## Verifica funzionale
 
-Su tutti i client:
+Casi di test da eseguire su ogni client:
 
-1. "Quando scade la prima rata della TARI?" → 30 aprile, cita `tari:p02`.
+1. "Quando scade la prima rata della TARI?" → 30 aprile, con citazione di `tari:p02`.
 2. "Quali sono le aliquote IMU?" → valori di Paperopoli (`imu:p02`), citati.
 3. "Che giorno passa l'umido nel quartiere Vesuvio?" → "Questa informazione non è nelle fonti."
 4. "Come prenoto la carta d'identità?" → procedura da `carta-identita-residenza:p01/p02`.
-5. Stessa domanda ai client → stessa risposta ancorata.
+5. La stessa domanda posta a client diversi produce la stessa risposta, ancorata al corpus.
 
-Test manuale del tool `cerca` (senza modelli):
+Test diretto del tool `cerca`, senza passare dai modelli:
 
 ```bash
 curl -s http://localhost:5000/mcp \
@@ -126,6 +116,4 @@ curl -s http://localhost:5000/mcp \
   -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"cerca","arguments":{"query":"prima rata TARI"}}}'
 ```
 
-Se un client risponde con regole nazionali generiche: NON mettere i dati nel prompt;
-rinforza le regole di comportamento e mostra i passaggi recuperati accanto alla risposta
-(la UI lo fa già con il riquadro "Fonti recuperate").
+Se un client risponde con normativa nazionale generica anziché con i dati del corpus, la soluzione non è inserire i dati nel prompt: vanno rinforzate le regole di comportamento e mostrati i passaggi recuperati accanto alla risposta (la UI lo fa già con il riquadro "Fonti recuperate").
