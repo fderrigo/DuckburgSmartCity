@@ -1,0 +1,17 @@
+[
+  {
+    "Name": "Portal + MCP",
+    "Projects": [
+      {
+        "Path": "Duckburg.Registry\\Duckburg.Registry.csproj",
+        "Action": "Start",
+        "DebugTarget": "http"
+      },
+      {
+        "Path": "Duckburg.Portal\\Duckburg.Portal.csproj",
+        "Action": "Start",
+        "DebugTarget": "Duckburg.Portal"
+      }
+    ]
+  }
+]

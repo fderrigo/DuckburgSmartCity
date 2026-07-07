@@ -1,0 +1,65 @@
+@inject Microsoft.Extensions.Configuration.IConfiguration Config
+@{
+    var modelli = new List<(string Valore, string Nome)>();
+    if (!string.IsNullOrWhiteSpace(Config["Gemini:ApiKey"])) { modelli.Add(("gemini", "Gemini")); }
+    if (!string.IsNullOrWhiteSpace(Config["Anthropic:ApiKey"])) { modelli.Add(("claude", "Claude")); }
+}
+<!-- Widget assistente virtuale ChattyDuck, montabile su ogni pagina del portale -->
+<button type="button" class="widget-bottone" data-widget-apri aria-expanded="false" aria-controls="widget-assistente">
+    <svg viewBox="0 0 32 32" aria-hidden="true" fill="none" stroke="#17120E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 6 h24 v16 h-14 l-6 5 v-5 h-4 Z" fill="#fff"/>
+        <circle cx="11" cy="14" r="1.2" fill="#17120E"/>
+        <circle cx="16" cy="14" r="1.2" fill="#17120E"/>
+        <circle cx="21" cy="14" r="1.2" fill="#17120E"/>
+    </svg>
+    Chiedi al Comune
+</button>
+<div id="widget-assistente" class="widget-pannello" data-widget-pannello role="dialog" aria-label="Assistente virtuale del Comune di Paperopoli">
+    <div class="chat-pannello">
+        <div class="chat-barra">
+            <span class="spia" aria-hidden="true"></span>
+            <span class="display titoletto">Assistente</span>
+            @if (modelli.Count > 1)
+            {
+                <label>
+                    <span class="visually-hidden">Modello di intelligenza artificiale</span>
+                    <select data-chat-model>
+                        @foreach (var m in modelli)
+                        {
+                            <option value="@m.Valore">@m.Nome</option>
+                        }
+                    </select>
+                </label>
+            }
+            else
+            {
+                <input type="hidden" data-chat-model value="@(modelli.Count == 1 ? modelli[0].Valore : "gemini")" />
+            }
+            <button type="button" class="widget-chiudi" data-widget-chiudi aria-label="Chiudi l'assistente">✕</button>
+        </div>
+        <div class="chat-messaggi" data-chat-messages role="log" aria-live="polite" aria-label="Messaggi della conversazione">
+            <div class="balloon assistente"><span class="chi">Assistente</span>Ciao! Rispondo solo con le fonti ufficiali del Comune. Cosa vuoi sapere?</div>
+        </div>
+        <form class="chat-input" data-chat-form>
+            <label class="visually-hidden" for="widget-domanda">Scrivi la tua domanda</label>
+            <input id="widget-domanda" type="text" autocomplete="off" placeholder="Scrivi la tua domanda…" data-chat-input />
+            <button type="submit" class="btn-fumetto" data-chat-send style="font-size:1rem; padding:.4rem .9rem;">Invia</button>
+        </form>
+
+        <details class="chat-limiti">
+            <summary>Limiti di utilizzo</summary>
+            <ul>
+                @if (!string.IsNullOrWhiteSpace(Config["Anthropic:ApiKey"]))
+                {
+                    <li><strong>Claude</strong> (Haiku 4.5): 10.000 rich./min &middot; 10M token in/min &middot; 2M token out/min<br />
+                        <span class="uso" data-usage-model="claude">nessun uso registrato</span></li>
+                }
+                @if (!string.IsNullOrWhiteSpace(Config["Gemini:ApiKey"]))
+                {
+                    <li><strong>Gemini</strong> (2.5 Flash, free): ~10 rich./min &middot; ~250/giorno <em>(indicativo)</em><br />
+                        <span class="uso" data-usage-model="gemini">nessun uso registrato</span></li>
+                }
+            </ul>
+        </details>
+    </div>
+</div>

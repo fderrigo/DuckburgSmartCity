@@ -1,0 +1,55 @@
+@page "/assistente"
+@{
+    ViewData["Title"] = "Assistente virtuale";
+    ViewData["Nav"] = "assistente";
+    ViewData["HideWidget"] = true;
+}
+
+<nav class="wrap briciole" aria-label="Percorso di navigazione">
+    <ol>
+        <li><a href="/">Home</a></li>
+        <li><span aria-current="page">Assistente virtuale</span></li>
+    </ol>
+</nav>
+
+<section class="wrap" aria-labelledby="titolo-assistente">
+    <span class="sezione-eyebrow">Assistente virtuale</span>
+    <h1 class="display sezione-titolo" id="titolo-assistente">Chiedi, il Comune risponde</h1>
+    <p class="sezione-sub">
+        L'assistente risponde <strong>solo</strong> con informazioni tratte dai contenuti certificati del
+        Comune di Paperopoli. Niente invenzioni: ogni risposta cita la fonte. Se un'informazione non è
+        nel corpus comunale, l'assistente lo dice chiaramente.
+    </p>
+
+    <div class="scheda-grid">
+        <!-- Pannello chat dell'assistente ChattyDuck (partial dalla RCL ChattyDuck.Quack) -->
+        <partial name="_QuackChat" />
+
+        <aside class="pannello-lato" aria-label="Come funziona l'assistente">
+            <h2 class="display">Come funziona</h2>
+            <dl>
+                <dt>Fonti certificate</dt>
+                <dd>Le risposte vengono solo dal corpus ufficiale del Comune, esposto tramite un server MCP.</dd>
+                <dt>Citazione obbligatoria</dt>
+                <dd>Ogni risposta riporta l'identificativo del passaggio, ad esempio <span class="fonte-chip">tari:p02 · v1.0</span></dd>
+                <dt>Fuori dal corpus?</dt>
+                <dd>Se la risposta non è nelle fonti comunali, l'assistente lo dichiara e ti indirizza agli uffici.</dd>
+                <dt>Serve un operatore?</dt>
+                <dd>Numero verde <strong>800-PAPERINO</strong>, oppure URP in via dei Dobloni 13.</dd>
+            </dl>
+            <svg class="mascotte" style="width:120px; display:block; margin:1rem auto 0; filter:drop-shadow(4px 4px 0 rgba(23,18,14,.85));" viewBox="0 0 130 150" role="img" aria-label="Mascotte del portale: un papero stilizzato con berretto da impiegato comunale">
+                <ellipse cx="64" cy="144" rx="32" ry="6" fill="rgba(23,18,14,.18)"/>
+                <ellipse cx="62" cy="100" rx="30" ry="28" fill="#FFF6E0" stroke="#17120E" stroke-width="4"/>
+                <path d="M40 94 q-10 10 0 20" fill="none" stroke="#17120E" stroke-width="4" stroke-linecap="round"/>
+                <circle cx="72" cy="48" r="22" fill="#FFF6E0" stroke="#17120E" stroke-width="4"/>
+                <path d="M92 42 q18 -2 20 8 q-4 9 -20 6 q3 -7 0 -14 Z" fill="#F2B705" stroke="#17120E" stroke-width="3.5" stroke-linejoin="round"/>
+                <circle cx="79" cy="41" r="4" fill="#17120E"/>
+                <circle cx="80.5" cy="39.5" r="1.4" fill="#fff"/>
+                <path d="M54 36 Q56 16 72 16 Q88 16 90 34 L84 38 Q80 28 72 28 Q62 28 60 38 Z" fill="#1D9BB8" stroke="#17120E" stroke-width="3.5" stroke-linejoin="round"/>
+                <path d="M52 38 h40" stroke="#17120E" stroke-width="3.5" stroke-linecap="round"/>
+                <path d="M54 126 v12 M72 126 v12" stroke="#17120E" stroke-width="4" stroke-linecap="round"/>
+                <path d="M54 138 h-13 M72 138 h13" stroke="#17120E" stroke-width="4" stroke-linecap="round"/>
+            </svg>
+        </aside>
+    </div>
+</section>

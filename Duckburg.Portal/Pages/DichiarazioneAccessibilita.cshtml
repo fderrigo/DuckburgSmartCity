@@ -1,0 +1,47 @@
+@page "/dichiarazione-accessibilita"
+@{
+    ViewData["Title"] = "Dichiarazione di accessibilità";
+    ViewData["Nav"] = "";
+}
+
+<nav class="wrap briciole" aria-label="Percorso di navigazione">
+    <ol>
+        <li><a href="/">Home</a></li>
+        <li><span aria-current="page">Dichiarazione di accessibilità</span></li>
+    </ol>
+</nav>
+
+<section class="wrap" aria-labelledby="titolo-accessibilita" style="max-width:820px;">
+    <span class="sezione-eyebrow">Accessibilità</span>
+    <h1 class="display sezione-titolo" id="titolo-accessibilita">Dichiarazione di accessibilità</h1>
+
+    <div class="nota-fonte" style="margin-bottom:1.4rem;">
+        <strong>Nota:</strong> il Comune di Paperopoli è un ente immaginario. Questa pagina imita la
+        dichiarazione di accessibilità prevista per i siti della pubblica amministrazione, ma non ha
+        valore legale e non è registrata presso AgID.
+    </div>
+
+    <div class="scheda-corpo">
+        <h2>Stato di conformità</h2>
+        <p>
+            Questo sito è progettato per essere <strong>conforme</strong> ai requisiti della
+            WCAG 2.1 livello AA: navigazione da tastiera, collegamento di salto al contenuto,
+            landmark e intestazioni strutturate, contrasti verificati, etichette esplicite dei
+            campi, contenuti dinamici annunciati con regioni live e rispetto della preferenza
+            di riduzione del movimento.
+        </p>
+
+        <h2>Contenuti non accessibili</h2>
+        <ul>
+            <li>Il carattere display in stile fumetto è usato solo per i titoli; i testi informativi usano un carattere ad alta leggibilità.</li>
+            <li>Le onomatopee decorative sono nascoste alle tecnologie assistive.</li>
+        </ul>
+
+        <h2>Meccanismo di feedback</h2>
+        <p>
+            Hai riscontrato barriere? Scrivi a urp@paperopoli.demo o chiama il numero verde
+            800-PAPERINO. Nella realtà qui troveresti anche il collegamento al meccanismo di
+            segnalazione AgID.
+        </p>
+    </div>
+</section>

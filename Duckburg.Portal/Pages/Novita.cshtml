@@ -1,0 +1,41 @@
+@page "/novita"
+@{
+    ViewData["Title"] = "Novità";
+    ViewData["Nav"] = "novita";
+}
+
+<nav class="wrap briciole" aria-label="Percorso di navigazione">
+    <ol>
+        <li><a href="/">Home</a></li>
+        <li><span aria-current="page">Novità</span></li>
+    </ol>
+</nav>
+
+<section class="wrap" aria-labelledby="titolo-novita">
+    <span class="sezione-eyebrow">Novità</span>
+    <h1 class="display sezione-titolo" id="titolo-novita">Notizie, comunicati e avvisi</h1>
+    <p class="sezione-sub">Le ultime dal Comune di Paperopoli. Contenuti dimostrativi.</p>
+
+    <div class="card-grid">
+        <article class="card-fumetto">
+            <span class="card-data">Avviso · 1 luglio 2026</span>
+            <h2 style="font-size:1.05rem;">Porta a porta: nuovo calendario nel quartiere Dogburg</h2>
+            <p>Dal 15 luglio la raccolta di carta e cartone nel quartiere Dogburg passa dal mercoledì al venerdì. Il calendario aggiornato è disponibile chiedendo all'assistente virtuale.</p>
+        </article>
+        <article class="card-fumetto">
+            <span class="card-data">Notizia · 24 giugno 2026</span>
+            <h2 style="font-size:1.05rem;">Festa di San Quaquaraqua: variazioni degli orari</h2>
+            <p>In occasione della festa del patrono gli sportelli comunali resteranno chiusi. Riapertura regolare il giorno successivo con i consueti orari.</p>
+        </article>
+        <article class="card-fumetto">
+            <span class="card-data">Comunicato · 18 giugno 2026</span>
+            <h2 style="font-size:1.05rem;">Mensa scolastica: aperte le iscrizioni</h2>
+            <p>Fino al 31 agosto è possibile iscriversi al servizio mensa per il nuovo anno scolastico. Tariffe agevolate per fascia ISEE.</p>
+        </article>
+        <article class="card-fumetto">
+            <span class="card-data">Avviso · 10 giugno 2026</span>
+            <h2 style="font-size:1.05rem;">TARI: promemoria seconda rata</h2>
+            <p>La seconda rata della TARI scade il 31 luglio. L'avviso pagoPA è in arrivo nelle caselle dei contribuenti.</p>
+        </article>
+    </div>
+</section>

@@ -1,0 +1,84 @@
+@page "/amministrazione/sindaco"
+@{
+    ViewData["Title"] = "La Sindaca";
+    ViewData["Nav"] = "amministrazione";
+}
+
+<nav class="wrap briciole" aria-label="Percorso di navigazione">
+    <ol>
+        <li><a href="/">Home</a></li>
+        <li><a href="/amministrazione">Amministrazione</a></li>
+        <li><span aria-current="page">La Sindaca</span></li>
+    </ol>
+</nav>
+
+<section class="wrap" aria-labelledby="titolo-sindaca">
+    <span class="sezione-eyebrow">Organi di governo</span>
+    <h1 class="display sezione-titolo" id="titolo-sindaca">Adele Anatrini, Sindaca</h1>
+
+    <div class="scheda-grid">
+        <div class="scheda-corpo">
+            <div style="display:flex; gap:1.4rem; align-items:center; flex-wrap:wrap; margin-bottom:1.4rem;">
+                <svg class="ritratto" style="width:140px; height:140px; filter:drop-shadow(4px 4px 0 rgba(23,18,14,.85));" viewBox="0 0 120 120" role="img" aria-label="Ritratto a fumetto della Sindaca Adele Anatrini: papera con fascia da sindaca e collana di perle">
+                    <circle cx="60" cy="60" r="56" fill="#FFD84D" stroke="#17120E" stroke-width="4"/>
+                    <path d="M28 118 q4 -30 32 -30 q28 0 32 30 Z" fill="#1D9BB8" stroke="#17120E" stroke-width="4"/>
+                    <path d="M36 118 L84 92" stroke="#F2B705" stroke-width="9"/>
+                    <path d="M36 118 L84 92" stroke="#E23A2E" stroke-width="3"/>
+                    <circle cx="60" cy="54" r="28" fill="#FFF6E0" stroke="#17120E" stroke-width="4"/>
+                    <path d="M84 50 q16 -2 18 8 q-4 8 -18 5 q3 -6 0 -13 Z" fill="#F2B705" stroke="#17120E" stroke-width="3.5" stroke-linejoin="round"/>
+                    <circle cx="70" cy="46" r="4" fill="#17120E"/>
+                    <circle cx="71.5" cy="44.5" r="1.4" fill="#fff"/>
+                    <path d="M40 32 q8 -10 20 -6" fill="none" stroke="#17120E" stroke-width="4" stroke-linecap="round"/>
+                    <circle cx="48" cy="88" r="3.5" fill="#fff" stroke="#17120E" stroke-width="2"/>
+                    <circle cx="58" cy="91" r="3.5" fill="#fff" stroke="#17120E" stroke-width="2"/>
+                    <circle cx="68" cy="90" r="3.5" fill="#fff" stroke="#17120E" stroke-width="2"/>
+                </svg>
+                <div>
+                    <p style="font-weight:700; font-size:1.1rem;">Sindaca del Comune di Paperopoli</p>
+                    <p style="color:var(--grigio-testo);">In carica dal 2024 · mandato quinquennale</p>
+                    <p style="margin-top:.5rem;">
+                        <span class="fonte-chip">Personale</span>
+                        <span class="fonte-chip">Comunicazione</span>
+                        <span class="fonte-chip">Rapporti con la Regione</span>
+                    </p>
+                </div>
+            </div>
+
+            <h2>Biografia</h2>
+            <p>
+                Nata e cresciuta nel quartiere Dogburg, ragioniera, per vent'anni alla guida della
+                cooperativa del Mercato dei Dobloni. Personaggio di fantasia: ogni somiglianza con
+                persone o paperi reali è puramente casuale.
+            </p>
+
+            <h2>Deleghe</h2>
+            <ul>
+                <li>Personale e organizzazione degli uffici</li>
+                <li>Comunicazione istituzionale e portale dei servizi</li>
+                <li>Rapporti con la Regione Palmipedia</li>
+            </ul>
+
+            <h2>Ricevimento</h2>
+            <p>
+                Riceve i cittadini il <strong>giovedì dalle 10:00 alle 12:00</strong> al Palazzo
+                Comunale, su appuntamento tramite URP.
+            </p>
+            <p style="margin-top:.6rem;">
+                <a class="btn-fumetto" href="/assistente?q=Come prendo appuntamento con la Sindaca?">Prendi appuntamento</a>
+            </p>
+        </div>
+
+        <aside class="pannello-lato" aria-label="Contatti della Sindaca">
+            <h2 class="display">Contatti</h2>
+            <dl>
+                <dt>Segreteria</dt>
+                <dd>sindaca@paperopoli.demo (fittizio)</dd>
+                <dt>Telefono</dt>
+                <dd>Numero verde 800-PAPERINO</dd>
+                <dt>Sede</dt>
+                <dd>Palazzo Comunale, via dei Dobloni 13</dd>
+            </dl>
+            <p style="margin-top:.8rem;"><a href="/amministrazione/giunta">Vai alla Giunta comunale →</a></p>
+        </aside>
+    </div>
+</section>

@@ -1,0 +1,358 @@
+{
+  "corpus_version": "0.1.0",
+  "generated_at": "2026-07-05T07:24:55.000751+00:00",
+  "disclaimer": "Comune di Paperopoli: ente immaginario. Dati di esempio a fini dimostrativi, non hanno alcun valore reale.",
+  "principle": "L'assistente risponde solo dai passaggi qui esposti. Dati locali di Paperopoli, non regole nazionali generiche.",
+  "works": [
+    {
+      "id": "tari",
+      "title": "TARI - Tassa sui rifiuti",
+      "source": "Comune di Paperopoli (immaginario), dati di esempio",
+      "license": "contenuto dimostrativo fittizio",
+      "passage_count": 7,
+      "passages": [
+        {
+          "id": "tari:p01",
+          "seq": 1,
+          "version": "1.0",
+          "hash": "f3cfc2b2a0a3d913f9af94d44dac9a4c4db181db5ee508d2e9d266e1463aae0b",
+          "text": "La TARI del Comune di Paperopoli e la tassa annuale sui rifiuti. La pagano tutti coloro che possiedono o detengono locali o aree che producono rifiuti, a qualsiasi titolo, sul territorio comunale."
+        },
+        {
+          "id": "tari:p02",
+          "seq": 2,
+          "version": "1.0",
+          "hash": "afe6856e1ae5e0042e2df9bcf2a954e1dda30e15d16f9cd0b34b7342c563d63d",
+          "text": "Per l'anno in corso la TARI si paga in tre rate. Prima rata: scadenza 30 aprile. Seconda rata: scadenza 31 luglio. Terza rata di saldo: scadenza 2 dicembre. E ammesso il pagamento in unica soluzione entro la scadenza della prima rata."
+        },
+        {
+          "id": "tari:p03",
+          "seq": 3,
+          "version": "1.0",
+          "hash": "dff12eebd648d4ee0b33940a42760d9e09de6f7a07b769f6a16c2ba9b4b7864c",
+          "text": "La tariffa per le utenze domestiche si compone di una quota fissa al metro quadro e di una quota variabile che dipende dal numero di occupanti. Quota fissa: 0,98 euro al metro quadro all'anno. Quota variabile per un nucleo di una persona: 48 euro all'anno, che aumenta con il numero degli occupanti."
+        },
+        {
+          "id": "tari:p04",
+          "seq": 4,
+          "version": "1.0",
+          "hash": "6d859a1d7e3f2a700a92b457bd0141dd512dc61b04fb8279d470faf14d5c641a",
+          "text": "Hanno diritto a una riduzione del 30 per cento le abitazioni tenute a disposizione per uso stagionale o limitato e ricorrente. La riduzione va richiesta una sola volta e resta valida finche permangono le condizioni dichiarate."
+        },
+        {
+          "id": "tari:p05",
+          "seq": 5,
+          "version": "1.0",
+          "hash": "723e478ee9ef866130e9e3ed91fbf19f343ad3d3ada9fc631485f1d363bdd94a",
+          "text": "I nuclei con ISEE inferiore a 9.000 euro possono chiedere una riduzione del 25 per cento sulla quota variabile. La domanda si presenta all'Ufficio Tributi entro il 31 marzo, allegando l'attestazione ISEE in corso di validita."
+        },
+        {
+          "id": "tari:p06",
+          "seq": 6,
+          "version": "1.0",
+          "hash": "8d4bc7ed806e791e26cb709c5dbc306164286c1c62d50d53091123ef4f27bde1",
+          "text": "Il pagamento si effettua con avviso pagoPA, che il Comune invia al domicilio digitale o cartaceo. In caso di smarrimento, l'avviso si puo ristampare allo sportello dell'Ufficio Tributi o tramite il portale dei servizi del Comune."
+        },
+        {
+          "id": "tari:p07",
+          "seq": 7,
+          "version": "1.0",
+          "hash": "c35d65f5de7ba7df53f77769c209d237c39b4a93554115ce175a161f1745c6a2",
+          "text": "L'Ufficio Tributi di Paperopoli ha sede in via dei Dobloni 13. Telefono: numero verde 800-PAPERINO. Per le pratiche TARI riceve su appuntamento il martedi e il giovedi."
+        }
+      ]
+    },
+    {
+      "id": "raccolta-differenziata",
+      "title": "Raccolta differenziata",
+      "source": "Comune di Paperopoli (immaginario), dati di esempio",
+      "license": "contenuto dimostrativo fittizio",
+      "passage_count": 7,
+      "passages": [
+        {
+          "id": "raccolta-differenziata:p01",
+          "seq": 1,
+          "version": "1.0",
+          "hash": "56f90de4199f298926ab85227459a491ed050cf7a8af5a81bbc6e71f96e848c1",
+          "text": "La raccolta dei rifiuti a Paperopoli e porta a porta e segue un calendario per quartiere. I rifiuti vanno esposti in strada la sera prima del giorno di raccolta, tra le 20 e le 24, negli appositi contenitori o sacchi."
+        },
+        {
+          "id": "raccolta-differenziata:p02",
+          "seq": 2,
+          "version": "1.0",
+          "hash": "bd0827ef0c7214459fad83438baba2c5242484d804845480ffb9e2027637ecee",
+          "text": "Quartiere Dogburg: umido il lunedi e il giovedi; carta il martedi; plastica e metalli il mercoledi; vetro il venerdi; indifferenziato il sabato."
+        },
+        {
+          "id": "raccolta-differenziata:p03",
+          "seq": 3,
+          "version": "1.0",
+          "hash": "62f453900f0a0b39f6417cff38887d2a49643697395b454b749c351411e171b5",
+          "text": "Quartiere del Porto Vecchio: umido il martedi e il venerdi; carta il mercoledi; plastica e metalli il giovedi; vetro il lunedi; indifferenziato il sabato."
+        },
+        {
+          "id": "raccolta-differenziata:p04",
+          "seq": 4,
+          "version": "1.0",
+          "hash": "a5ad4e54e4aa5dffc50cfa64d956613ff160fec455d511858a6660c911e95174",
+          "text": "Quartiere Collina dei Salici: umido il mercoledi e il sabato; carta il lunedi; plastica e metalli il martedi; vetro il giovedi; indifferenziato il venerdi."
+        },
+        {
+          "id": "raccolta-differenziata:p05",
+          "seq": 5,
+          "version": "1.0",
+          "hash": "32759c12885f6a2c7ba0a6adae4e168aff22799869087fe611830d367ee53a18",
+          "text": "Nell'umido vanno avanzi di cibo, fondi di caffe, tovaglioli di carta unti, fiori recisi. Non vanno pannolini, lettiere, mozziconi. Nella carta non va la carta sporca di cibo o unta, che e indifferenziato."
+        },
+        {
+          "id": "raccolta-differenziata:p06",
+          "seq": 6,
+          "version": "1.0",
+          "hash": "0158b778cb175b1830e80646d6bedb161a9071eb85610eb54791263aa8fbd92b",
+          "text": "Il centro di raccolta comunale, dove portare ingombranti, sfalci, oli esausti e piccoli elettrodomestici, e in via delle Monete d'Oro 7. Orari: dal lunedi al sabato, 8-12 e 14-18. L'accesso e gratuito per i residenti, fino a un metro cubo per conferimento."
+        },
+        {
+          "id": "raccolta-differenziata:p07",
+          "seq": 7,
+          "version": "1.0",
+          "hash": "ed74bddbc90c38c2b4972f281fc53b85db6d5903f764d14dcc4683f8d691e6a2",
+          "text": "Il ritiro a domicilio degli ingombranti e gratuito e si prenota al numero verde 800-PAPERINO o dal portale del Comune. Il ritiro avviene entro sette giorni dalla prenotazione, nel giorno comunicato."
+        }
+      ]
+    },
+    {
+      "id": "uffici-orari",
+      "title": "Uffici comunali e orari",
+      "source": "Comune di Paperopoli (immaginario), dati di esempio",
+      "license": "contenuto dimostrativo fittizio",
+      "passage_count": 6,
+      "passages": [
+        {
+          "id": "uffici-orari:p01",
+          "seq": 1,
+          "version": "1.0",
+          "hash": "74adb63dd0f67a88f1f6d0514137cec579c49b83a6d8794eff756d4de170a5a3",
+          "text": "Il Municipio di Paperopoli si trova in piazza Sant'Antonio Pennuto 1. Il centralino risponde al numero verde 800-PAPERINO dal lunedi al venerdi, dalle 8 alle 18."
+        },
+        {
+          "id": "uffici-orari:p02",
+          "seq": 2,
+          "version": "1.0",
+          "hash": "40ba967aca02a5f977693da1478fdc0c6519c8c9f8e686cea1743a2fff85aff0",
+          "text": "L'Ufficio Anagrafe riceve dal lunedi al venerdi dalle 8.30 alle 12.30, e il martedi e il giovedi anche dalle 15 alle 17. Il rilascio della carta d'identita elettronica e solo su appuntamento."
+        },
+        {
+          "id": "uffici-orari:p03",
+          "seq": 3,
+          "version": "1.0",
+          "hash": "fe359439a89e64f5b74cb219013114f1e1dfd684125fd00e0a2c8a2159dbef44",
+          "text": "L'Ufficio Protocollo riceve dal lunedi al venerdi dalle 9 alle 13. La presentazione di istanze e possibile anche online tramite la posta elettronica certificata del Comune."
+        },
+        {
+          "id": "uffici-orari:p04",
+          "seq": 4,
+          "version": "1.0",
+          "hash": "b9d136dd0a68574f42a3af7cb6492c06a7b5124933a10e5efab64034fb1c808c",
+          "text": "L'Ufficio Tecnico, competente per edilizia e urbanistica, riceve il mercoledi dalle 9 alle 12 e su appuntamento. Per i pareri preliminari si consiglia di prenotare con almeno cinque giorni di anticipo."
+        },
+        {
+          "id": "uffici-orari:p05",
+          "seq": 5,
+          "version": "1.0",
+          "hash": "24472339ae65ed9849f31c47778d024a973b780d7626a26953c422169923a28e",
+          "text": "L'Ufficio Tributi riceve il martedi e il giovedi dalle 9 alle 12.30, su appuntamento. Si occupa di TARI, IMU e addizionale comunale."
+        },
+        {
+          "id": "uffici-orari:p06",
+          "seq": 6,
+          "version": "1.0",
+          "hash": "aacac6ef657894878c374a81a45633a8ce330463d513e1f9d0f1104d5de3ce56",
+          "text": "Gli sportelli comunali sono chiusi al pubblico nelle giornate festive e il giorno del Santo Patrono, San Quaquaraqua, che a Paperopoli si celebra il 13 settembre."
+        }
+      ]
+    },
+    {
+      "id": "carta-identita-residenza",
+      "title": "Carta d'identita e residenza",
+      "source": "Comune di Paperopoli (immaginario), dati di esempio",
+      "license": "contenuto dimostrativo fittizio",
+      "passage_count": 6,
+      "passages": [
+        {
+          "id": "carta-identita-residenza:p01",
+          "seq": 1,
+          "version": "1.0",
+          "hash": "5aec90b515db9e5b75a39000b9cf21595026d54b79a6ad77911e001d2deb2fe0",
+          "text": "La carta d'identita elettronica si richiede all'Ufficio Anagrafe solo su appuntamento, prenotabile dal portale del Comune o al numero verde. Il giorno dell'appuntamento occorre presentarsi di persona, perche vengono rilevate le impronte digitali."
+        },
+        {
+          "id": "carta-identita-residenza:p02",
+          "seq": 2,
+          "version": "1.0",
+          "hash": "af8e2537fdcabec3b91c7151b5b097a6d390bdf1dd0e1cd17561f41f621de581",
+          "text": "Per la carta d'identita servono: una fototessera recente, la tessera sanitaria, e la carta d'identita scaduta o, in mancanza, la denuncia di smarrimento o furto. Il costo e di 22,21 euro, da pagare allo sportello."
+        },
+        {
+          "id": "carta-identita-residenza:p03",
+          "seq": 3,
+          "version": "1.0",
+          "hash": "66dae8cf6879d8ba83407934033175f05f5f8dbd64b789658566bbb45153bf48",
+          "text": "La carta non viene consegnata subito: arriva entro sei giorni lavorativi all'indirizzo indicato, oppure puo essere ritirata in Comune da persona delegata. Per chi parte a breve esiste la procedura d'urgenza."
+        },
+        {
+          "id": "carta-identita-residenza:p04",
+          "seq": 4,
+          "version": "1.0",
+          "hash": "9c832a9350ae4eeb24e67c84315b5f0452b1b9cea3bd2950186b7d2b2c3759c8",
+          "text": "Il cambio di residenza si richiede entro venti giorni dal trasferimento. La domanda si presenta all'Ufficio Anagrafe con un documento d'identita e i dati dell'abitazione. Per chi non e proprietario serve il titolo che giustifica l'occupazione, ad esempio il contratto d'affitto registrato."
+        },
+        {
+          "id": "carta-identita-residenza:p05",
+          "seq": 5,
+          "version": "1.0",
+          "hash": "772b6d0774216606103129700a3652354280990407b8a8441744dd4bf27a4322",
+          "text": "Dopo la domanda di residenza, la registrazione e immediata, ma il Comune ha quarantacinque giorni per verificare l'effettiva dimora abituale, anche con un sopralluogo della polizia locale. Se la verifica e negativa, la residenza viene annullata."
+        },
+        {
+          "id": "carta-identita-residenza:p06",
+          "seq": 6,
+          "version": "1.0",
+          "hash": "3224bd13c23ac776c423c2f5080e4ade579ddd5285fb21e17378ba6273738d0a",
+          "text": "Il certificato di residenza e gli altri certificati anagrafici si possono ottenere allo sportello oppure online, in molti casi gratuitamente, tramite l'identita digitale SPID o CIE."
+        }
+      ]
+    },
+    {
+      "id": "imu",
+      "title": "IMU - Imposta municipale",
+      "source": "Comune di Paperopoli (immaginario), dati di esempio",
+      "license": "contenuto dimostrativo fittizio",
+      "passage_count": 5,
+      "passages": [
+        {
+          "id": "imu:p01",
+          "seq": 1,
+          "version": "1.0",
+          "hash": "6cd0a4c64ef592f90adba544e8ffec7a1ddcf204198db244dd4c66f674717102",
+          "text": "A Paperopoli l'IMU non si paga sull'abitazione principale e relative pertinenze, salvo che si tratti di abitazione di lusso. Si paga invece sulle seconde case, sulle aree edificabili e sugli immobili diversi dall'abitazione principale."
+        },
+        {
+          "id": "imu:p02",
+          "seq": 2,
+          "version": "1.0",
+          "hash": "0c71cbfdefc1c5763633f1fb6c4816cdde3eddeb7edca63c1383bc5934c11d4a",
+          "text": "Le aliquote IMU a Paperopoli sono: 0,86 per cento per le seconde case e gli immobili a disposizione; 0,76 per cento per gli immobili locati con contratto a canone concordato; 1,06 per cento per le aree edificabili."
+        },
+        {
+          "id": "imu:p03",
+          "seq": 3,
+          "version": "1.0",
+          "hash": "87a29114fc19174f01f21c8a8250d5ab138a104332df0cb0b5a013e0d3189fa4",
+          "text": "L'IMU si paga in due rate. Acconto: scadenza 16 giugno. Saldo: scadenza 16 dicembre. E possibile versare in unica soluzione entro il 16 giugno."
+        },
+        {
+          "id": "imu:p04",
+          "seq": 4,
+          "version": "1.0",
+          "hash": "df572cf24541a010ec87a5ad9e6c5aae09d2c33f4958df698f2fe82f0d557499",
+          "text": "Il versamento si effettua con modello F24 oppure con avviso pagoPA. Il calcolo si basa sulla rendita catastale rivalutata e sui mesi di possesso nell'anno. L'Ufficio Tributi offre assistenza al calcolo su appuntamento."
+        },
+        {
+          "id": "imu:p05",
+          "seq": 5,
+          "version": "1.0",
+          "hash": "6cdbfd7871188520cc67b9f4e430489c08b3ad29bd27f16016a1b811fe7fd46d",
+          "text": "Chi concede un immobile in comodato gratuito a un figlio o a un genitore, che lo usa come abitazione principale, puo avere una riduzione del 50 per cento della base imponibile, alle condizioni di legge e previa comunicazione al Comune."
+        }
+      ]
+    },
+    {
+      "id": "mensa-trasporto-scolastico",
+      "title": "Mensa e trasporto scolastico",
+      "source": "Comune di Paperopoli (immaginario), dati di esempio",
+      "license": "contenuto dimostrativo fittizio",
+      "passage_count": 5,
+      "passages": [
+        {
+          "id": "mensa-trasporto-scolastico:p01",
+          "seq": 1,
+          "version": "1.0",
+          "hash": "0027b3a280c85f204b42d695e8e6fd7108a73b2ecda9d30a07600e1f7c79b939",
+          "text": "Il servizio di mensa scolastica del Comune di Paperopoli e attivo nelle scuole dell'infanzia e primarie. L'iscrizione si effettua ogni anno entro il 31 agosto tramite il portale dei servizi scolastici del Comune."
+        },
+        {
+          "id": "mensa-trasporto-scolastico:p02",
+          "seq": 2,
+          "version": "1.0",
+          "hash": "40aea4ccc33f9e4f42fbb36874669d13d12ce47d05dfe3e04110d0a095776513",
+          "text": "Il costo del singolo pasto e di 4,20 euro. Le famiglie con ISEE inferiore a 12.000 euro pagano una tariffa ridotta di 2,50 euro a pasto; con ISEE inferiore a 6.000 euro il servizio e gratuito."
+        },
+        {
+          "id": "mensa-trasporto-scolastico:p03",
+          "seq": 3,
+          "version": "1.0",
+          "hash": "911a05eb2f1e81d3bc6887a32700f14af87a1da164e7cb47a5fee9e85cc5ec8d",
+          "text": "I pasti si pagano con sistema prepagato: si ricarica il borsellino elettronico associato all'alunno e a ogni presenza viene scalato il costo del pasto. La ricarica si fa con pagoPA dal portale o presso i punti convenzionati."
+        },
+        {
+          "id": "mensa-trasporto-scolastico:p04",
+          "seq": 4,
+          "version": "1.0",
+          "hash": "d30662a5bcbbe145a938848e9bc15a88a90bb63002d2374efbd5a89c38ca88c2",
+          "text": "Il trasporto scolastico copre le frazioni di Paperopoli con scuolabus. L'iscrizione si presenta entro il 31 agosto. La tariffa annuale e di 180 euro per il primo figlio e 120 euro per ciascun figlio successivo."
+        },
+        {
+          "id": "mensa-trasporto-scolastico:p05",
+          "seq": 5,
+          "version": "1.0",
+          "hash": "aab159384cc91aad0c5a2f82b6f7c34581582772eeacfd8cafff7c490af0586e",
+          "text": "Per segnalare allergie o intolleranze e necessario presentare un certificato medico all'ufficio scuola prima dell'inizio delle lezioni. Sono previsti menu alternativi anche per motivi etici o religiosi, su richiesta."
+        }
+      ]
+    },
+    {
+      "id": "tributi-pagopa-rateazione",
+      "title": "Pagamenti, pagoPA e rateazioni",
+      "source": "Comune di Paperopoli (immaginario), dati di esempio",
+      "license": "contenuto dimostrativo fittizio",
+      "passage_count": 5,
+      "passages": [
+        {
+          "id": "tributi-pagopa-rateazione:p01",
+          "seq": 1,
+          "version": "1.0",
+          "hash": "bcef78aeff8f15e33f841a7b3d5bd5649b0dc539e56074198fa1702247ae91b7",
+          "text": "Tutti i pagamenti verso il Comune di Paperopoli avvengono tramite pagoPA: TARI, IMU, mensa, multe, diritti di segreteria. Si paga online dal portale, dall'app dei pagamenti, oppure presso banche, tabaccai e uffici postali con l'avviso."
+        },
+        {
+          "id": "tributi-pagopa-rateazione:p02",
+          "seq": 2,
+          "version": "1.0",
+          "hash": "f8627c3174195a3d8850e4f8fb5abaeaee043ec9851f9473ae04c287a699b043",
+          "text": "Chi non riesce a pagare un tributo in una sola volta puo chiedere la rateazione all'Ufficio Tributi. Per debiti fino a 3.000 euro si concedono fino a dodici rate mensili; per importi superiori, fino a trentasei rate."
+        },
+        {
+          "id": "tributi-pagopa-rateazione:p03",
+          "seq": 3,
+          "version": "1.0",
+          "hash": "34123fd94ed3057351c7f8266d3c993b2cd4000851223d3e08b4d284cb4021de",
+          "text": "La domanda di rateazione si presenta prima della scadenza o, per le somme gia iscritte a ruolo, prima dell'avvio della riscossione coattiva. La rateazione decade se non si pagano due rate, anche non consecutive."
+        },
+        {
+          "id": "tributi-pagopa-rateazione:p04",
+          "seq": 4,
+          "version": "1.0",
+          "hash": "076c33665b237d27576ee9b5afe482b86fa2ef32e6c34325a5da9227c318a0f7",
+          "text": "In caso di pagamento oltre la scadenza si applica il ravvedimento operoso: si versa il tributo con una piccola sanzione ridotta e gli interessi, tanto piu bassi quanto prima si regolarizza la posizione."
+        },
+        {
+          "id": "tributi-pagopa-rateazione:p05",
+          "seq": 5,
+          "version": "1.0",
+          "hash": "d2ad7a62a24ee64b8b01a523ae783487ba4949245b88168fb7b0386eb0590dba",
+          "text": "Per contestare un avviso di pagamento ritenuto errato ci si rivolge all'Ufficio Tributi entro sessanta giorni, presentando un'istanza in autotutela con i documenti che dimostrano l'errore. La presentazione dell'istanza non sospende automaticamente la scadenza."
+        }
+      ]
+    }
+  ]
+}

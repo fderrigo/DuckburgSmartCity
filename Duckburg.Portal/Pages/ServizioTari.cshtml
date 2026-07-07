@@ -1,0 +1,71 @@
+@page "/servizi/tari"
+@{
+    ViewData["Title"] = "TARI — Tassa sui rifiuti";
+    ViewData["Nav"] = "servizi";
+}
+
+<nav class="wrap briciole" aria-label="Percorso di navigazione">
+    <ol>
+        <li><a href="/">Home</a></li>
+        <li><a href="/servizi">Servizi</a></li>
+        <li><span aria-current="page">TARI — Tassa sui rifiuti</span></li>
+    </ol>
+</nav>
+
+<section class="wrap" aria-labelledby="titolo-tari">
+    <span class="sezione-eyebrow">Scheda servizio</span>
+    <h1 class="display sezione-titolo" id="titolo-tari">TARI — Tassa sui rifiuti</h1>
+    <p class="sezione-sub">La tassa annuale sui rifiuti del Comune di Paperopoli: chi la paga, quando e come.</p>
+
+    <div class="scheda-grid">
+        <div class="scheda-corpo">
+            <h2>A chi è rivolto</h2>
+            <p>
+                A tutti coloro che possiedono o detengono locali o aree che producono rifiuti,
+                a qualsiasi titolo, sul territorio comunale.
+                <span class="fonte-chip">Fonte: tari:p01 · v1.0</span>
+            </p>
+
+            <h2>Scadenze</h2>
+            <ul>
+                <li><strong>Prima rata:</strong> 30 aprile</li>
+                <li><strong>Seconda rata:</strong> 31 luglio</li>
+                <li><strong>Terza rata (saldo):</strong> 2 dicembre</li>
+                <li>Pagamento in unica soluzione ammesso entro la scadenza della prima rata.</li>
+            </ul>
+            <p><span class="fonte-chip">Fonte: tari:p02 · v1.0</span></p>
+
+            <h2>Costi</h2>
+            <p>
+                Per le utenze domestiche la tariffa si compone di una quota fissa di 0,98 euro al metro
+                quadro all'anno e di una quota variabile che dipende dal numero di occupanti
+                (48 euro all'anno per un nucleo di una persona).
+                <span class="fonte-chip">Fonte: tari:p03 · v1.0</span>
+            </p>
+
+            <h2>Come fare</h2>
+            <p>
+                Il pagamento avviene tramite avviso pagoPA: online dal portale, dall'app dei pagamenti,
+                oppure presso banche, tabaccai e uffici postali.
+            </p>
+            <p style="margin-top:.6rem;">
+                <a class="btn-fumetto" href="/assistente?q=Come pago la TARI?">Chiedi all'assistente</a>
+            </p>
+        </div>
+
+        <aside class="pannello-lato" aria-label="Contatti dell'ufficio responsabile">
+            <h2 class="display">Ufficio Tributi</h2>
+            <dl>
+                <dt>Sede</dt>
+                <dd>via dei Dobloni 13, Paperopoli</dd>
+                <dt>Telefono</dt>
+                <dd>Numero verde 800-PAPERINO</dd>
+                <dt>Ricevimento</dt>
+                <dd>Martedì e giovedì 9:00–12:30, su appuntamento</dd>
+            </dl>
+            <p style="margin-top:.8rem; font-size:.82rem; color:var(--grigio-testo);">
+                Dati dal corpus certificato del Comune. <span class="fonte-chip">tari:p07</span> <span class="fonte-chip">uffici:p02</span>
+            </p>
+        </aside>
+    </div>
+</section>

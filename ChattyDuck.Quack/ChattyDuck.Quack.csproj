@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>ChattyDuck.Quack</RootNamespace>
+    <AssemblyName>ChattyDuck.Quack</AssemblyName>
+    <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ChattyDuck.Mcp\ChattyDuck.Mcp.csproj" />
+    <ProjectReference Include="..\ChattyDuck.Models\ChattyDuck.Models.csproj" />
+  </ItemGroup>
+
+</Project>

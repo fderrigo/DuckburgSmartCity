@@ -1,0 +1,138 @@
+@inject Microsoft.Extensions.Configuration.IConfiguration Config
+@{
+    var modelli = new List<(string Valore, string Nome)>();
+    if (!string.IsNullOrWhiteSpace(Config["Gemini:ApiKey"])) { modelli.Add(("gemini", "Gemini (ponte tool-MCP)")); }
+    if (!string.IsNullOrWhiteSpace(Config["Anthropic:ApiKey"])) { modelli.Add(("claude", "Claude (MCP nativo)")); }
+}
+<!-- Pannello chat a pagina intera dell'assistente ChattyDuck -->
+<div class="chat-pannello" data-chat-pagina>
+    <div class="chat-barra">
+        <span class="spia" aria-hidden="true"></span>
+        <span class="display titoletto">Sportello virtuale</span>
+        @if (modelli.Count > 1)
+        {
+            <label>
+                Modello
+                <select data-chat-model>
+                    @foreach (var m in modelli)
+                    {
+                        <option value="@m.Valore">@m.Nome</option>
+                    }
+                    <option value="mcp-config">&#9881; Configura il tuo chatbot (server MCP)</option>
+                </select>
+            </label>
+        }
+        else
+        {
+            <input type="hidden" data-chat-model value="@(modelli.Count == 1 ? modelli[0].Valore : "gemini")" />
+        }
+        <button type="button" class="info-modello" data-info-apri
+                aria-label="Come funziona l'assistente con questo modello">i</button>
+    </div>
+
+    <!-- Modale informativa: cosa fa l'assistente con il modello selezionato -->
+    <dialog class="info-modale" data-info-modale aria-labelledby="info-titolo">
+        <div class="info-testa">
+            <h2 id="info-titolo">Come funziona l'assistente</h2>
+            <button type="button" class="widget-chiudi" data-info-chiudi aria-label="Chiudi la finestra informativa">✕</button>
+        </div>
+        <p>
+            L'assistente non inventa le risposte: usa solo i <strong>contenuti certificati del Comune</strong>
+            (il corpus), custoditi da un registro dedicato. Il modello di intelligenza artificiale li raggiunge
+            tramite <strong>MCP</strong> (Model Context Protocol), un protocollo standard che permette ai modelli
+            di usare strumenti esterni &mdash; qui, lo strumento di ricerca nel corpus. Ogni passaggio usato viene
+            citato con identificativo e versione, cos&igrave; puoi sempre verificare la fonte.
+        </p>
+        <section data-info-modello="gemini" hidden>
+            <h3>Con Gemini &mdash; ponte tool-MCP</h3>
+            <p>
+                Gemini non parla MCP nativamente, quindi il portale fa da interprete:
+                traduce gli strumenti MCP del registro in &laquo;funzioni&raquo; che Gemini capisce.
+                Quando Gemini vuole cercare, chiede al portale di eseguire la funzione; il portale
+                interroga il registro e gli riconsegna i passaggi trovati. Il giro pu&ograve; ripetersi
+                pi&ugrave; volte, poi Gemini scrive la risposta citando le fonti.
+                Il modello gira sui server Google (piano gratuito).
+            </p>
+        </section>
+        <section data-info-modello="claude" hidden>
+            <h3>Con Claude &mdash; MCP nativo</h3>
+            <p>
+                Claude parla MCP nativamente: il portale gli comunica l'indirizzo pubblico del registro
+                e sono i server Anthropic a collegarsi da soli e a usare lo strumento di ricerca,
+                senza intermediari. Il portale invia solo la tua domanda e riceve la risposta
+                gi&agrave; completa di citazioni.
+            </p>
+        </section>
+    </dialog>
+
+    @{
+        var mcpEndpointPubblico = Config["Anthropic:McpEndpoint"];
+        var mcpEndpointMostrato = string.IsNullOrWhiteSpace(mcpEndpointPubblico)
+            ? "https://<indirizzo-pubblico-del-registro>/mcp"
+            : mcpEndpointPubblico;
+    }
+    <!-- Modale: come collegare un proprio chatbot al server MCP del Comune -->
+    <dialog class="info-modale" data-mcp-modale aria-labelledby="mcp-titolo">
+        <div class="info-testa">
+            <h2 id="mcp-titolo">Configura il tuo chatbot</h2>
+            <button type="button" class="widget-chiudi" data-mcp-chiudi aria-label="Chiudi la finestra di configurazione">✕</button>
+        </div>
+        <p>
+            I contenuti certificati del Comune sono esposti da un <strong>server MCP</strong>
+            (Model Context Protocol): qualunque assistente AI compatibile con MCP &mdash; Claude,
+            un client personalizzato, un IDE &mdash; pu&ograve; collegarsi e cercare nel corpus,
+            proprio come fa questo sportello.
+        </p>
+        <h3>Dati di collegamento</h3>
+        <ul>
+            <li><strong>Endpoint</strong>: <code>@mcpEndpointMostrato</code></li>
+            <li><strong>Trasporto</strong>: HTTP (Streamable HTTP, standard MCP)</li>
+            <li><strong>Autenticazione</strong>: nessuna</li>
+            <li><strong>Strumento esposto</strong>: <code>cerca</code> &mdash; ricerca nei passaggi certificati; ogni risultato porta id, versione e hash per la verifica</li>
+        </ul>
+        <h3>Esempio di configurazione</h3>
+        <p>Per Claude Desktop, Claude Code o altri client che leggono un file di configurazione MCP:</p>
+        <pre><code>{
+  "mcpServers": {
+    "comune-paperopoli": {
+      "type": "http",
+      "url": "@mcpEndpointMostrato"
+    }
+  }
+}</code></pre>
+        <p>
+            Il tuo chatbot vedr&agrave; lo strumento <code>cerca</code> e potr&agrave; usarlo nelle risposte.
+            Ricorda di citare sempre l'id dei passaggi: sono l'unica fonte di verit&agrave;.
+        </p>
+    </dialog>
+
+    <div class="chat-messaggi" data-chat-messages role="log" aria-live="polite" aria-label="Messaggi della conversazione" style="min-height:380px; max-height:60vh;">
+        <span class="etichetta-esempio">Esempio di conversazione</span>
+        <div class="balloon utente"><span class="chi">Cittadino</span>Quando scade la prima rata della TARI?</div>
+        <div class="balloon assistente"><span class="chi">Assistente</span>La TARI si paga in tre rate: la prima scade il 30 aprile, la seconda il 31 luglio e la terza, di saldo, il 2 dicembre. Puoi anche pagare in unica soluzione entro il 30 aprile.<span class="fonte-chip">Fonte: tari:p02 · v1.0</span></div>
+        <span class="etichetta-esempio">— Ora prova tu —</span>
+    </div>
+
+    <form class="chat-input" data-chat-form>
+        <label class="visually-hidden" for="chat-domanda">Scrivi la tua domanda all'assistente</label>
+        <input id="chat-domanda" type="text" autocomplete="off"
+               placeholder="Scrivi la tua domanda…" data-chat-input />
+        <button type="submit" class="btn-fumetto" data-chat-send>Invia</button>
+    </form>
+
+    <details class="chat-limiti">
+        <summary>Limiti di utilizzo dei modelli</summary>
+        <ul>
+            @if (!string.IsNullOrWhiteSpace(Config["Anthropic:ApiKey"]))
+            {
+                <li><strong>Claude</strong> (Haiku 4.5, tier Scale): 10.000 richieste/min &middot; 10M token input/min &middot; 2M token output/min<br />
+                    <span class="uso" data-usage-model="claude">nessun uso registrato in questa sessione</span></li>
+            }
+            @if (!string.IsNullOrWhiteSpace(Config["Gemini:ApiKey"]))
+            {
+                <li><strong>Gemini</strong> (2.5 Flash, free tier): ~10 richieste/min &middot; ~250k token/min &middot; ~250 richieste/giorno <em>(indicativo &mdash; verifica in Google AI Studio)</em><br />
+                    <span class="uso" data-usage-model="gemini">nessun uso registrato in questa sessione</span></li>
+            }
+        </ul>
+    </details>
+</div>

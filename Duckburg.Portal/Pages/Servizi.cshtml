@@ -1,0 +1,88 @@
+@page "/servizi"
+@{
+    ViewData["Title"] = "Servizi";
+    ViewData["Nav"] = "servizi";
+}
+
+<nav class="wrap briciole" aria-label="Percorso di navigazione">
+    <ol>
+        <li><a href="/">Home</a></li>
+        <li><span aria-current="page">Servizi</span></li>
+    </ol>
+</nav>
+
+<section class="wrap" aria-labelledby="titolo-servizi">
+    <span class="sezione-eyebrow">Servizi</span>
+    <h1 class="display sezione-titolo" id="titolo-servizi">Tutti i servizi</h1>
+    <p class="sezione-sub">
+        I servizi del Comune di Paperopoli per cittadini e famiglie. Per ogni servizio trovi scadenze,
+        costi e come fare. Per una risposta immediata usa l'<a href="/assistente">assistente virtuale</a>.
+    </p>
+
+    <div class="card-grid">
+        <a class="card-fumetto" href="/servizi/tari">
+            <span class="icona oro" aria-hidden="true">
+                <svg viewBox="0 0 32 32" fill="none" stroke="#17120E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M7 10 h18 l-2 16 h-14 Z" fill="#fff"/>
+                    <path d="M5 10 h22 M12 10 v-3 h8 v3 M13 15 v7 M19 15 v7"/>
+                </svg>
+            </span>
+            <h2 style="font-size:1.05rem;">TARI — Tassa sui rifiuti</h2>
+            <p>Chi la paga, le tre rate, le tariffe e le riduzioni. Scheda completa del servizio.</p>
+        </a>
+        <div class="card-fumetto">
+            <span class="icona acqua" aria-hidden="true">
+                <svg viewBox="0 0 32 32" fill="none" stroke="#17120E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 5 l5 8" /><path d="M25 12 l1 9 -6 -1" /><path d="M8 24 l-2 -8 6 0" /><path d="M10 27 h12" />
+                </svg>
+            </span>
+            <h2 style="font-size:1.05rem;">Raccolta differenziata</h2>
+            <p>Calendario porta a porta per quartiere e regole di conferimento. <em>(Scheda demo: chiedi all'assistente.)</em></p>
+        </div>
+        <div class="card-fumetto">
+            <span class="icona rossa" aria-hidden="true">
+                <svg viewBox="0 0 32 32" fill="none" stroke="#17120E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="4" y="8" width="24" height="16" rx="2" fill="#fff"/><circle cx="11" cy="15" r="3"/><path d="M7 21 q4 -3 8 0 M18 13 h7 M18 17 h7"/>
+                </svg>
+            </span>
+            <h2 style="font-size:1.05rem;">Anagrafe e carta d'identità</h2>
+            <p>CIE su appuntamento, certificati online e cambi di residenza. <em>(Scheda demo: chiedi all'assistente.)</em></p>
+        </div>
+        <div class="card-fumetto">
+            <span class="icona oro" aria-hidden="true">
+                <svg viewBox="0 0 32 32" fill="none" stroke="#17120E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 15 L16 5 l11 10" /><path d="M8 14 v12 h16 v-12" fill="#fff"/><circle cx="16" cy="20" r="4" fill="#FFD84D"/><path d="M16 18 v4 M14.5 19 h3"/>
+                </svg>
+            </span>
+            <h2 style="font-size:1.05rem;">IMU</h2>
+            <p>Aliquote, acconto 16 giugno e saldo 16 dicembre, esenzioni. <em>(Scheda demo: chiedi all'assistente.)</em></p>
+        </div>
+        <div class="card-fumetto">
+            <span class="icona acqua" aria-hidden="true">
+                <svg viewBox="0 0 32 32" fill="none" stroke="#17120E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="4" y="7" width="24" height="15" rx="3" fill="#fff"/><path d="M4 15 h24 M8 22 v3 M24 22 v3"/><circle cx="9" cy="19" r="1" fill="#17120E"/><circle cx="23" cy="19" r="1" fill="#17120E"/>
+                </svg>
+            </span>
+            <h2 style="font-size:1.05rem;">Mensa e trasporto scolastico</h2>
+            <p>Iscrizioni, tariffe ISEE e linee dello scuolabus. <em>(Scheda demo: chiedi all'assistente.)</em></p>
+        </div>
+        <div class="card-fumetto">
+            <span class="icona rossa" aria-hidden="true">
+                <svg viewBox="0 0 32 32" fill="none" stroke="#17120E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M8 4 h16 v24 l-3 -2 -3 2 -2 -2 -3 2 -2 -2 -3 2 Z" fill="#fff"/><path d="M12 10 h8 M12 14 h8 M12 18 h5"/>
+                </svg>
+            </span>
+            <h2 style="font-size:1.05rem;">Pagamenti e pagoPA</h2>
+            <p>Tutti i pagamenti verso il Comune con avviso pagoPA. <em>(Scheda demo: chiedi all'assistente.)</em></p>
+        </div>
+        <a class="card-fumetto" href="/amministrazione">
+            <span class="icona oro" aria-hidden="true">
+                <svg viewBox="0 0 32 32" fill="none" stroke="#17120E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="16" cy="16" r="11" fill="#fff"/><path d="M16 9 v7 l5 3"/>
+                </svg>
+            </span>
+            <h2 style="font-size:1.05rem;">Uffici e orari</h2>
+            <p>Sedi, orari di ricevimento e appuntamenti degli uffici comunali.</p>
+        </a>
+    </div>
+</section>

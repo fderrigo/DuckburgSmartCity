@@ -1,0 +1,14 @@
+# Output di compilazione
+bin/
+obj/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Configurazione: i file reali (chiavi API, endpoint) restano locali.
+# In remoto vanno solo i template appsettings.template.json.
+appsettings.json
+appsettings.*.json
+!appsettings.template.json

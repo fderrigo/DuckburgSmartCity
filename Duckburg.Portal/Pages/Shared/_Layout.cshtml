@@ -1,0 +1,139 @@
+@{
+    var nav = ViewData["Nav"] as string ?? "";
+    var hideWidget = ViewData["HideWidget"] as bool? ?? false;
+    string? Current(string voce) => nav == voce ? "page" : null;
+}
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] — Comune di Paperopoli</title>
+    <meta name="description" content="Portale dei servizi al cittadino del Comune di Paperopoli, ente immaginario per una demo. Con assistente virtuale che risponde solo dalle fonti ufficiali." />
+    <link rel="preload" href="~/fonts/bangers-400.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="~/fonts/titillium-400.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="~/css/paperopoli.css" asp-append-version="true" />
+</head>
+<body>
+    <a class="skip-link" href="#contenuto">Vai al contenuto principale</a>
+
+    <!-- Header slim: ente di appartenenza (modello Comuni) -->
+    <div class="header-slim">
+        <div class="wrap">
+            <span>Regione Palmipedia <span aria-hidden="true">·</span> ente immaginario</span>
+            <a href="#" aria-disabled="true" title="Non attivo nella demo">Area personale (demo)</a>
+        </div>
+    </div>
+
+    <!-- Header principale -->
+    <header class="testata">
+        <div class="wrap testata-inner">
+            <a class="testata-brand" href="/">
+                <svg class="stemma" viewBox="0 0 74 84" role="img" aria-label="Stemma del Comune di Paperopoli">
+                    <path d="M4 6 h66 v40 q0 24 -33 34 q-33 -10 -33 -34 Z" fill="#1D9BB8" stroke="#17120E" stroke-width="4" stroke-linejoin="round"/>
+                    <path d="M4 6 h66 v18 h-66 Z" fill="#F2B705" stroke="#17120E" stroke-width="4"/>
+                    <circle cx="37" cy="15" r="7" fill="#FFD84D" stroke="#17120E" stroke-width="3"/>
+                    <path d="M33 15 h8 M37 11 v8" stroke="#17120E" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M26 52 q0 -14 12 -14 q9 0 9 8 q0 4 -4 6 q10 1 10 9 q0 8 -13 8 q-14 0 -14 -9 Z" fill="#FFF6E0" stroke="#17120E" stroke-width="3" stroke-linejoin="round"/>
+                    <path d="M47 44 l9 3 -9 4 Z" fill="#F2B705" stroke="#17120E" stroke-width="2.5" stroke-linejoin="round"/>
+                    <circle cx="41" cy="44" r="1.8" fill="#17120E"/>
+                    <path d="M22 70 q15 6 30 0" fill="none" stroke="#17120E" stroke-width="3" stroke-linecap="round"/>
+                </svg>
+                <span>
+                    <span class="testata-eyebrow">Portale dei servizi al cittadino</span>
+                    <span class="display testata-nome" style="display:block">Comune di Paperopoli</span>
+                </span>
+            </a>
+            <form class="testata-cerca" role="search" action="/assistente" method="get">
+                <label class="visually-hidden" for="cerca-sito">Cerca nel sito: la domanda viene inviata all'assistente virtuale</label>
+                <input type="search" id="cerca-sito" name="q" placeholder="Cerca o chiedi…" />
+                <button type="submit" class="btn-fumetto" style="font-size:1rem; padding:.4rem .9rem;">Cerca</button>
+            </form>
+            <p class="timbro-demo">
+                Ente immaginario
+                <span>demo dimostrativa</span>
+            </p>
+        </div>
+    </header>
+
+    <!-- Navigazione principale (voci del modello Comuni) -->
+    <nav class="nav-principale" aria-label="Navigazione principale">
+        <div class="wrap">
+            <button type="button" class="nav-toggle" data-nav-toggle aria-expanded="false" aria-controls="menu-principale">
+                <span aria-hidden="true">☰</span> Menu
+            </button>
+            <ul id="menu-principale">
+                <li><a href="/amministrazione" aria-current="@Current("amministrazione")">Amministrazione</a></li>
+                <li><a href="/novita" aria-current="@Current("novita")">Novità</a></li>
+                <li><a href="/servizi" aria-current="@Current("servizi")">Servizi</a></li>
+                <li><a href="/vivere-il-comune" aria-current="@Current("vivere")">Vivere il Comune</a></li>
+                <li class="nav-assistente"><a href="/assistente" aria-current="@Current("assistente")"><span aria-hidden="true">💬</span>&nbsp;Assistente virtuale</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main id="contenuto">
+        @RenderBody()
+    </main>
+
+    <!-- Footer istituzionale -->
+    <footer class="footer-sito">
+        <div class="wrap">
+            <div class="footer-grid">
+                <div>
+                    <h2>Comune di Paperopoli</h2>
+                    <ul>
+                        <li>Palazzo Comunale — via dei Dobloni 13</li>
+                        <li>Quartiere Dogburg, Paperopoli</li>
+                        <li>Patrono: San Quaquaraqua</li>
+                        <li>C.F. 00000000313 (fittizio)</li>
+                    </ul>
+                </div>
+                <div>
+                    <h2>Contatti</h2>
+                    <ul>
+                        <li>PEC: protocollo@@pec.paperopoli.demo</li>
+                        <li>URP: urp@@paperopoli.demo</li>
+                        <li><span class="numero-verde">☎ 800-PAPERINO</span></li>
+                    </ul>
+                </div>
+                <div>
+                    <h2>Amministrazione</h2>
+                    <ul>
+                        <li><a href="/amministrazione">Organi e uffici</a></li>
+                        <li><a href="#" aria-disabled="true" title="Non attivo nella demo">Amministrazione trasparente (demo)</a></li>
+                        <li><a href="#" aria-disabled="true" title="Non attivo nella demo">Albo pretorio (demo)</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h2>Orari sportelli</h2>
+                    <ul>
+                        <li>Lun–Ven 9:00–12:30</li>
+                        <li>Mar e gio anche 15:00–17:00</li>
+                        <li>Ufficio Tributi: mar e gio su appuntamento</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-legale">
+                <a href="/dichiarazione-accessibilita">Dichiarazione di accessibilità</a>
+                <a href="/privacy">Privacy</a>
+                <a href="/note-legali">Note legali</a>
+            </div>
+            <p class="footer-nota">
+                Il Comune di Paperopoli è un ente immaginario. Questo portale è una simulazione dimostrativa:
+                nomi, indirizzi, importi e scadenze sono dati di esempio senza alcun valore reale.
+            </p>
+        </div>
+    </footer>
+
+    @if (!hideWidget)
+    {
+        <!-- Widget dell'assistente ChattyDuck, montato dal portale su tutte le pagine -->
+        <partial name="_QuackWidget" />
+    }
+
+    <script src="~/js/portal.js" asp-append-version="true"></script>
+    <script src="~/_content/ChattyDuck.Quack/quack-chat.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,55 @@
+@page "/amministrazione"
+@{
+    ViewData["Title"] = "Amministrazione";
+    ViewData["Nav"] = "amministrazione";
+}
+
+<nav class="wrap briciole" aria-label="Percorso di navigazione">
+    <ol>
+        <li><a href="/">Home</a></li>
+        <li><span aria-current="page">Amministrazione</span></li>
+    </ol>
+</nav>
+
+<section class="wrap" aria-labelledby="titolo-amministrazione">
+    <span class="sezione-eyebrow">Amministrazione</span>
+    <h1 class="display sezione-titolo" id="titolo-amministrazione">Organi e uffici</h1>
+    <p class="sezione-sub">Come è organizzato il Comune di Paperopoli: organi di governo, uffici e orari di ricevimento. Contenuti dimostrativi.</p>
+
+    <div class="card-grid">
+        <a class="card-fumetto" href="/amministrazione/sindaco">
+            <span class="card-data">Organi di governo</span>
+            <h2 style="font-size:1.05rem;">La Sindaca</h2>
+            <p>Adele Anatrini, in carica dal 2024. Deleghe, biografia, contatti e orari di ricevimento.</p>
+        </a>
+        <a class="card-fumetto" href="/amministrazione/giunta">
+            <span class="card-data">Organi di governo</span>
+            <h2 style="font-size:1.05rem;">La Giunta comunale</h2>
+            <p>Vicesindaco e assessori con le rispettive deleghe. Si riunisce il lunedì al Palazzo Comunale.</p>
+        </a>
+        <div class="card-fumetto">
+            <span class="card-data">Ufficio</span>
+            <h2 style="font-size:1.05rem;">Ufficio Tributi</h2>
+            <p>via dei Dobloni 13 — martedì e giovedì 9:00–12:30 su appuntamento. Si occupa di TARI, IMU e addizionale comunale.</p>
+        </div>
+        <div class="card-fumetto">
+            <span class="card-data">Ufficio</span>
+            <h2 style="font-size:1.05rem;">Anagrafe e stato civile</h2>
+            <p>Palazzo Comunale — lun–ven 9:00–12:30, martedì e giovedì anche 15:00–17:00. CIE su appuntamento.</p>
+        </div>
+        <div class="card-fumetto">
+            <span class="card-data">Ufficio</span>
+            <h2 style="font-size:1.05rem;">URP — Relazioni con il pubblico</h2>
+            <p>urp@paperopoli.demo — numero verde 800-PAPERINO. Primo punto di contatto per ogni pratica.</p>
+        </div>
+        <div class="card-fumetto">
+            <span class="card-data">Documenti e dati</span>
+            <h2 style="font-size:1.05rem;">Corpus certificato</h2>
+            <p>I contenuti ufficiali che alimentano l'assistente virtuale: passaggi versionati e firmati con hash.</p>
+        </div>
+    </div>
+
+    <p style="margin-top:1.6rem;">
+        Hai una domanda su un ufficio? <a href="/assistente?q=Quali sono gli orari degli uffici comunali?">Chiedi all'assistente</a>.
+    </p>
+</section>

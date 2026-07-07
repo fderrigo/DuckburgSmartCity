@@ -1,0 +1,100 @@
+@page "/amministrazione/giunta"
+@{
+    ViewData["Title"] = "La Giunta comunale";
+    ViewData["Nav"] = "amministrazione";
+}
+
+<nav class="wrap briciole" aria-label="Percorso di navigazione">
+    <ol>
+        <li><a href="/">Home</a></li>
+        <li><a href="/amministrazione">Amministrazione</a></li>
+        <li><span aria-current="page">La Giunta comunale</span></li>
+    </ol>
+</nav>
+
+<section class="wrap" aria-labelledby="titolo-giunta">
+    <span class="sezione-eyebrow">Organi di governo</span>
+    <h1 class="display sezione-titolo" id="titolo-giunta">La Giunta comunale</h1>
+    <p class="sezione-sub">
+        La Giunta si riunisce il lunedì al Palazzo Comunale ed è composta dalla
+        <a href="/amministrazione/sindaco">Sindaca</a> e da quattro assessori.
+        Tutti i personaggi sono di fantasia.
+    </p>
+
+    <div class="card-grid">
+
+        <article class="card-fumetto">
+            <svg style="width:96px; height:96px;" viewBox="0 0 120 120" role="img" aria-label="Ritratto a fumetto del vicesindaco Romeo Starnazzi: papero con casco da cantiere">
+                <circle cx="60" cy="60" r="56" fill="#BDE7F0" stroke="#17120E" stroke-width="4"/>
+                <path d="M28 118 q4 -30 32 -30 q28 0 32 30 Z" fill="#14748A" stroke="#17120E" stroke-width="4"/>
+                <circle cx="60" cy="56" r="28" fill="#FFF6E0" stroke="#17120E" stroke-width="4"/>
+                <path d="M84 52 q16 -2 18 8 q-4 8 -18 5 q3 -6 0 -13 Z" fill="#F2B705" stroke="#17120E" stroke-width="3.5" stroke-linejoin="round"/>
+                <circle cx="70" cy="48" r="4" fill="#17120E"/>
+                <circle cx="71.5" cy="46.5" r="1.4" fill="#fff"/>
+                <path d="M34 42 q2 -22 26 -22 q24 0 26 22 l-6 2 q-4 -14 -20 -14 q-16 0 -20 14 Z" fill="#F2B705" stroke="#17120E" stroke-width="3.5" stroke-linejoin="round"/>
+                <path d="M30 44 h60" stroke="#17120E" stroke-width="3.5" stroke-linecap="round"/>
+            </svg>
+            <span class="card-data">Vicesindaco</span>
+            <h2 style="font-size:1.05rem;">Romeo Starnazzi</h2>
+            <p><strong>Deleghe:</strong> lavori pubblici, viabilità, manutenzione della Piazza del Doblone.</p>
+            <p>Riceve il lunedì 15:00–17:00 su appuntamento.</p>
+        </article>
+
+        <article class="card-fumetto">
+            <svg style="width:96px; height:96px;" viewBox="0 0 120 120" role="img" aria-label="Ritratto a fumetto dell'assessora Clara Pennadoro: papera con occhiali rotondi">
+                <circle cx="60" cy="60" r="56" fill="#FFD1CC" stroke="#17120E" stroke-width="4"/>
+                <path d="M28 118 q4 -30 32 -30 q28 0 32 30 Z" fill="#E23A2E" stroke="#17120E" stroke-width="4"/>
+                <circle cx="60" cy="56" r="28" fill="#FFF6E0" stroke="#17120E" stroke-width="4"/>
+                <path d="M84 52 q16 -2 18 8 q-4 8 -18 5 q3 -6 0 -13 Z" fill="#F2B705" stroke="#17120E" stroke-width="3.5" stroke-linejoin="round"/>
+                <circle cx="70" cy="48" r="9" fill="none" stroke="#17120E" stroke-width="3"/>
+                <circle cx="48" cy="48" r="9" fill="none" stroke="#17120E" stroke-width="3"/>
+                <path d="M57 48 h4" stroke="#17120E" stroke-width="3"/>
+                <circle cx="70" cy="48" r="3.5" fill="#17120E"/>
+                <path d="M42 30 q10 -8 24 -4" fill="none" stroke="#17120E" stroke-width="4" stroke-linecap="round"/>
+            </svg>
+            <span class="card-data">Assessora</span>
+            <h2 style="font-size:1.05rem;">Clara Pennadoro</h2>
+            <p><strong>Deleghe:</strong> scuola, mensa e trasporto scolastico, cultura e biblioteca civica.</p>
+            <p>Riceve il mercoledì 9:00–11:00 su appuntamento.</p>
+        </article>
+
+        <article class="card-fumetto">
+            <svg style="width:96px; height:96px;" viewBox="0 0 120 120" role="img" aria-label="Ritratto a fumetto dell'assessore Bartolo Beccogialli: papero con visiera da contabile e papillon">
+                <circle cx="60" cy="60" r="56" fill="#FFD84D" stroke="#17120E" stroke-width="4"/>
+                <path d="M28 118 q4 -30 32 -30 q28 0 32 30 Z" fill="#17120E" stroke="#17120E" stroke-width="4"/>
+                <path d="M52 92 l8 6 8 -6 -8 -6 Z" fill="#E23A2E" stroke="#17120E" stroke-width="3" stroke-linejoin="round"/>
+                <circle cx="60" cy="56" r="28" fill="#FFF6E0" stroke="#17120E" stroke-width="4"/>
+                <path d="M84 52 q16 -2 18 8 q-4 8 -18 5 q3 -6 0 -13 Z" fill="#F2B705" stroke="#17120E" stroke-width="3.5" stroke-linejoin="round"/>
+                <circle cx="70" cy="48" r="4" fill="#17120E"/>
+                <circle cx="71.5" cy="46.5" r="1.4" fill="#fff"/>
+                <path d="M34 40 q26 -14 52 0 l-4 8 q-22 -10 -44 0 Z" fill="#2E7D1E" stroke="#17120E" stroke-width="3.5" stroke-linejoin="round"/>
+            </svg>
+            <span class="card-data">Assessore</span>
+            <h2 style="font-size:1.05rem;">Bartolo Beccogialli</h2>
+            <p><strong>Deleghe:</strong> bilancio, TARI, IMU e tributi, pagamenti pagoPA.</p>
+            <p>Riceve il martedì 9:00–12:30 con l'Ufficio Tributi.</p>
+        </article>
+
+        <article class="card-fumetto">
+            <svg style="width:96px; height:96px;" viewBox="0 0 120 120" role="img" aria-label="Ritratto a fumetto dell'assessora Ines Tuffetti: papera con basco verde e foglia">
+                <circle cx="60" cy="60" r="56" fill="#BDE7F0" stroke="#17120E" stroke-width="4"/>
+                <path d="M28 118 q4 -30 32 -30 q28 0 32 30 Z" fill="#2E7D1E" stroke="#17120E" stroke-width="4"/>
+                <circle cx="60" cy="56" r="28" fill="#FFF6E0" stroke="#17120E" stroke-width="4"/>
+                <path d="M84 52 q16 -2 18 8 q-4 8 -18 5 q3 -6 0 -13 Z" fill="#F2B705" stroke="#17120E" stroke-width="3.5" stroke-linejoin="round"/>
+                <circle cx="70" cy="48" r="4" fill="#17120E"/>
+                <circle cx="71.5" cy="46.5" r="1.4" fill="#fff"/>
+                <path d="M32 38 q6 -16 28 -16 q20 0 26 12 l-6 6 q-8 -8 -20 -8 q-16 0 -22 10 Z" fill="#2E7D1E" stroke="#17120E" stroke-width="3.5" stroke-linejoin="round"/>
+                <path d="M76 22 q10 -8 16 -2 q-2 10 -14 8 Z" fill="#7FBF4D" stroke="#17120E" stroke-width="3" stroke-linejoin="round"/>
+            </svg>
+            <span class="card-data">Assessora</span>
+            <h2 style="font-size:1.05rem;">Ines Tuffetti</h2>
+            <p><strong>Deleghe:</strong> ambiente, raccolta differenziata, Parco della Fontana Dorata.</p>
+            <p>Riceve il venerdì 10:00–12:00 su appuntamento.</p>
+        </article>
+
+    </div>
+
+    <p style="margin-top:1.6rem;">
+        Domande sulle deleghe? <a href="/assistente?q=Chi si occupa dei tributi in Comune?">Chiedi all'assistente</a>.
+    </p>
+</section>

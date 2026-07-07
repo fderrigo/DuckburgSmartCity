@@ -1,0 +1,51 @@
+@page "/vivere-il-comune"
+@{
+    ViewData["Title"] = "Vivere il Comune";
+    ViewData["Nav"] = "vivere";
+}
+
+<nav class="wrap briciole" aria-label="Percorso di navigazione">
+    <ol>
+        <li><a href="/">Home</a></li>
+        <li><span aria-current="page">Vivere il Comune</span></li>
+    </ol>
+</nav>
+
+<section class="wrap" aria-labelledby="titolo-vivere">
+    <span class="sezione-eyebrow">Vivere il Comune</span>
+    <h1 class="display sezione-titolo" id="titolo-vivere">Luoghi ed eventi</h1>
+    <p class="sezione-sub">Cosa vedere e cosa fare a Paperopoli. Contenuti dimostrativi.</p>
+
+    <h2 class="display" style="font-size:1.6rem; margin-bottom:1rem;">Luoghi</h2>
+    <div class="card-grid" style="margin-bottom:2.4rem;">
+        <div class="card-fumetto">
+            <span class="card-data">Piazza</span>
+            <h3>Piazza del Doblone</h3>
+            <p>Il cuore della città, con la fontana dorata e il mercato del sabato.</p>
+        </div>
+        <div class="card-fumetto">
+            <span class="card-data">Parco</span>
+            <h3>Parco della Fontana Dorata</h3>
+            <p>Aree gioco, laghetto delle papere e percorso ciclabile lungo l'ansa del fiume.</p>
+        </div>
+        <div class="card-fumetto">
+            <span class="card-data">Cultura</span>
+            <h3>Biblioteca civica di Dogburg</h3>
+            <p>Sala studio, emeroteca e la più grande collezione di fumetti della regione.</p>
+        </div>
+    </div>
+
+    <h2 class="display" style="font-size:1.6rem; margin-bottom:1rem;">Eventi</h2>
+    <div class="card-grid">
+        <article class="card-fumetto">
+            <span class="card-data">Festa patronale · settembre</span>
+            <h3>Festa di San Quaquaraqua</h3>
+            <p>Sfilata dei carri, mercatino dei Dobloni e spettacolo pirotecnico sul fiume.</p>
+        </article>
+        <article class="card-fumetto">
+            <span class="card-data">Mercato · ogni sabato</span>
+            <h3>Mercato dei Dobloni</h3>
+            <p>Prodotti locali e artigianato in Piazza del Doblone, dalle 8 alle 13.</p>
+        </article>
+    </div>
+</section>
