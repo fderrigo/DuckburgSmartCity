@@ -1,0 +1,56 @@
+@page "/amministrazione/organi-di-governo"
+@model AmministrazioneOrganiModel
+@{
+    ViewData["Title"] = "Organi di governo";
+    ViewData["Nav"] = "amministrazione";
+}
+
+<nav class="wrap container-xl briciole" aria-label="Percorso di navigazione">
+    <ol class="breadcrumb" data-element="breadcrumb">
+        <li class="breadcrumb-item"><a href="/"><span>Home</span></a></li>
+        <li class="breadcrumb-item"><a href="/amministrazione"><span>Amministrazione</span></a></li>
+        <li class="breadcrumb-item active"><a><span aria-current="page">Organi di governo</span></a></li>
+    </ol>
+</nav>
+
+<section class="wrap container-xl" aria-labelledby="titolo-organi">
+    <span class="sezione-eyebrow">Amministrazione</span>
+    <h1 class="display sezione-titolo" id="titolo-organi" data-element="page-name">Organi di governo</h1>
+    <p class="sezione-sub">Le cariche che guidano il Comune di Paperopoli. Tutti i personaggi sono di fantasia.</p>
+
+    <div class="card-grid row">
+        @if (Model.Sindaco != null)
+        {
+            <div class="col-12 col-md-4 mb-3">
+                <div class="card card-fumetto h-100">
+                    <div class="card-body">
+                        <span class="card-data">@Model.Sindaco.Carica</span>
+                        <a href="/amministrazione/sindaco"><h2 style="font-size:1.05rem;">@Model.Sindaco.Nome</h2></a>
+                        <p>@(Model.Sindaco.Deleghe.FirstOrDefault() ?? "")</p>
+                    </div>
+                </div>
+            </div>
+        }
+        <div class="col-12 col-md-4 mb-3">
+            <div class="card card-fumetto h-100">
+                <div class="card-body">
+                    <span class="card-data">Organo collegiale</span>
+                    <a href="/amministrazione/giunta"><h2 style="font-size:1.05rem;">La Giunta comunale</h2></a>
+                    <p>Vicesindaco e assessori con le rispettive deleghe. Si riunisce il lunedì al Palazzo Comunale.</p>
+                </div>
+            </div>
+        </div>
+        @foreach (var p in Model.Giunta)
+        {
+            <div class="col-12 col-md-4 mb-3">
+                <div class="card card-fumetto h-100">
+                    <div class="card-body">
+                        <span class="card-data">@p.Carica</span>
+                        <a href="/amministrazione/giunta"><h2 style="font-size:1.05rem;">@p.Nome</h2></a>
+                        <p>@(p.Deleghe.FirstOrDefault() ?? "")</p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>

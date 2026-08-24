@@ -4,7 +4,15 @@ using Duckburg.Registry.Mcp;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Sorgenti del corpus, in ordine di autorevolezza: il feed del CMS del portale, se
+// configurato, e il corpus statico su file come ripiego. Con Corpus:Merge = "Merge"
+// i due si sommano invece di escludersi.
+builder.Services.AddHttpClient();
+if (!string.IsNullOrWhiteSpace(builder.Configuration["Corpus:FeedUrl"]))
+    builder.Services.AddSingleton<ICorpusSource, HttpFeedCorpusSource>();
+builder.Services.AddSingleton<ICorpusSource, FileCorpusSource>();
 builder.Services.AddSingleton<CorpusService>();
+builder.Services.AddHostedService<CorpusRefreshService>();
 
 builder.Services.AddMcpServer()
     .WithHttpTransport()
@@ -53,9 +61,36 @@ if (!string.IsNullOrWhiteSpace(accessToken))
     });
 }
 
-app.MapGet("/health", () => Results.Ok(new { status = "ok" }));
+app.MapGet("/health", (CorpusService corpus) => Results.Ok(new
+{
+    status = "ok",
+    corpus_version = corpus.Document.CorpusVersion,
+    works = corpus.Works.Count,
+    passages = corpus.PassageCount,
+    sources = corpus.SorgentiAttive,
+    loaded_at = corpus.CaricatoIl,
+}));
+
+// Ricarico a caldo delle sorgenti: dopo una pubblicazione nel CMS rende subito
+// disponibile il contenuto nuovo, senza riavviare il server MCP.
+// Protetto dal middleware di Registry:AccessToken quando il token e' configurato.
+app.MapPost("/corpus/reload", async (CorpusService corpus, CancellationToken ct) =>
+{
+    var ok = await corpus.ReloadAsync(obbligatorio: false, ct);
+    return Results.Ok(new
+    {
+        reloaded = ok,
+        corpus_version = corpus.Document.CorpusVersion,
+        works = corpus.Works.Count,
+        passages = corpus.PassageCount,
+        sources = corpus.SorgentiAttive,
+    });
+});
 
 app.MapMcp("/mcp");
 
+// Primo caricamento prima di servire richieste: se nessuna sorgente risponde, meglio
+// non partire affatto che rispondere su un corpus vuoto.
+await app.Services.GetRequiredService<CorpusService>().ReloadAsync(obbligatorio: true);
 
 app.Run();

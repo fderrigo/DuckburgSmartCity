@@ -1,19 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
+using Duckburg.Portal.Cms;
 
 namespace Duckburg.Portal.Pages;
 
-public class PrivacyModel : PageModel
+public class PrivacyModel : PaginaContenutoModel
 {
-    private readonly ILogger<PrivacyModel> _logger;
-
-    public PrivacyModel(ILogger<PrivacyModel> logger)
-    {
-        _logger = logger;
-    }
-
-    public void OnGet()
-    {
-    }
+    public PrivacyModel(ContentService cms) : base(cms) { }
+    protected override string Slug => "privacy";
 }
-

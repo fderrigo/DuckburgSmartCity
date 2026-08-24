@@ -1,0 +1,39 @@
+@page "/admin/appuntamenti"
+@model AppuntamentiModel
+@{
+    ViewData["Title"] = "Appuntamenti prenotati";
+    var it = new System.Globalization.CultureInfo("it-IT");
+}
+
+<table>
+    <thead>
+        <tr><th>Codice</th><th>Quando</th><th>Ufficio</th><th>Argomento</th><th>Cittadino</th><th>Contatti</th><th>Stato</th><th></th></tr>
+    </thead>
+    <tbody>
+        @foreach (var a in Model.Appuntamenti)
+        {
+            <tr style="@(a.Annullato ? "opacity:.5;" : "")">
+                <td><strong>@a.Codice</strong></td>
+                <td>@a.Data.ToString("ddd d MMM yyyy", it) · @a.Ora.ToString("HH:mm")</td>
+                <td>@a.Ufficio?.Nome</td>
+                <td>@a.Argomento</td>
+                <td>@a.Nome</td>
+                <td>@a.Email @a.Telefono</td>
+                <td>@(a.Annullato ? "annullato" : "confermato")</td>
+                <td>
+                    @if (!a.Annullato)
+                    {
+                        <form method="post" asp-page-handler="Annulla" asp-route-id="@a.Id" style="margin:0;"
+                              onsubmit="return confirm('Annullare questo appuntamento?');">
+                            <button class="btn rosso sm" type="submit">Annulla</button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+        @if (Model.Appuntamenti.Count == 0)
+        {
+            <tr><td colspan="8" class="muted">Nessun appuntamento prenotato.</td></tr>
+        }
+    </tbody>
+</table>

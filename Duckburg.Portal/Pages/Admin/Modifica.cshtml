@@ -1,0 +1,204 @@
+@page "/admin/{entity}/modifica/{id:int?}"
+@model ModificaModel
+@{
+    var def = Model.Def;
+    ViewData["Title"] = (Model.IsNew ? "Nuovo" : "Modifica") + " · " + def.Singolare;
+    string V(string prop) => Model.Valori.TryGetValue(prop, out var v) ? v : "";
+
+    // Ordine delle sezioni dell'editor.
+    var ordineSezioni = new[] { "Contenuto", "Dettagli", "Classificazione", "Contatti", "Pubblicazione" };
+    var sezioni = def.Campi.GroupBy(f => f.Sezione)
+        .OrderBy(g => { var i = Array.IndexOf(ordineSezioni, g.Key); return i < 0 ? 99 : i; })
+        .ToList();
+    var icone = new Dictionary<string, string> {
+        ["Contenuto"] = "✏️", ["Dettagli"] = "📋", ["Classificazione"] = "🏷️",
+        ["Contatti"] = "📞", ["Pubblicazione"] = "🚀"
+    };
+    // Primo campo testuale: sorgente per lo slug automatico.
+    var campoTitolo = def.Campi.FirstOrDefault(f => f.Kind == FieldKind.Text && f.Prop != "Slug")?.Prop;
+}
+
+<p style="margin:0 0 1rem;"><a href="/admin/@def.Key">← @def.Plurale</a></p>
+
+@if (Model.Locked)
+{
+    <div class="lockbar">
+        🔒 <strong>Contenuto di default protetto.</strong> È in sola lettura perché
+        <code>Cms:ProtectDefaultContent</code> è attivo. Disattiva la protezione in appsettings per modificarlo.
+    </div>
+}
+
+<form class="editor-v2" method="post" id="form-editor">
+    <fieldset style="border:none;padding:0;margin:0;" @(Model.Locked ? "disabled" : "")>
+        @foreach (var gruppo in sezioni)
+        {
+            <details class="editor-sezione card" open>
+                <summary class="editor-sezione-titolo">
+                    <span aria-hidden="true">@(icone.TryGetValue(gruppo.Key, out var ic) ? ic : "▪")</span>
+                    @gruppo.Key
+                </summary>
+                <div class="editor-campi">
+                    @foreach (var f in gruppo)
+                    {
+                        var val = V(f.Prop);
+                        <div class="field @(f.Mezza ? "mezza" : "intera") @(f.Kind == FieldKind.Html ? "html" : "")">
+                            @if (f.Kind == FieldKind.Bool)
+                            {
+                                <label class="toggle">
+                                    <input type="checkbox" name="@f.Prop" value="true" @(val == "true" ? "checked" : "") />
+                                    <span class="toggle-slider" aria-hidden="true"></span>
+                                    <span class="toggle-label">@f.Label</span>
+                                </label>
+                            }
+                            else if (f.Kind == FieldKind.Image)
+                            {
+                                <label for="f_@f.Prop">@f.Label</label>
+                                <div class="picker-immagine" data-prop="@f.Prop">
+                                    <div class="picker-anteprima @(string.IsNullOrEmpty(val) ? "vuota" : "")" id="prev_@f.Prop">
+                                        @if (!string.IsNullOrEmpty(val))
+                                        {
+                                            if (val.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase))
+                                            { <span class="picker-doc">📄</span> }
+                                            else
+                                            { <img src="@val" alt="" /> }
+                                        }
+                                        else
+                                        {
+                                            <span class="picker-vuoto">Nessun file</span>
+                                        }
+                                    </div>
+                                    <div class="picker-azioni">
+                                        <input type="hidden" id="f_@f.Prop" name="@f.Prop" value="@val" />
+                                        <button type="button" class="btn ghost sm" onclick="duckApriPicker('@f.Prop')">📁 Scegli o carica</button>
+                                        <button type="button" class="btn sm rosso" onclick="duckRimuoviMedia('@f.Prop')"
+                                                style="@(string.IsNullOrEmpty(val) ? "display:none;" : "")" id="rm_@f.Prop">✕ Rimuovi</button>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <label for="f_@f.Prop">@f.Label</label>
+                                @switch (f.Kind)
+                                {
+                                    case FieldKind.Multiline:
+                                    case FieldKind.StringList:
+                                        <textarea id="f_@f.Prop" name="@f.Prop" data-autosize
+                                                  rows="@(f.Kind == FieldKind.StringList ? 3 : 4)">@val</textarea>
+                                        break;
+                                    case FieldKind.Html:
+                                        <textarea id="f_@f.Prop" name="@f.Prop" data-autosize rows="8" spellcheck="false">@val</textarea>
+                                        break;
+                                    case FieldKind.Int:
+                                        <input type="number" id="f_@f.Prop" name="@f.Prop" value="@val" />
+                                        break;
+                                    case FieldKind.Date:
+                                        <input type="date" id="f_@f.Prop" name="@f.Prop" value="@val" />
+                                        break;
+                                    case FieldKind.Select:
+                                        <select id="f_@f.Prop" name="@f.Prop">
+                                            @if (f.EnumType == null)
+                                            {
+                                                <option value="">— nessuno —</option>
+                                            }
+                                            @if (Model.Opzioni.TryGetValue(f.Prop, out var opts))
+                                            {
+                                                @foreach (var o in opts)
+                                                {
+                                                    <option value="@o.Value" selected="@(o.Value == val)">@o.Text</option>
+                                                }
+                                            }
+                                        </select>
+                                        break;
+                                    default:
+                                        <input type="text" id="f_@f.Prop" name="@f.Prop" value="@val"
+                                               data-slug-target="@(f.Prop == "Slug" ? "true" : null)"
+                                               data-slug-source="@(f.Prop == campoTitolo ? "true" : null)" />
+                                        break;
+                                }
+                            }
+                            @if (!string.IsNullOrEmpty(f.Aiuto))
+                            {
+                                <div class="aiuto">@f.Aiuto</div>
+                            }
+                        </div>
+                    }
+                </div>
+            </details>
+        }
+    </fieldset>
+
+    @if (!Model.Locked)
+    {
+        <div class="editor-azioni">
+            <button class="btn" type="submit">💾 Salva @def.Singolare.ToLowerInvariant()</button>
+            <a class="btn ghost" href="/admin/@def.Key">Annulla</a>
+            <span class="muted" id="editor-stato" role="status"></span>
+        </div>
+    }
+</form>
+
+<script>
+(function () {
+    // --- Slug automatico dal titolo (finché non viene toccato a mano) ---
+    var src = document.querySelector('[data-slug-source]');
+    var dst = document.querySelector('[data-slug-target]');
+    if (src && dst) {
+        var toccato = @(Model.IsNew ? "false" : "true"); // su contenuti esistenti lo slug non si tocca da solo
+        dst.addEventListener('input', function () { toccato = true; });
+        src.addEventListener('input', function () {
+            if (toccato) return;
+            dst.value = src.value.toLowerCase()
+                .normalize('NFD').replace(/[̀-ͯ]/g, '')
+                .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+        });
+    }
+
+    // --- Textarea che crescono col contenuto ---
+    document.querySelectorAll('textarea[data-autosize]').forEach(function (t) {
+        var fit = function () { t.style.height = 'auto'; t.style.height = (t.scrollHeight + 4) + 'px'; };
+        t.addEventListener('input', fit); fit();
+    });
+
+    // --- Avviso modifiche non salvate ---
+    var form = document.getElementById('form-editor'), sporco = false, invio = false;
+    form.addEventListener('input', function () {
+        sporco = true;
+        var s = document.getElementById('editor-stato');
+        if (s) s.textContent = 'Modifiche non salvate';
+    });
+    form.addEventListener('submit', function () { invio = true; });
+    window.addEventListener('beforeunload', function (e) {
+        if (sporco && !invio) { e.preventDefault(); e.returnValue = ''; }
+    });
+})();
+
+// --- Picker della libreria media ---
+var duckPickerProp = null;
+function duckApriPicker(prop) {
+    duckPickerProp = prop;
+    window.open('/admin/media?picker=true', 'duckmedia', 'width=760,height=560,scrollbars=yes');
+}
+function duckMediaScelto(url) {
+    if (!duckPickerProp) return;
+    var input = document.getElementById('f_' + duckPickerProp);
+    var prev = document.getElementById('prev_' + duckPickerProp);
+    var rm = document.getElementById('rm_' + duckPickerProp);
+    input.value = url;
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    prev.classList.remove('vuota');
+    prev.innerHTML = url.toLowerCase().endsWith('.pdf')
+        ? '<span class="picker-doc">📄</span>'
+        : '<img src="' + url + '" alt="" />';
+    if (rm) rm.style.display = '';
+}
+function duckRimuoviMedia(prop) {
+    var input = document.getElementById('f_' + prop);
+    var prev = document.getElementById('prev_' + prop);
+    var rm = document.getElementById('rm_' + prop);
+    input.value = '';
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    prev.classList.add('vuota');
+    prev.innerHTML = '<span class="picker-vuoto">Nessun file</span>';
+    if (rm) rm.style.display = 'none';
+}
+</script>

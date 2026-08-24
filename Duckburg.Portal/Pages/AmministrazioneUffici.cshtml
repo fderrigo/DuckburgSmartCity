@@ -1,0 +1,36 @@
+@page "/amministrazione/uffici"
+@model AmministrazioneUfficiModel
+@{
+    ViewData["Title"] = "Uffici";
+    ViewData["Nav"] = "amministrazione";
+}
+
+<nav class="wrap container-xl briciole" aria-label="Percorso di navigazione">
+    <ol class="breadcrumb" data-element="breadcrumb">
+        <li class="breadcrumb-item"><a href="/"><span>Home</span></a></li>
+        <li class="breadcrumb-item"><a href="/amministrazione"><span>Amministrazione</span></a></li>
+        <li class="breadcrumb-item active"><a><span aria-current="page">Uffici</span></a></li>
+    </ol>
+</nav>
+
+<section class="wrap container-xl" aria-labelledby="titolo-uffici">
+    <span class="sezione-eyebrow">Amministrazione</span>
+    <h1 class="display sezione-titolo" id="titolo-uffici" data-element="page-name">Uffici</h1>
+    <p class="sezione-sub">Le unità organizzative del Comune di Paperopoli: competenze, sedi e orari.</p>
+
+    <div class="card-grid row">
+        @foreach (var u in Model.Uffici)
+        {
+            <div class="col-12 col-md-4 mb-3">
+                <div class="card card-fumetto h-100">
+                    <div class="card-body">
+                        <span class="card-data">@u.Tipo</span>
+                        <a href="/amministrazione/uffici/@u.Slug"><h2 style="font-size:1.05rem;">@u.Nome</h2></a>
+                        <p>@u.Descrizione</p>
+                        @if (!string.IsNullOrWhiteSpace(u.Orari)) { <p><strong>Orari:</strong> @u.Orari</p> }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>

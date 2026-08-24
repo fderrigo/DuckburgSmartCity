@@ -1,0 +1,56 @@
+@page "/admin/{entity}"
+@model ListaModel
+@{
+    var def = Model.Def;
+    ViewData["Title"] = def.Plurale;
+}
+
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.1rem;gap:1rem;flex-wrap:wrap;">
+    <p class="muted" style="margin:0;">@def.Emoji @def.Descrizione</p>
+    <a class="btn" href="/admin/@def.Key/modifica">➕ Nuovo: @def.Singolare</a>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            @foreach (var c in def.ColonneLista)
+            {
+                var campo = def.Campi.FirstOrDefault(f => f.Prop == c);
+                <th>@(campo?.Label ?? c)</th>
+            }
+            <th>Stato</th>
+            <th style="width:1%;">Azioni</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var r in Model.Righe)
+        {
+            <tr>
+                @foreach (var v in r.Valori)
+                {
+                    <td>@(v.Length > 70 ? v[..70] + "…" : v)</td>
+                }
+                <td>
+                    @if (r.IsPublished) { <span class="chip on">pubbl.</span> } else { <span class="chip off">bozza</span> }
+                    @if (r.Locked) { <span class="chip lock">🔒 default</span> }
+                </td>
+                <td>
+                    <div class="row-actions">
+                        <a class="btn ghost sm" href="/admin/@def.Key/modifica/@r.Id">@(r.Locked ? "Vedi" : "Modifica")</a>
+                        @if (!r.Locked)
+                        {
+                            <form method="post" asp-page-handler="Delete" asp-route-entity="@def.Key" asp-route-id="@r.Id"
+                                  onsubmit="return confirm('Eliminare definitivamente questo contenuto?');" style="margin:0;">
+                                <button class="btn rosso sm" type="submit">Elimina</button>
+                            </form>
+                        }
+                    </div>
+                </td>
+            </tr>
+        }
+        @if (Model.Righe.Count == 0)
+        {
+            <tr><td colspan="99" class="muted">Nessun contenuto. Crea il primo con “Nuovo”.</td></tr>
+        }
+    </tbody>
+</table>

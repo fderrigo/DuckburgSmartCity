@@ -1,41 +1,69 @@
 @page "/novita"
+@model NovitaModel
 @{
     ViewData["Title"] = "Novità";
     ViewData["Nav"] = "novita";
+    var it = new System.Globalization.CultureInfo("it-IT");
+    var label = new Dictionary<TipoNovita, string> {
+        [TipoNovita.Notizia] = "Notizia", [TipoNovita.Comunicato] = "Comunicato", [TipoNovita.Avviso] = "Avviso"
+    };
 }
 
-<nav class="wrap briciole" aria-label="Percorso di navigazione">
-    <ol>
-        <li><a href="/">Home</a></li>
-        <li><span aria-current="page">Novità</span></li>
+<nav class="wrap container-xl briciole" aria-label="Percorso di navigazione">
+    <ol class="breadcrumb" data-element="breadcrumb">
+        <li class="breadcrumb-item"><a href="/"><span>Home</span></a></li>
+        <li class="breadcrumb-item active"><a><span aria-current="page">Novità</span></a></li>
     </ol>
 </nav>
 
-<section class="wrap" aria-labelledby="titolo-novita">
+<section class="wrap container-xl" aria-labelledby="titolo-novita">
     <span class="sezione-eyebrow">Novità</span>
-    <h1 class="display sezione-titolo" id="titolo-novita">Notizie, comunicati e avvisi</h1>
+    <h1 class="display sezione-titolo" id="titolo-novita">Novità</h1>
     <p class="sezione-sub">Le ultime dal Comune di Paperopoli. Contenuti dimostrativi.</p>
 
-    <div class="card-grid">
-        <article class="card-fumetto">
-            <span class="card-data">Avviso · 1 luglio 2026</span>
-            <h2 style="font-size:1.05rem;">Porta a porta: nuovo calendario nel quartiere Dogburg</h2>
-            <p>Dal 15 luglio la raccolta di carta e cartone nel quartiere Dogburg passa dal mercoledì al venerdì. Il calendario aggiornato è disponibile chiedendo all'assistente virtuale.</p>
-        </article>
-        <article class="card-fumetto">
-            <span class="card-data">Notizia · 24 giugno 2026</span>
-            <h2 style="font-size:1.05rem;">Festa di San Quaquaraqua: variazioni degli orari</h2>
-            <p>In occasione della festa del patrono gli sportelli comunali resteranno chiusi. Riapertura regolare il giorno successivo con i consueti orari.</p>
-        </article>
-        <article class="card-fumetto">
-            <span class="card-data">Comunicato · 18 giugno 2026</span>
-            <h2 style="font-size:1.05rem;">Mensa scolastica: aperte le iscrizioni</h2>
-            <p>Fino al 31 agosto è possibile iscriversi al servizio mensa per il nuovo anno scolastico. Tariffe agevolate per fascia ISEE.</p>
-        </article>
-        <article class="card-fumetto">
-            <span class="card-data">Avviso · 10 giugno 2026</span>
-            <h2 style="font-size:1.05rem;">TARI: promemoria seconda rata</h2>
-            <p>La seconda rata della TARI scade il 31 luglio. L'avviso pagoPA è in arrivo nelle caselle dei contribuenti.</p>
-        </article>
+    <div class="card-grid row" style="margin-bottom:2.2rem;">
+        <div class="col-12 col-md-4 mb-3">
+            <div class="card card-fumetto h-100">
+                <div class="card-body">
+                    <span class="card-data">Categoria</span>
+                    <a href="/novita/notizie" data-element="news-category-link"><h2 style="font-size:1.05rem;">Notizie</h2></a>
+                    <p>I fatti e le storie dal Comune e dal territorio.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-4 mb-3">
+            <div class="card card-fumetto h-100">
+                <div class="card-body">
+                    <span class="card-data">Categoria</span>
+                    <a href="/novita/comunicati" data-element="news-category-link"><h2 style="font-size:1.05rem;">Comunicati</h2></a>
+                    <p>I comunicati stampa dell'amministrazione.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-4 mb-3">
+            <div class="card card-fumetto h-100">
+                <div class="card-body">
+                    <span class="card-data">Categoria</span>
+                    <a href="/novita/avvisi" data-element="news-category-link"><h2 style="font-size:1.05rem;">Avvisi</h2></a>
+                    <p>Scadenze, variazioni di servizio e avvisi ai cittadini.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="display" style="font-size:1.5rem; margin-bottom:1rem;">Le ultime pubblicate</h2>
+    <div class="card-grid row">
+        @foreach (var n in Model.Novita)
+        {
+            <div class="col-12 col-md-4 mb-3">
+                <div class="card card-fumetto h-100">
+                    <div class="card-body">
+                        <span class="card-data">@label[n.Tipo] · @n.Data.ToString("d MMMM yyyy", it)</span>
+                        <a href="/novita/dettaglio/@n.Slug"><h3 style="font-size:1.02rem;">@n.Titolo</h3></a>
+                        <p>@n.Sommario</p>
+                    </div>
+                </div>
+            </div>
+        }
     </div>
 </section>

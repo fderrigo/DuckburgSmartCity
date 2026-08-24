@@ -1,0 +1,98 @@
+@page "/segnalazione-disservizio"
+@model SegnalazioneDisservizioModel
+@{
+    ViewData["Title"] = "Segnalazione disservizio";
+    ViewData["Nav"] = "";
+}
+
+<nav class="wrap container-xl briciole" aria-label="Percorso di navigazione">
+    <ol class="breadcrumb" data-element="breadcrumb">
+        <li class="breadcrumb-item"><a href="/"><span>Home</span></a></li>
+        <li class="breadcrumb-item active"><a><span aria-current="page">Segnalazione disservizio</span></a></li>
+    </ol>
+</nav>
+
+<section class="wrap container-xl" aria-labelledby="titolo-segnalazione" style="max-width:820px;">
+    <span class="sezione-eyebrow">Assistenza</span>
+    <h1 class="display sezione-titolo" id="titolo-segnalazione">Segnalazione disservizio</h1>
+
+    @if (Model.CodiceInviato != null)
+    {
+        <div class="card card-fumetto">
+            <div class="card-body">
+                <h2 style="font-size:1.3rem;">Segnalazione inviata! 🦆</h2>
+                <p>Grazie per la collaborazione. Il codice della tua segnalazione è
+                   <strong class="fonte-chip">@Model.CodiceInviato</strong>: conservalo per eventuali comunicazioni.</p>
+                <p>Il servizio competente prenderà in carico la segnalazione nei prossimi giorni lavorativi.</p>
+                <a class="btn btn-fumetto" href="/">Torna alla home</a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <p class="sezione-sub">
+            Buche, lampioni spenti, rifiuti abbandonati: raccontaci cosa non va. Puoi allegare foto e documenti.
+            In alternativa scrivi a <a href="mailto:disservizi@paperopoli.demo">disservizi@paperopoli.demo</a>.
+        </p>
+
+        @if (Model.Errore != null)
+        {
+            <div class="alert alert-danger" role="alert">@Model.Errore</div>
+        }
+
+        <form method="post" enctype="multipart/form-data" class="form-segnalazione card card-fumetto">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12 col-md-6 mb-3">
+                        <label class="form-label fw-bold" for="seg-categoria">Categoria *</label>
+                        <select class="form-select" id="seg-categoria" name="Categoria" required>
+                            <option value="">Scegli una categoria…</option>
+                            @foreach (var c in SegnalazioneDisservizioModel.CategorieDisponibili)
+                            {
+                                <option value="@c" selected="@(Model.Categoria == c)">@c</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-6 mb-3">
+                        <label class="form-label fw-bold" for="seg-indirizzo">Luogo (indirizzo) *</label>
+                        <input class="form-control" id="seg-indirizzo" name="Indirizzo" value="@Model.Indirizzo"
+                               placeholder="Es. via dei Dobloni, davanti al civico 13" required />
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold" for="seg-oggetto">Oggetto *</label>
+                    <input class="form-control" id="seg-oggetto" name="Oggetto" value="@Model.Oggetto"
+                           placeholder="Es. Lampione spento da tre giorni" required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold" for="seg-descrizione">Breve descrizione *</label>
+                    <textarea class="form-control" id="seg-descrizione" name="Descrizione" rows="4"
+                              placeholder="Descrivi il problema: da quanto tempo, quanto è esteso, se è pericoloso…" required>@Model.Descrizione</textarea>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-md-6 mb-3">
+                        <label class="form-label fw-bold" for="seg-immagini">Immagini</label>
+                        <input class="form-control" type="file" id="seg-immagini" name="Immagini" multiple accept="image/*" />
+                        <div class="form-text">Fino a 3 foto (jpg, png), max 8 MB ciascuna.</div>
+                    </div>
+                    <div class="col-12 col-md-6 mb-3">
+                        <label class="form-label fw-bold" for="seg-documenti">Documenti</label>
+                        <input class="form-control" type="file" id="seg-documenti" name="Documenti" multiple accept=".pdf,.doc,.docx" />
+                        <div class="form-text">Eventuali documenti utili (pdf, doc).</div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-md-6 mb-3">
+                        <label class="form-label fw-bold" for="seg-nome">Nome e cognome</label>
+                        <input class="form-control" id="seg-nome" name="Nome" value="@Model.Nome" autocomplete="name" />
+                    </div>
+                    <div class="col-12 col-md-6 mb-3">
+                        <label class="form-label fw-bold" for="seg-email">Email per aggiornamenti</label>
+                        <input class="form-control" type="email" id="seg-email" name="Email" value="@Model.Email" autocomplete="email" />
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-fumetto">Invia la segnalazione</button>
+            </div>
+        </form>
+    }
+</section>

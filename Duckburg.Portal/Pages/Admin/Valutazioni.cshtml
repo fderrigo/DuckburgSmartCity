@@ -1,0 +1,48 @@
+@page "/admin/valutazioni"
+@model ValutazioniModel
+@{
+    ViewData["Title"] = "Valutazioni delle pagine";
+    string Stelle(double v) => string.Concat(Enumerable.Repeat("★", (int)Math.Round(v))) + string.Concat(Enumerable.Repeat("☆", 5 - (int)Math.Round(v)));
+}
+
+<div class="grid" style="margin-bottom:1.4rem;">
+    <div class="card dash-card"><span class="e">🗳️</span><span class="n">@Model.Totale</span><span>valutazioni raccolte</span></div>
+    <div class="card dash-card"><span class="e">⭐</span><span class="n">@Model.MediaComplessiva.ToString("0.0")</span><span>media complessiva</span></div>
+</div>
+
+<h2 style="font-size:1.05rem;">Chiarezza per pagina (peggiori in alto)</h2>
+<table style="margin-bottom:1.6rem;">
+    <thead><tr><th>Pagina</th><th>Valutazioni</th><th>Media</th><th>Ultimi 7 giorni</th></tr></thead>
+    <tbody>
+        @foreach (var r in Model.PerPagina)
+        {
+            <tr>
+                <td><a href="@r.Url" target="_blank">@(string.IsNullOrEmpty(r.Titolo) ? r.Url : r.Titolo)</a></td>
+                <td>@r.Quante</td>
+                <td title="@r.Media.ToString("0.00")">@Stelle(r.Media) (@r.Media.ToString("0.0"))</td>
+                <td>@r.Ultime</td>
+            </tr>
+        }
+        @if (Model.PerPagina.Count == 0)
+        {
+            <tr><td colspan="4" class="muted">Ancora nessuna valutazione dal widget di chiarezza.</td></tr>
+        }
+    </tbody>
+</table>
+
+<h2 style="font-size:1.05rem;">Ultime risposte</h2>
+<table>
+    <thead><tr><th>Quando</th><th>Pagina</th><th>Voto</th><th>Risposte</th><th>Commento</th></tr></thead>
+    <tbody>
+        @foreach (var v in Model.Ultime)
+        {
+            <tr>
+                <td>@v.CreatedAt.ToLocalTime().ToString("dd/MM HH:mm")</td>
+                <td>@v.Url</td>
+                <td>@Stelle(v.Voto)</td>
+                <td>@string.Join("; ", v.Risposte)</td>
+                <td>@v.Commento</td>
+            </tr>
+        }
+    </tbody>
+</table>

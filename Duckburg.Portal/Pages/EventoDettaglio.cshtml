@@ -1,0 +1,43 @@
+@page "/vivere-il-comune/eventi/{slug}"
+@model EventoDettaglioModel
+@{
+    var e = Model.Evento;
+    ViewData["Title"] = e.Titolo;
+    ViewData["Nav"] = "vivere";
+    var it = new System.Globalization.CultureInfo("it-IT");
+}
+
+<nav class="wrap container-xl briciole" aria-label="Percorso di navigazione">
+    <ol class="breadcrumb" data-element="breadcrumb">
+        <li class="breadcrumb-item"><a href="/"><span>Home</span></a></li>
+        <li class="breadcrumb-item"><a href="/vivere-il-comune"><span>Vivere il Comune</span></a></li>
+        <li class="breadcrumb-item"><a href="/vivere-il-comune/eventi"><span>Eventi</span></a></li>
+        <li class="breadcrumb-item active"><a><span aria-current="page">@e.Titolo</span></a></li>
+    </ol>
+</nav>
+
+<section class="wrap container-xl" aria-labelledby="titolo-evento">
+    <span class="sezione-eyebrow">@e.Ricorrenza</span>
+    <h1 class="display sezione-titolo" id="titolo-evento">@e.Titolo</h1>
+
+    <div class="row scheda-grid">
+        <div class="col-12 col-lg-8 scheda-corpo">
+            <p style="font-weight:600;">@e.Sommario</p>
+            <p>@e.Descrizione</p>
+        </div>
+        <aside class="col-12 col-lg-4 pannello-lato" aria-label="Informazioni sull'evento">
+            <h2 class="display">Informazioni</h2>
+            <dl>
+                @if (e.DataInizio.HasValue)
+                {
+                    <dt>Data</dt>
+                    <dd>@e.DataInizio.Value.ToString("d MMMM yyyy", it)@(e.DataFine.HasValue ? $" – {e.DataFine.Value.ToString("d MMMM yyyy", it)}" : "")</dd>
+                }
+                @if (!string.IsNullOrWhiteSpace(e.Orario)) { <dt>Orario</dt><dd>@e.Orario</dd> }
+                @if (!string.IsNullOrWhiteSpace(e.LuogoTesto)) { <dt>Luogo</dt><dd>@e.LuogoTesto</dd> }
+                @if (!string.IsNullOrWhiteSpace(e.Costo)) { <dt>Costo</dt><dd>@e.Costo</dd> }
+                @if (!string.IsNullOrWhiteSpace(e.Contatti)) { <dt>Contatti</dt><dd>@e.Contatti</dd> }
+            </dl>
+        </aside>
+    </div>
+</section>

@@ -13,6 +13,92 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChattyDuck.Mcp", "ChattyDuc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChattyDuck.Models", "ChattyDuck.Models\ChattyDuck.Models.csproj", "{FD90DB7F-D820-4EAD-ACF8-88DE52178E00}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Duckburg.Identity", "Duckburg.Identity\Duckburg.Identity.csproj", "{08C78F9D-5181-4DA3-AFA5-2863228B5B20}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Duckburg.ServiziOnline", "Duckburg.ServiziOnline\Duckburg.ServiziOnline.csproj", "{8F721DFA-E11A-428D-AE64-86FB37E278F5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{22296667-4E24-40D3-BA72-FACD663B701A}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		DuckburgSmartCity.slnLaunch = DuckburgSmartCity.slnLaunch
+		LICENSE.txt = LICENSE.txt
+		NOTICE-spid-cie-oidc.txt = NOTICE-spid-cie-oidc.txt
+		README.md = README.md
+		docker-compose.yml = docker-compose.yml
+		e2e_test.sh = e2e_test.sh
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{DC74F47A-3EDC-4A32-B849-3AF3DD740C79}"
+	ProjectSection(SolutionItems) = preProject
+		scripts\add-hosts.ps1 = scripts\add-hosts.ps1
+		scripts\setup-secrets.ps1 = scripts\setup-secrets.ps1
+		scripts\start.ps1 = scripts\start.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "secrets", "secrets", "{1F570E0D-2345-46A4-BF06-21B7088C1737}"
+	ProjectSection(SolutionItems) = preProject
+		secrets\README.md = secrets\README.md
+		secrets\rp_private_keys.sample.json = secrets\rp_private_keys.sample.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "corpus", "corpus", "{1801CC92-1B9B-417E-B43C-C0CDD460C7BF}"
+	ProjectSection(SolutionItems) = preProject
+		corpus\out\corpus.json = corpus\out\corpus.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "infra", "infra", "{988B1EB3-4B74-4230-B26B-F124DEE0CE3A}"
+	ProjectSection(SolutionItems) = preProject
+		infra\README.md = infra\README.md
+		infra\UPSTREAM_LICENSE = infra\UPSTREAM_LICENSE
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "federation_authority", "federation_authority", "{70D13166-3EB6-4627-ADBD-C251C2BBAE44}"
+	ProjectSection(SolutionItems) = preProject
+		infra\federation_authority\dump_data.sh = infra\federation_authority\dump_data.sh
+		infra\federation_authority\manage.py = infra\federation_authority\manage.py
+		infra\federation_authority\dumps\example.json = infra\federation_authority\dumps\example.json
+		infra\federation_authority\logs\README.md = infra\federation_authority\logs\README.md
+		infra\federation_authority\templates\base.html = infra\federation_authority\templates\base.html
+		infra\federation_authority\templates\op_base.html = infra\federation_authority\templates\op_base.html
+		infra\federation_authority\templates\admin\change_form.html = infra\federation_authority\templates\admin\change_form.html
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "federation_authority", "federation_authority", "{9BA6504B-AC2A-414A-8746-FA5B0308E481}"
+	ProjectSection(SolutionItems) = preProject
+		infra\federation_authority\federation_authority\__init__.py = infra\federation_authority\federation_authority\__init__.py
+		infra\federation_authority\federation_authority\asgi.py = infra\federation_authority\federation_authority\asgi.py
+		infra\federation_authority\federation_authority\settings.py = infra\federation_authority\federation_authority\settings.py
+		infra\federation_authority\federation_authority\settingslocal.py = infra\federation_authority\federation_authority\settingslocal.py
+		infra\federation_authority\federation_authority\settingslocal.py.example = infra\federation_authority\federation_authority\settingslocal.py.example
+		infra\federation_authority\federation_authority\urls.py = infra\federation_authority\federation_authority\urls.py
+		infra\federation_authority\federation_authority\wsgi.py = infra\federation_authority\federation_authority\wsgi.py
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "provider", "provider", "{55638342-5C35-45C8-89A4-67179FE4B932}"
+	ProjectSection(SolutionItems) = preProject
+		infra\provider\dump_data.sh = infra\provider\dump_data.sh
+		infra\provider\manage.py = infra\provider\manage.py
+		infra\provider\run.sh = infra\provider\run.sh
+		infra\provider\dumps\example.json = infra\provider\dumps\example.json
+		infra\provider\logs\README.md = infra\provider\logs\README.md
+		infra\provider\templates\op_base.html = infra\provider\templates\op_base.html
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "provider", "provider", "{A8A92C4D-8CC6-4218-9E4D-09C9F62ABD38}"
+	ProjectSection(SolutionItems) = preProject
+		infra\provider\provider\__init__.py = infra\provider\provider\__init__.py
+		infra\provider\provider\asgi.py = infra\provider\provider\asgi.py
+		infra\provider\provider\settings.py = infra\provider\provider\settings.py
+		infra\provider\provider\settingslocal.py = infra\provider\provider\settingslocal.py
+		infra\provider\provider\settingslocal.py.example = infra\provider\provider\settingslocal.py.example
+		infra\provider\provider\urls.py = infra\provider\provider\urls.py
+		infra\provider\provider\wsgi.py = infra\provider\provider\wsgi.py
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Duckburg.DockerLaunch", "Duckburg.DockerLaunch\Duckburg.DockerLaunch.csproj", "{F81AF0A2-0427-4358-828E-D425D6CE4D94}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Duckburg.Valutazione", "Duckburg.Valutazione\Duckburg.Valutazione.csproj", "{20AE5B09-54E3-4E42-BDE2-9606E6F321A0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,8 +169,62 @@ Global
 		{FD90DB7F-D820-4EAD-ACF8-88DE52178E00}.Release|x64.Build.0 = Release|Any CPU
 		{FD90DB7F-D820-4EAD-ACF8-88DE52178E00}.Release|x86.ActiveCfg = Release|Any CPU
 		{FD90DB7F-D820-4EAD-ACF8-88DE52178E00}.Release|x86.Build.0 = Release|Any CPU
+		{08C78F9D-5181-4DA3-AFA5-2863228B5B20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08C78F9D-5181-4DA3-AFA5-2863228B5B20}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08C78F9D-5181-4DA3-AFA5-2863228B5B20}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{08C78F9D-5181-4DA3-AFA5-2863228B5B20}.Debug|x64.Build.0 = Debug|Any CPU
+		{08C78F9D-5181-4DA3-AFA5-2863228B5B20}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{08C78F9D-5181-4DA3-AFA5-2863228B5B20}.Debug|x86.Build.0 = Debug|Any CPU
+		{08C78F9D-5181-4DA3-AFA5-2863228B5B20}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08C78F9D-5181-4DA3-AFA5-2863228B5B20}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08C78F9D-5181-4DA3-AFA5-2863228B5B20}.Release|x64.ActiveCfg = Release|Any CPU
+		{08C78F9D-5181-4DA3-AFA5-2863228B5B20}.Release|x64.Build.0 = Release|Any CPU
+		{08C78F9D-5181-4DA3-AFA5-2863228B5B20}.Release|x86.ActiveCfg = Release|Any CPU
+		{08C78F9D-5181-4DA3-AFA5-2863228B5B20}.Release|x86.Build.0 = Release|Any CPU
+		{8F721DFA-E11A-428D-AE64-86FB37E278F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F721DFA-E11A-428D-AE64-86FB37E278F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F721DFA-E11A-428D-AE64-86FB37E278F5}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8F721DFA-E11A-428D-AE64-86FB37E278F5}.Debug|x64.Build.0 = Debug|Any CPU
+		{8F721DFA-E11A-428D-AE64-86FB37E278F5}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8F721DFA-E11A-428D-AE64-86FB37E278F5}.Debug|x86.Build.0 = Debug|Any CPU
+		{8F721DFA-E11A-428D-AE64-86FB37E278F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F721DFA-E11A-428D-AE64-86FB37E278F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F721DFA-E11A-428D-AE64-86FB37E278F5}.Release|x64.ActiveCfg = Release|Any CPU
+		{8F721DFA-E11A-428D-AE64-86FB37E278F5}.Release|x64.Build.0 = Release|Any CPU
+		{8F721DFA-E11A-428D-AE64-86FB37E278F5}.Release|x86.ActiveCfg = Release|Any CPU
+		{8F721DFA-E11A-428D-AE64-86FB37E278F5}.Release|x86.Build.0 = Release|Any CPU
+		{F81AF0A2-0427-4358-828E-D425D6CE4D94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F81AF0A2-0427-4358-828E-D425D6CE4D94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F81AF0A2-0427-4358-828E-D425D6CE4D94}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F81AF0A2-0427-4358-828E-D425D6CE4D94}.Debug|x64.Build.0 = Debug|Any CPU
+		{F81AF0A2-0427-4358-828E-D425D6CE4D94}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F81AF0A2-0427-4358-828E-D425D6CE4D94}.Debug|x86.Build.0 = Debug|Any CPU
+		{F81AF0A2-0427-4358-828E-D425D6CE4D94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F81AF0A2-0427-4358-828E-D425D6CE4D94}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F81AF0A2-0427-4358-828E-D425D6CE4D94}.Release|x64.ActiveCfg = Release|Any CPU
+		{F81AF0A2-0427-4358-828E-D425D6CE4D94}.Release|x64.Build.0 = Release|Any CPU
+		{F81AF0A2-0427-4358-828E-D425D6CE4D94}.Release|x86.ActiveCfg = Release|Any CPU
+		{F81AF0A2-0427-4358-828E-D425D6CE4D94}.Release|x86.Build.0 = Release|Any CPU
+		{20AE5B09-54E3-4E42-BDE2-9606E6F321A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20AE5B09-54E3-4E42-BDE2-9606E6F321A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20AE5B09-54E3-4E42-BDE2-9606E6F321A0}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{20AE5B09-54E3-4E42-BDE2-9606E6F321A0}.Debug|x64.Build.0 = Debug|Any CPU
+		{20AE5B09-54E3-4E42-BDE2-9606E6F321A0}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{20AE5B09-54E3-4E42-BDE2-9606E6F321A0}.Debug|x86.Build.0 = Debug|Any CPU
+		{20AE5B09-54E3-4E42-BDE2-9606E6F321A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20AE5B09-54E3-4E42-BDE2-9606E6F321A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20AE5B09-54E3-4E42-BDE2-9606E6F321A0}.Release|x64.ActiveCfg = Release|Any CPU
+		{20AE5B09-54E3-4E42-BDE2-9606E6F321A0}.Release|x64.Build.0 = Release|Any CPU
+		{20AE5B09-54E3-4E42-BDE2-9606E6F321A0}.Release|x86.ActiveCfg = Release|Any CPU
+		{20AE5B09-54E3-4E42-BDE2-9606E6F321A0}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{70D13166-3EB6-4627-ADBD-C251C2BBAE44} = {988B1EB3-4B74-4230-B26B-F124DEE0CE3A}
+		{9BA6504B-AC2A-414A-8746-FA5B0308E481} = {70D13166-3EB6-4627-ADBD-C251C2BBAE44}
+		{55638342-5C35-45C8-89A4-67179FE4B932} = {988B1EB3-4B74-4230-B26B-F124DEE0CE3A}
+		{A8A92C4D-8CC6-4218-9E4D-09C9F62ABD38} = {55638342-5C35-45C8-89A4-67179FE4B932}
 	EndGlobalSection
 EndGlobal

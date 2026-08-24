@@ -1,0 +1,36 @@
+@page "/vivere-il-comune/luoghi"
+@model LuoghiModel
+@{
+    ViewData["Title"] = "Luoghi";
+    ViewData["Nav"] = "vivere";
+}
+
+<nav class="wrap container-xl briciole" aria-label="Percorso di navigazione">
+    <ol class="breadcrumb" data-element="breadcrumb">
+        <li class="breadcrumb-item"><a href="/"><span>Home</span></a></li>
+        <li class="breadcrumb-item"><a href="/vivere-il-comune"><span>Vivere il Comune</span></a></li>
+        <li class="breadcrumb-item active"><a><span aria-current="page">Luoghi</span></a></li>
+    </ol>
+</nav>
+
+<section class="wrap container-xl" aria-labelledby="titolo-luoghi">
+    <span class="sezione-eyebrow">Vivere il Comune</span>
+    <h1 class="display sezione-titolo" id="titolo-luoghi" data-element="page-name">Luoghi</h1>
+
+    <div class="card-grid row">
+        @foreach (var l in Model.Luoghi)
+        {
+            <div class="col-12 col-md-4 mb-3">
+                <div class="card card-fumetto h-100">
+                    <div class="card-body">
+                        <span class="card-data">@l.Categoria</span>
+                        <h2 style="font-size:1.02rem;">
+                            <a href="/vivere-il-comune/luoghi/@l.Slug">@l.Nome</a>
+                        </h2>
+                        <p>@l.Descrizione</p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>

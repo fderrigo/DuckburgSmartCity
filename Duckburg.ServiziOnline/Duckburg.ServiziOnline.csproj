@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>Duckburg.ServiziOnline</RootNamespace>
+    <AssemblyName>Duckburg.ServiziOnline</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Verifica del token SSO firmato da Duckburg.Identity (RS256) -->
+    <PackageReference Include="jose-jwt" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ChattyDuck.Quack\ChattyDuck.Quack.csproj" />
+  </ItemGroup>
+
+</Project>

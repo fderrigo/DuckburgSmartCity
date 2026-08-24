@@ -5,27 +5,29 @@
     ViewData["HideWidget"] = true;
 }
 
-<nav class="wrap briciole" aria-label="Percorso di navigazione">
-    <ol>
-        <li><a href="/">Home</a></li>
-        <li><span aria-current="page">Assistente virtuale</span></li>
+<nav class="wrap container-xl briciole" aria-label="Percorso di navigazione">
+    <ol class="breadcrumb" data-element="breadcrumb">
+        <li class="breadcrumb-item"><a href="/"><span>Home</span></a></li>
+        <li class="breadcrumb-item active"><a><span aria-current="page">Assistente virtuale</span></a></li>
     </ol>
 </nav>
 
-<section class="wrap" aria-labelledby="titolo-assistente">
+<section class="wrap container-xl" aria-labelledby="titolo-assistente">
     <span class="sezione-eyebrow">Assistente virtuale</span>
     <h1 class="display sezione-titolo" id="titolo-assistente">Chiedi, il Comune risponde</h1>
-    <p class="sezione-sub">
+    <p class="sezione-sub lead mb-4">
         L'assistente risponde <strong>solo</strong> con informazioni tratte dai contenuti certificati del
         Comune di Paperopoli. Niente invenzioni: ogni risposta cita la fonte. Se un'informazione non è
         nel corpus comunale, l'assistente lo dice chiaramente.
     </p>
 
-    <div class="scheda-grid">
+    <div class="scheda-grid row g-3">
         <!-- Pannello chat dell'assistente ChattyDuck (partial dalla RCL ChattyDuck.Quack) -->
-        <partial name="_QuackChat" />
+        <div class="col-12 col-lg-8 chat-colonna">
+            <partial name="_QuackChat" />
+        </div>
 
-        <aside class="pannello-lato" aria-label="Come funziona l'assistente">
+        <aside class="pannello-lato col-12 col-lg-4" aria-label="Come funziona l'assistente">
             <h2 class="display">Come funziona</h2>
             <dl>
                 <dt>Fonti certificate</dt>

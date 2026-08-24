@@ -1,0 +1,169 @@
+@{
+    var entita = AdminRegistry.All;
+    var path = Context.Request.Path.Value ?? "";
+    string ActiveKey()
+    {
+        foreach (var e in entita)
+            if (path.StartsWith($"/admin/{e.Key}", StringComparison.OrdinalIgnoreCase)) return e.Key;
+        return path.Equals("/admin", StringComparison.OrdinalIgnoreCase) ? "__dash" : "";
+    }
+    var active = ActiveKey();
+    var flash = TempData["Flash"] as string;
+    var flashKo = TempData["FlashKo"] as string;
+}
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] · CMS Paperopoli</title>
+    <style>
+        :root{
+            --oro:#F2B705; --acqua:#1D9BB8; --rosso:#E23A2E; --inchiostro:#17120E;
+            --carta:#FFF6E0; --grigio:#6b6257; --bordo:#17120E;
+        }
+        *{box-sizing:border-box;}
+        body{margin:0;font-family:'Titillium Web',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+            background:#f4efe1;color:var(--inchiostro);display:flex;min-height:100vh;}
+        a{color:var(--acqua);text-decoration:none;}
+        aside{width:250px;background:var(--inchiostro);color:#fff;flex-shrink:0;
+            display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;}
+        .brand{padding:1.1rem 1.2rem;font-weight:800;font-size:1.15rem;letter-spacing:.02em;
+            border-bottom:3px solid var(--oro);display:flex;align-items:center;gap:.5rem;}
+        .brand small{display:block;font-weight:400;font-size:.7rem;color:#d9cfa4;letter-spacing:.08em;text-transform:uppercase;}
+        nav.side{padding:.6rem 0;flex:1;}
+        nav.side a{display:flex;align-items:center;gap:.6rem;color:#e9e2cf;padding:.5rem 1.2rem;font-size:.92rem;border-left:4px solid transparent;}
+        nav.side a:hover{background:rgba(255,255,255,.06);}
+        nav.side a.active{background:rgba(242,183,5,.16);border-left-color:var(--oro);color:#fff;font-weight:700;}
+        nav.side .sep{padding:.8rem 1.2rem .3rem;font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:#a99e82;}
+        .side-foot{padding:1rem 1.2rem;border-top:1px solid rgba(255,255,255,.12);font-size:.82rem;}
+        main{flex:1;min-width:0;display:flex;flex-direction:column;}
+        header.top{background:#fff;border-bottom:2px solid var(--inchiostro);padding:.9rem 1.6rem;
+            display:flex;align-items:center;justify-content:space-between;gap:1rem;}
+        header.top h1{margin:0;font-size:1.25rem;}
+        .content{padding:1.6rem;max-width:1100px;width:100%;}
+        .btn{display:inline-flex;align-items:center;gap:.4rem;background:var(--oro);color:var(--inchiostro);
+            border:2px solid var(--inchiostro);border-radius:.5rem;padding:.45rem .9rem;font-weight:700;
+            cursor:pointer;font-size:.9rem;box-shadow:2px 2px 0 var(--inchiostro);}
+        .btn:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--inchiostro);}
+        .btn.ghost{background:#fff;}
+        .btn.rosso{background:var(--rosso);color:#fff;}
+        .btn.sm{padding:.3rem .6rem;font-size:.8rem;box-shadow:1px 1px 0 var(--inchiostro);}
+        table{width:100%;border-collapse:collapse;background:#fff;border:2px solid var(--inchiostro);border-radius:.6rem;overflow:hidden;}
+        th,td{text-align:left;padding:.6rem .8rem;border-bottom:1px solid #eadfbf;font-size:.92rem;}
+        th{background:var(--carta);font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;}
+        tr:last-child td{border-bottom:none;}
+        .chip{display:inline-block;padding:.1rem .5rem;border-radius:1rem;font-size:.72rem;font-weight:700;border:1px solid var(--inchiostro);}
+        .chip.lock{background:#efe6c6;}
+        .chip.on{background:#cdeccd;} .chip.off{background:#f3d4d0;}
+        .card{background:#fff;border:2px solid var(--inchiostro);border-radius:.7rem;padding:1.1rem;box-shadow:3px 3px 0 rgba(23,18,14,.85);}
+        .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:1rem;}
+        .dash-card{display:flex;flex-direction:column;gap:.2rem;}
+        .dash-card .n{font-size:2rem;font-weight:800;}
+        .dash-card .e{font-size:1.6rem;}
+        form.editor{display:flex;flex-direction:column;gap:1rem;background:#fff;border:2px solid var(--inchiostro);border-radius:.7rem;padding:1.4rem;}
+        .field label{display:block;font-weight:700;margin-bottom:.3rem;font-size:.9rem;}
+        .field .aiuto{font-size:.78rem;color:var(--grigio);margin-top:.25rem;}
+        .field input[type=text],.field input[type=date],.field textarea,.field select{
+            width:100%;padding:.5rem .6rem;border:2px solid var(--inchiostro);border-radius:.45rem;font-size:.92rem;font-family:inherit;}
+        .field textarea{min-height:90px;resize:vertical;}
+        .field.html textarea{min-height:150px;font-family:ui-monospace,monospace;font-size:.85rem;}
+        .flash{padding:.7rem 1rem;border-radius:.5rem;border:2px solid var(--inchiostro);margin-bottom:1.2rem;font-weight:600;}
+        .flash.ok{background:#cdeccd;} .flash.ko{background:#f3d4d0;}
+        .lockbar{background:#efe6c6;border:2px solid var(--inchiostro);border-radius:.5rem;padding:.6rem .9rem;margin-bottom:1rem;font-size:.9rem;}
+        .row-actions{display:flex;gap:.4rem;}
+        .muted{color:var(--grigio);}
+        @@media(max-width:820px){body{flex-direction:column;}aside{width:100%;height:auto;position:static;}}
+
+        /* ---- Editor v2: form a sezioni, due colonne, toggle ---- */
+        .editor-v2{display:flex;flex-direction:column;gap:0;max-width:980px;padding-bottom:1rem;}
+        .editor-sezione{padding:0;overflow:hidden;margin-bottom:20px;}
+        /* Sezioni collassabili (details/summary) */
+        .editor-sezione>summary.editor-sezione-titolo{
+            margin:0;padding:.8rem 1.1rem;background:var(--carta);
+            border-bottom:2px solid var(--inchiostro);font-size:.98rem;letter-spacing:.02em;
+            font-weight:800;cursor:pointer;list-style:none;
+            display:flex;align-items:center;gap:.5rem;}
+        .editor-sezione>summary.editor-sezione-titolo::-webkit-details-marker{display:none;}
+        .editor-sezione>summary.editor-sezione-titolo::after{
+            content:"▾";margin-left:auto;font-size:.9rem;transition:transform .15s;}
+        .editor-sezione:not([open])>summary.editor-sezione-titolo{border-bottom:0;}
+        .editor-sezione:not([open])>summary.editor-sezione-titolo::after{transform:rotate(-90deg);}
+        .editor-sezione-titolo{margin:0;}
+        .editor-campi{display:grid;grid-template-columns:1fr 1fr;gap:1rem 1.2rem;padding:1.2rem;}
+        .editor-campi .field.intera{grid-column:1 / -1;}
+        .editor-campi .field.mezza{grid-column:auto;}
+        @@media(max-width:900px){.editor-campi{grid-template-columns:1fr;}}
+        .field input[type=number]{width:100%;padding:.5rem .6rem;border:2px solid var(--inchiostro);border-radius:.45rem;font-size:.92rem;}
+        .field textarea{line-height:1.45;}
+        .field.html textarea{background:#faf7ef;}
+        .editor-azioni{position:sticky;bottom:0;background:#fff;border:2px solid var(--inchiostro);
+            border-radius:.7rem;padding:.8rem 1.1rem;display:flex;align-items:center;gap:.8rem;
+            box-shadow:0 -3px 12px rgba(23,18,14,.12);z-index:5;}
+        /* Toggle switch */
+        .toggle{display:flex;align-items:center;gap:.6rem;cursor:pointer;font-weight:700;}
+        .toggle input{position:absolute;opacity:0;width:1px;height:1px;}
+        .toggle-slider{display:inline-block;width:44px;height:24px;background:#d8cfae;border:2px solid var(--inchiostro);
+            border-radius:14px;position:relative;transition:background .15s;flex-shrink:0;}
+        .toggle-slider::after{content:"";position:absolute;top:1px;left:1px;width:18px;height:18px;
+            background:#fff;border:2px solid var(--inchiostro);border-radius:50%;transition:left .15s;box-sizing:border-box;}
+        .toggle input:checked + .toggle-slider{background:var(--oro);}
+        .toggle input:checked + .toggle-slider::after{left:21px;}
+        .toggle input:focus-visible + .toggle-slider{outline:2px solid var(--inchiostro);outline-offset:2px;}
+        /* Picker immagine */
+        .picker-immagine{display:flex;gap:.8rem;align-items:flex-start;}
+        .picker-anteprima{width:120px;height:84px;border:2px solid var(--inchiostro);border-radius:.5rem;
+            overflow:hidden;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+        .picker-anteprima img{width:100%;height:100%;object-fit:cover;}
+        .picker-anteprima.vuota{border-style:dashed;background:var(--carta);}
+        .picker-vuoto{font-size:.72rem;color:var(--grigio);}
+        .picker-doc{font-size:2rem;}
+        .picker-azioni{display:flex;flex-direction:column;gap:.4rem;}
+        /* Libreria media */
+        .media-griglia{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:1rem;}
+        .media-item{padding:0;overflow:hidden;display:flex;flex-direction:column;}
+        .media-item img{width:100%;height:120px;object-fit:cover;background:#eee;display:block;}
+        .media-doc{height:120px;display:flex;align-items:center;justify-content:center;font-size:2.4rem;background:var(--carta);}
+        .media-info{padding:.6rem .7rem;font-size:.82rem;display:flex;flex-direction:column;gap:.15rem;}
+        .media-info strong{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+        .upload-riga{display:flex;gap:.7rem;align-items:center;flex-wrap:wrap;}
+        .upload-riga .campo-testo{flex:1;min-width:220px;padding:.5rem .6rem;border:2px solid var(--inchiostro);border-radius:.45rem;}
+    </style>
+</head>
+<body>
+    <aside>
+        <div class="brand">🦆 CMS Paperopoli<small>Gestione contenuti</small></div>
+        <nav class="side">
+            <a href="/admin" class="@(active == "__dash" ? "active" : "")">📊 Dashboard</a>
+            <div class="sep">Contenuti</div>
+            @foreach (var e in entita)
+            {
+                <a href="/admin/@e.Key" class="@(active == e.Key ? "active" : "")">@e.Emoji @e.Plurale</a>
+            }
+            <div class="sep">Strumenti</div>
+            <a href="/admin/media" class="@(path.StartsWith("/admin/media") ? "active" : "")">🖼️ Libreria media</a>
+            <div class="sep">Richieste dei cittadini</div>
+            <a href="/admin/appuntamenti" class="@(path.StartsWith("/admin/appuntamenti") ? "active" : "")">📅 Appuntamenti</a>
+            <a href="/admin/segnalazioni" class="@(path.StartsWith("/admin/segnalazioni") ? "active" : "")">⚠️ Segnalazioni</a>
+            <a href="/admin/valutazioni" class="@(path.StartsWith("/admin/valutazioni") ? "active" : "")">⭐ Valutazioni pagine</a>
+        </nav>
+        <div class="side-foot">
+            <a href="/" style="color:#e9e2cf;">↗ Vai al sito</a><br />
+            <form method="post" action="/admin/logout" style="margin-top:.5rem;">
+                <button class="btn ghost sm" type="submit">Esci</button>
+            </form>
+        </div>
+    </aside>
+    <main>
+        <header class="top">
+            <h1>@ViewData["Title"]</h1>
+            <span class="muted">Comune di Paperopoli · demo</span>
+        </header>
+        <div class="content">
+            @if (flash != null) { <div class="flash ok">@flash</div> }
+            @if (flashKo != null) { <div class="flash ko">@flashKo</div> }
+            @RenderBody()
+        </div>
+    </main>
+</body>
+</html>

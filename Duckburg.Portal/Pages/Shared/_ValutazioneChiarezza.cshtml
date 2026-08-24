@@ -1,0 +1,93 @@
+<section class="wrap container-xl" aria-label="Valutazione della chiarezza di questa pagina" style="padding-top:0;">
+    <div class="card card-fumetto valutazione-box" data-element="feedback">
+        <div class="card-body">
+            <form id="form-valutazione" novalidate>
+                <div class="valutazione-testa">
+                    <h2 data-element="feedback-title" class="valutazione-titolo">Quanto sono chiare le informazioni su questa pagina?</h2>
+                    <fieldset class="valutazione-stelle" id="vc-stelle">
+                    <legend class="visually-hidden">Scegli un voto da 1 a 5 stelle</legend>
+                    <input type="radio" name="vc-voto" id="vc-v5" value="5">
+                    <label data-element="feedback-rate-5" for="vc-v5" title="5 stelle"><span class="visually-hidden">Valuta 5 stelle su 5</span><span aria-hidden="true">★</span></label>
+                    <input type="radio" name="vc-voto" id="vc-v4" value="4">
+                    <label data-element="feedback-rate-4" for="vc-v4" title="4 stelle"><span class="visually-hidden">Valuta 4 stelle su 5</span><span aria-hidden="true">★</span></label>
+                    <input type="radio" name="vc-voto" id="vc-v3" value="3">
+                    <label data-element="feedback-rate-3" for="vc-v3" title="3 stelle"><span class="visually-hidden">Valuta 3 stelle su 5</span><span aria-hidden="true">★</span></label>
+                    <input type="radio" name="vc-voto" id="vc-v2" value="2">
+                    <label data-element="feedback-rate-2" for="vc-v2" title="2 stelle"><span class="visually-hidden">Valuta 2 stelle su 5</span><span aria-hidden="true">★</span></label>
+                    <input type="radio" name="vc-voto" id="vc-v1" value="1">
+                    <label data-element="feedback-rate-1" for="vc-v1" title="1 stella"><span class="visually-hidden">Valuta 1 stelle su 5</span><span aria-hidden="true">★</span></label>
+                    </fieldset>
+                </div>
+
+                <fieldset data-element="feedback-rating-positive" id="vc-positivo" class="valutazione-follow" hidden>
+                    <h3><legend data-element="feedback-rating-question">Quali sono stati gli aspetti che hai preferito?</legend></h3>
+                    <label data-element="feedback-rating-answer" class="form-check"><input class="form-check-input" type="checkbox" value="Le indicazioni erano chiare"> Le indicazioni erano chiare</label>
+                    <label data-element="feedback-rating-answer" class="form-check"><input class="form-check-input" type="checkbox" value="Le indicazioni erano complete"> Le indicazioni erano complete</label>
+                    <label data-element="feedback-rating-answer" class="form-check"><input class="form-check-input" type="checkbox" value="Capivo sempre che stavo procedendo correttamente"> Capivo sempre che stavo procedendo correttamente</label>
+                    <label data-element="feedback-rating-answer" class="form-check"><input class="form-check-input" type="checkbox" value="Non ho avuto problemi tecnici"> Non ho avuto problemi tecnici</label>
+                    <label data-element="feedback-rating-answer" class="form-check"><input class="form-check-input" type="checkbox" value="Altro"> Altro</label>
+                </fieldset>
+
+                <fieldset data-element="feedback-rating-negative" id="vc-negativo" class="valutazione-follow" hidden>
+                    <h3><legend data-element="feedback-rating-question">Dove hai incontrato le maggiori difficoltà?</legend></h3>
+                    <label data-element="feedback-rating-answer" class="form-check"><input class="form-check-input" type="checkbox" value="A volte le indicazioni non erano chiare"> A volte le indicazioni non erano chiare</label>
+                    <label data-element="feedback-rating-answer" class="form-check"><input class="form-check-input" type="checkbox" value="A volte le indicazioni non erano complete"> A volte le indicazioni non erano complete</label>
+                    <label data-element="feedback-rating-answer" class="form-check"><input class="form-check-input" type="checkbox" value="A volte non capivo se stavo procedendo correttamente"> A volte non capivo se stavo procedendo correttamente</label>
+                    <label data-element="feedback-rating-answer" class="form-check"><input class="form-check-input" type="checkbox" value="Ho avuto problemi tecnici"> Ho avuto problemi tecnici</label>
+                    <label data-element="feedback-rating-answer" class="form-check"><input class="form-check-input" type="checkbox" value="Altro"> Altro</label>
+                </fieldset>
+
+                <fieldset id="vc-dettagli" class="valutazione-follow" hidden>
+                    <h3><legend class="d-block d-lg-inline">Vuoi aggiungere altri dettagli?</legend></h3>
+                    <label for="vc-testo" class="visually-hidden">Dettaglio</label>
+                    <input type="text" class="form-control" id="vc-testo" data-element="feedback-input-text" maxlength="400" placeholder="Scrivi qui (facoltativo)">
+                    <button type="submit" class="btn btn-fumetto mt-2" id="vc-invia">Invia la valutazione</button>
+                </fieldset>
+
+                <p id="vc-grazie" class="valutazione-grazie" hidden>Grazie! Il tuo parere ci aiuta a migliorare il sito. 🦆</p>
+            </form>
+        </div>
+    </div>
+</section>
+
+<script>
+(function () {
+    var form = document.getElementById('form-valutazione');
+    if (!form) return;
+    var pos = document.getElementById('vc-positivo'),
+        neg = document.getElementById('vc-negativo'),
+        det = document.getElementById('vc-dettagli'),
+        grazie = document.getElementById('vc-grazie');
+
+    form.addEventListener('change', function (e) {
+        if (e.target.name !== 'vc-voto') return;
+        var voto = parseInt(e.target.value, 10);
+        pos.hidden = voto < 4;
+        neg.hidden = voto >= 4;
+        det.hidden = false;
+    });
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var votoEl = form.querySelector('input[name="vc-voto"]:checked');
+        if (!votoEl) return;
+        var attivo = parseInt(votoEl.value, 10) >= 4 ? pos : neg;
+        var risposte = Array.prototype.map.call(
+            attivo.querySelectorAll('input:checked'), function (i) { return i.value; });
+        fetch('/api/valutazione', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                url: location.pathname,
+                titolo: document.title,
+                voto: parseInt(votoEl.value, 10),
+                risposte: risposte,
+                commento: document.getElementById('vc-testo').value || ''
+            })
+        }).catch(function () { });
+        pos.hidden = neg.hidden = det.hidden = true;
+        document.getElementById('vc-stelle').hidden = true;
+        grazie.hidden = false;
+    });
+})();
+</script>

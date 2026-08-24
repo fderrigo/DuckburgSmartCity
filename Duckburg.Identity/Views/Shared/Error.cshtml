@@ -1,0 +1,14 @@
+@model ErrorViewModel
+@{
+    ViewData["Title"] = "Errore";
+}
+
+<section class="wrap accesso-hero" aria-labelledby="titolo-errore">
+    <span class="sezione-eyebrow">Identità digitale</span>
+    <h1 class="display sezione-titolo" id="titolo-errore">Qualcosa è andato storto</h1>
+    <div class="card-accesso">
+        <p class="err"><b>@Model.Title</b></p>
+        <p>@Model.Detail</p>
+    </div>
+    <a class="btn-fumetto fumetto" href="/oidc/rp/landing">Torna all'accesso</a>
+</section>

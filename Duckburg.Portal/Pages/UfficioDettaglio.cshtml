@@ -1,0 +1,58 @@
+@page "/amministrazione/uffici/{slug}"
+@model UfficioDettaglioModel
+@{
+    var u = Model.Ufficio;
+    ViewData["Title"] = u.Nome;
+    ViewData["Nav"] = "amministrazione";
+}
+
+<nav class="wrap container-xl briciole" aria-label="Percorso di navigazione">
+    <ol class="breadcrumb" data-element="breadcrumb">
+        <li class="breadcrumb-item"><a href="/"><span>Home</span></a></li>
+        <li class="breadcrumb-item"><a href="/amministrazione"><span>Amministrazione</span></a></li>
+        <li class="breadcrumb-item"><a href="/amministrazione/uffici"><span>Uffici</span></a></li>
+        <li class="breadcrumb-item active"><a><span aria-current="page">@u.Nome</span></a></li>
+    </ol>
+</nav>
+
+<section class="wrap container-xl" aria-labelledby="titolo-ufficio">
+    <span class="sezione-eyebrow">@u.Tipo</span>
+    <h1 class="display sezione-titolo" id="titolo-ufficio">@u.Nome</h1>
+
+    <div class="row scheda-grid">
+        <div class="col-12 col-lg-8 scheda-corpo">
+            <h2>Descrizione</h2>
+            <p>@u.Descrizione</p>
+
+            @if (u.Competenze.Count > 0)
+            {
+                <h2>Competenze</h2>
+                <ul>@foreach (var c in u.Competenze) { <li>@c</li> }</ul>
+            }
+
+            @if (!string.IsNullOrWhiteSpace(u.Responsabile))
+            {
+                <h2>Responsabile</h2>
+                <p>@u.Responsabile</p>
+            }
+
+            @if (u.Prenotabile)
+            {
+                <p class="mt-3">
+                    <a class="btn btn-fumetto" href="/prenota-appuntamento?ufficio=@u.Slug" data-element="appointment-booking"><span>Prenota appuntamento</span></a>
+                </p>
+            }
+        </div>
+
+        <aside class="col-12 col-lg-4 pannello-lato" aria-label="Sede e contatti">
+            <h2 class="display">Sede principale</h2>
+            <dl>
+                @if (!string.IsNullOrWhiteSpace(u.Sede)) { <dt>Indirizzo</dt><dd>@u.Sede</dd> }
+                @if (!string.IsNullOrWhiteSpace(u.Orari)) { <dt>Orari</dt><dd>@u.Orari</dd> }
+                @if (!string.IsNullOrWhiteSpace(u.Telefono)) { <dt>Telefono</dt><dd>@u.Telefono</dd> }
+                @if (!string.IsNullOrWhiteSpace(u.Email)) { <dt>Email</dt><dd>@u.Email</dd> }
+                @if (!string.IsNullOrWhiteSpace(u.Pec)) { <dt>PEC</dt><dd>@u.Pec</dd> }
+            </dl>
+        </aside>
+    </div>
+</section>

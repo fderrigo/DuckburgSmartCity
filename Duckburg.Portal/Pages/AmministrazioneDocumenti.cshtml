@@ -1,0 +1,40 @@
+@page "/amministrazione/documenti-e-dati"
+@model AmministrazioneDocumentiModel
+@{
+    ViewData["Title"] = "Documenti e dati";
+    ViewData["Nav"] = "amministrazione";
+    var it = new System.Globalization.CultureInfo("it-IT");
+}
+
+<nav class="wrap container-xl briciole" aria-label="Percorso di navigazione">
+    <ol class="breadcrumb" data-element="breadcrumb">
+        <li class="breadcrumb-item"><a href="/"><span>Home</span></a></li>
+        <li class="breadcrumb-item"><a href="/amministrazione"><span>Amministrazione</span></a></li>
+        <li class="breadcrumb-item active"><a><span aria-current="page">Documenti e dati</span></a></li>
+    </ol>
+</nav>
+
+<section class="wrap container-xl" aria-labelledby="titolo-documenti">
+    <span class="sezione-eyebrow">Amministrazione</span>
+    <h1 class="display sezione-titolo" id="titolo-documenti" data-element="page-name">Documenti e dati</h1>
+    <p class="sezione-sub">Statuto, regolamenti e dati aperti del Comune di Paperopoli. Documenti dimostrativi.</p>
+
+    <div class="card-grid row">
+        @foreach (var d in Model.Documenti)
+        {
+            <div class="col-12 col-md-6 mb-3">
+                <div class="card card-fumetto h-100">
+                    <div class="card-body">
+                        <span class="card-data">@d.Tipo · @d.Data.ToString("d MMMM yyyy", it)</span>
+                        <a href="/documenti/@d.Slug"><h2 style="font-size:1.05rem;">@d.Titolo</h2></a>
+                        <p>@d.Descrizione</p>
+                        @if (d.UfficioResponsabile != null)
+                        {
+                            <p><strong>A cura di:</strong> @d.UfficioResponsabile.Nome</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>

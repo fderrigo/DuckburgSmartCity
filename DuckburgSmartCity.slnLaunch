@@ -1,5 +1,40 @@
 [
   {
+    "Name": "Tutto (Docker + servizi)",
+    "Projects": [
+      {
+        "Path": "Duckburg.DockerLaunch\\Duckburg.DockerLaunch.csproj",
+        "Action": "StartWithoutDebugging",
+        "DebugTarget": "Duckburg.DockerLaunch"
+      },
+      {
+        "Path": "Duckburg.Registry\\Duckburg.Registry.csproj",
+        "Action": "Start",
+        "DebugTarget": "http"
+      },
+      {
+        "Path": "Duckburg.Portal\\Duckburg.Portal.csproj",
+        "Action": "Start",
+        "DebugTarget": "Duckburg.Portal"
+      },
+      {
+        "Path": "Duckburg.Identity\\Duckburg.Identity.csproj",
+        "Action": "Start",
+        "DebugTarget": "Duckburg.Identity"
+      },
+      {
+        "Path": "Duckburg.ServiziOnline\\Duckburg.ServiziOnline.csproj",
+        "Action": "Start",
+        "DebugTarget": "Duckburg.ServiziOnline"
+      },
+      {
+        "Path": "Duckburg.Valutazione\\Duckburg.Valutazione.csproj",
+        "Action": "Start",
+        "DebugTarget": "Duckburg.Valutazione"
+      }
+    ]
+  },
+  {
     "Name": "Portal + MCP",
     "Projects": [
       {

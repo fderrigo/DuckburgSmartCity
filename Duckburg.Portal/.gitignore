@@ -1,0 +1,6 @@
+
+# CMS SQLite (demo data)
+**/App_Data/
+*.db
+*.db-shm
+*.db-wal

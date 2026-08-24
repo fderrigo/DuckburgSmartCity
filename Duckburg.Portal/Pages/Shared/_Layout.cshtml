@@ -1,34 +1,43 @@
+@inject Duckburg.Portal.Cms.ContentService Cms
 @{
-    var nav = ViewData["Nav"] as string ?? "";
     var hideWidget = ViewData["HideWidget"] as bool? ?? false;
-    string? Current(string voce) => nav == voce ? "page" : null;
+    var hideFeedback = ViewData["HideFeedback"] as bool? ?? false;
+
+    var s = await Cms.Settings();
+    string Get(string k, string fallback = "") => s.TryGetValue(k, out var v) && !string.IsNullOrWhiteSpace(v) ? v : fallback;
+    var menuPrincipale = await Cms.Menu(Duckburg.Portal.Cms.PosizioneMenu.Principale);
+    var menuFooter = await Cms.Menu(Duckburg.Portal.Cms.PosizioneMenu.Footer);
+    var nomeEnte = Get("ente.nome", "Comune di Paperopoli");
+    var pathCorrente = Context.Request.Path.Value ?? "/";
 }
 <!DOCTYPE html>
 <html lang="it">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] — Comune di Paperopoli</title>
+    <title>@ViewData["Title"] — @nomeEnte</title>
     <meta name="description" content="Portale dei servizi al cittadino del Comune di Paperopoli, ente immaginario per una demo. Con assistente virtuale che risponde solo dalle fonti ufficiali." />
     <link rel="preload" href="~/fonts/bangers-400.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="~/fonts/titillium-400.woff2" as="font" type="font/woff2" crossorigin>
+    <!-- Libreria di elementi di interfaccia del modello (C.SI.1.2) -->
+    <link rel="stylesheet" href="~/lib/bootstrap-italia/css/bootstrap-italia.min.css" />
     <link rel="stylesheet" href="~/css/paperopoli.css" asp-append-version="true" />
 </head>
 <body>
-    <a class="skip-link" href="#contenuto">Vai al contenuto principale</a>
+    <a class="skip-link visually-hidden-focusable" href="#contenuto">Vai al contenuto principale</a>
 
     <!-- Header slim: ente di appartenenza (modello Comuni) -->
     <div class="header-slim">
-        <div class="wrap">
-            <span>Regione Palmipedia <span aria-hidden="true">·</span> ente immaginario</span>
-            <a href="#" aria-disabled="true" title="Non attivo nella demo">Area personale (demo)</a>
+        <div class="wrap container-xl">
+            <span>@Get("ente.regione", "Regione Palmipedia") <span aria-hidden="true">·</span> ente immaginario</span>
+            <a href="http://localhost:5300/" data-element="personal-area-login" title="Servizi online: accesso con SPID/CIE">Area personale</a>
         </div>
     </div>
 
     <!-- Header principale -->
-    <header class="testata">
-        <div class="wrap testata-inner">
-            <a class="testata-brand" href="/">
+    <header class="testata it-header-center-wrapper">
+        <div class="wrap container-xl testata-inner row align-items-center">
+            <a class="testata-brand col-auto" href="/">
                 <svg class="stemma" viewBox="0 0 74 84" role="img" aria-label="Stemma del Comune di Paperopoli">
                     <path d="M4 6 h66 v40 q0 24 -33 34 q-33 -10 -33 -34 Z" fill="#1D9BB8" stroke="#17120E" stroke-width="4" stroke-linejoin="round"/>
                     <path d="M4 6 h66 v18 h-66 Z" fill="#F2B705" stroke="#17120E" stroke-width="4"/>
@@ -40,84 +49,100 @@
                     <path d="M22 70 q15 6 30 0" fill="none" stroke="#17120E" stroke-width="3" stroke-linecap="round"/>
                 </svg>
                 <span>
-                    <span class="testata-eyebrow">Portale dei servizi al cittadino</span>
-                    <span class="display testata-nome" style="display:block">Comune di Paperopoli</span>
+                    <span class="testata-eyebrow">@Get("ente.eyebrow", "Portale dei servizi al cittadino")</span>
+                    <span class="display testata-nome" style="display:block">@nomeEnte</span>
                 </span>
             </a>
-            <form class="testata-cerca" role="search" action="/assistente" method="get">
+            <form class="testata-cerca col" role="search" action="/assistente" method="get">
                 <label class="visually-hidden" for="cerca-sito">Cerca nel sito: la domanda viene inviata all'assistente virtuale</label>
-                <input type="search" id="cerca-sito" name="q" placeholder="Cerca o chiedi…" />
-                <button type="submit" class="btn-fumetto" style="font-size:1rem; padding:.4rem .9rem;">Cerca</button>
+                <input type="search" class="form-control" id="cerca-sito" name="q" placeholder="Cerca o chiedi…" />
+                <button type="submit" class="btn btn-fumetto" style="font-size:1rem; padding:.4rem .9rem;">Cerca</button>
             </form>
-            <p class="timbro-demo">
+            <p class="timbro-demo col-auto">
                 Ente immaginario
                 <span>demo dimostrativa</span>
             </p>
         </div>
     </header>
 
-    <!-- Navigazione principale (voci del modello Comuni) -->
-    <nav class="nav-principale" aria-label="Navigazione principale">
-        <div class="wrap">
-            <button type="button" class="nav-toggle" data-nav-toggle aria-expanded="false" aria-controls="menu-principale">
+    <!-- Navigazione principale: voci e ordine del modello Comuni (C.SI.1.6) -->
+    <nav class="nav-principale navbar" aria-label="Navigazione principale">
+        <div class="wrap container-xl">
+            <button type="button" class="nav-toggle btn" data-nav-toggle aria-expanded="false" aria-controls="menu-principale">
                 <span aria-hidden="true">☰</span> Menu
             </button>
-            <ul id="menu-principale">
-                <li><a href="/amministrazione" aria-current="@Current("amministrazione")">Amministrazione</a></li>
-                <li><a href="/novita" aria-current="@Current("novita")">Novità</a></li>
-                <li><a href="/servizi" aria-current="@Current("servizi")">Servizi</a></li>
-                <li><a href="/vivere-il-comune" aria-current="@Current("vivere")">Vivere il Comune</a></li>
-                <li class="nav-assistente"><a href="/assistente" aria-current="@Current("assistente")"><span aria-hidden="true">💬</span>&nbsp;Assistente virtuale</a></li>
+            <ul id="menu-principale" class="navbar-nav" data-element="main-navigation">
+                @foreach (var voce in menuPrincipale)
+                {
+                    var attiva = voce.Url != "/" && pathCorrente.StartsWith(voce.Url, StringComparison.OrdinalIgnoreCase) ? "page" : null;
+                    <li class="nav-item @(voce.Evidenzia ? "nav-assistente" : null)">
+                        <a class="nav-link" href="@voce.Url" aria-current="@attiva"
+                           data-element="@(string.IsNullOrEmpty(voce.DataElement) ? null : voce.DataElement)">
+                            @if (!string.IsNullOrEmpty(voce.Icona))
+                            {
+                                <span aria-hidden="true">@voce.Icona</span><text>&nbsp;</text>
+                            }
+                            <span>@voce.Etichetta</span>
+                        </a>
+                    </li>
+                }
             </ul>
         </div>
     </nav>
 
     <main id="contenuto">
         @RenderBody()
+
+        @if (!hideFeedback)
+        {
+            <!-- Valutazione della chiarezza informativa (C.SI.2.5 / C.SI.2.6) -->
+            <partial name="_ValutazioneChiarezza" />
+        }
     </main>
 
     <!-- Footer istituzionale -->
-    <footer class="footer-sito">
-        <div class="wrap">
-            <div class="footer-grid">
-                <div>
-                    <h2>Comune di Paperopoli</h2>
+    <footer class="footer-sito it-footer">
+        <div class="wrap container-xl">
+            <div class="footer-grid row">
+                <div class="col-12 col-md-3">
+                    <h2>@nomeEnte</h2>
                     <ul>
-                        <li>Palazzo Comunale — via dei Dobloni 13</li>
-                        <li>Quartiere Dogburg, Paperopoli</li>
-                        <li>Patrono: San Quaquaraqua</li>
-                        <li>C.F. 00000000313 (fittizio)</li>
+                        <li>@Get("ente.indirizzo", "Palazzo Comunale — via dei Dobloni 13")</li>
+                        <li>@Get("ente.quartiere", "Quartiere Dogburg, Paperopoli")</li>
+                        <li>Patrono: @Get("ente.patrono", "San Quaquaraqua")</li>
+                        <li>C.F. @Get("ente.cf", "00000000313 (fittizio)")</li>
                     </ul>
                 </div>
-                <div>
+                <div class="col-12 col-md-3">
                     <h2>Contatti</h2>
                     <ul>
-                        <li>PEC: protocollo@@pec.paperopoli.demo</li>
-                        <li>URP: urp@@paperopoli.demo</li>
-                        <li><span class="numero-verde">☎ 800-PAPERINO</span></li>
+                        <li>PEC: @Get("contatti.pec", "protocollo@pec.paperopoli.demo")</li>
+                        <li><a href="mailto:@Get("contatti.urp", "urp@paperopoli.demo")" data-element="contacts">URP: @Get("contatti.urp", "urp@paperopoli.demo")</a></li>
+                        <li><span class="numero-verde">☎ @Get("contatti.numeroverde", "800-PAPERINO")</span></li>
                     </ul>
                 </div>
-                <div>
+                <div class="col-12 col-md-3">
                     <h2>Amministrazione</h2>
                     <ul>
                         <li><a href="/amministrazione">Organi e uffici</a></li>
-                        <li><a href="#" aria-disabled="true" title="Non attivo nella demo">Amministrazione trasparente (demo)</a></li>
-                        <li><a href="#" aria-disabled="true" title="Non attivo nella demo">Albo pretorio (demo)</a></li>
+                        <li><a href="/amministrazione/documenti-e-dati">Documenti e dati</a></li>
+                        <li><a href="/prenota-appuntamento">Prenota appuntamento</a></li>
                     </ul>
                 </div>
-                <div>
+                <div class="col-12 col-md-3">
                     <h2>Orari sportelli</h2>
                     <ul>
-                        <li>Lun–Ven 9:00–12:30</li>
-                        <li>Mar e gio anche 15:00–17:00</li>
-                        <li>Ufficio Tributi: mar e gio su appuntamento</li>
+                        <li>@Get("orari.riga1", "Lun–Ven 9:00–12:30")</li>
+                        <li>@Get("orari.riga2", "Mar e gio anche 15:00–17:00")</li>
+                        <li>@Get("orari.riga3", "Ufficio Tributi: mar e gio su appuntamento")</li>
                     </ul>
                 </div>
             </div>
             <div class="footer-legale">
-                <a href="/dichiarazione-accessibilita">Dichiarazione di accessibilità</a>
-                <a href="/privacy">Privacy</a>
-                <a href="/note-legali">Note legali</a>
+                @foreach (var voce in menuFooter)
+                {
+                    <a href="@voce.Url" data-element="@(string.IsNullOrEmpty(voce.DataElement) ? null : voce.DataElement)">@voce.Etichetta</a>
+                }
             </div>
             <p class="footer-nota">
                 Il Comune di Paperopoli è un ente immaginario. Questo portale è una simulazione dimostrativa:
@@ -132,6 +157,7 @@
         <partial name="_QuackWidget" />
     }
 
+    <script src="~/lib/bootstrap-italia/js/bootstrap-italia.bundle.min.js"></script>
     <script src="~/js/portal.js" asp-append-version="true"></script>
     <script src="~/_content/ChattyDuck.Quack/quack-chat.js"></script>
     @await RenderSectionAsync("Scripts", required: false)

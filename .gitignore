@@ -1,6 +1,7 @@
 # Output di compilazione
 bin/
 obj/
+publish/
 
 # Visual Studio
 .vs/
@@ -12,3 +13,33 @@ obj/
 appsettings.json
 appsettings.*.json
 !appsettings.template.json
+
+# Duckburg.Identity: la config del RP non contiene segreti, va versionata.
+!Duckburg.Identity/appsettings.json
+!Duckburg.Identity/appsettings.Development.json
+
+# SEGRETI federazione SPID/CIE: mai committare le chiavi private reali del RP.
+# Restano tracciati solo *.sample.json (chiavi demo) e il README.
+secrets/*
+!secrets/*.sample.json
+!secrets/README.md
+
+# Artefatti runtime dell'infrastruttura Django (rigenerati a ogni docker compose up)
+infra/**/db.sqlite3
+infra/**/logs/*
+
+# Artefatti temporanei di e2e_test.sh (auto-puliti, ignorati in caso di interruzione)
+/op_jar.txt
+/rp_jar.txt
+/login.html
+/consent.html
+/profile.html
+/refresh.html
+/logout.html
+
+# App di valutazione (validatore clonato + report generati)
+Duckburg.Valutazione/tool/
+Duckburg.Valutazione/reports/
+
+# File caricati dagli utenti (libreria media, segnalazioni)
+Duckburg.Portal/wwwroot/media/

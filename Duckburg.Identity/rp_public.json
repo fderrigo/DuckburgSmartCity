@@ -1,0 +1,75 @@
+{
+  "sub": "http://identity.paperopoli.derrigo.it:8001",
+  "authority_hints": [
+    "http://trust-anchor.paperopoli.derrigo.it:8000"
+  ],
+  "default_signature_alg": "RS256",
+  "trust_marks": [
+    {
+      "id": "https://www.spid.gov.it/openid-federation/agreement/sp-public",
+      "trust_mark": "eyJhbGciOiJSUzI1NiIsImtpZCI6IkZpZll4MDNibm9zRDhtNmdZUUlmTkhOUDljTV9TYW05VGM1bkxsb0lJcmMifQ.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvIiwic3ViIjoiaHR0cDovLzEyNy4wLjAuMTo4MDAwL29pZGMvcnAvIiwiaWF0IjoxNjQ1NjEyNDAxLCJpZCI6Imh0dHBzOi8vd3d3LnNwaWQuZ292Lml0L2NlcnRpZmljYXRpb24vcnAiLCJtYXJrIjoiaHR0cHM6Ly93d3cuYWdpZC5nb3YuaXQvdGhlbWVzL2N1c3RvbS9hZ2lkL2xvZ28uc3ZnIiwicmVmIjoiaHR0cHM6Ly9kb2NzLml0YWxpYS5pdC9pdGFsaWEvc3BpZC9zcGlkLXJlZ29sZS10ZWNuaWNoZS1vaWRjL2l0L3N0YWJpbGUvaW5kZXguaHRtbCJ9.mSPNR0AOPBn3UNJAIbrWUMQ8vGTetQajpa3i59JDKDXYWqo2TUGh4AQBghCiG3qqV9cl-hleLtuwoeZ1InKHeslTLftVdcR3meeMLs3mLobHYr26Mi7pC7-jx1ZFVyk4GXl7mn9WVSQGEUOiuhL01tdlUfxf0TJSFSOMEZGpCA3hXroLOnEl3FjkAw7sPvjfImsbadbHVusb72HTTs1n5Xo7z3As3fDWHcxD-fvvq0beu9cx-L2sT4YaNC-ELd1M3m5r0NIjjEUAt4Gnot-l5Z3-C_bA41uvh2hX34U_fGZ6jpmuluJo1Lqi26N8LTB-Rbu0UMaZnkRg9E72_YRZig"
+    }
+  ],
+  "metadata": {
+    "federation_entity": {
+      "federation_resolve_endpoint": "http://identity.paperopoli.derrigo.it:8001/resolve",
+      "organization_name": "Comune di Paperopoli",
+      "homepage_uri": "http://identity.paperopoli.derrigo.it:8001",
+      "policy_uri": "http://identity.paperopoli.derrigo.it:8001/en/website/legal-information",
+      "logo_uri": "http://trust-anchor.paperopoli.derrigo.it:8000/static/svg/spid-logo-c-lb.svg",
+      "contacts": [
+        "servizionline@paperopoli.demo"
+      ]
+    },
+    "openid_relying_party": {
+      "application_type": "web",
+      "organization_name": "Comune di Paperopoli",
+      "client_id": "http://identity.paperopoli.derrigo.it:8001",
+      "client_registration_types": [
+        "automatic"
+      ],
+      "jwks_uri": "http://identity.paperopoli.derrigo.it:8001/oidc/rp/openid_relying_party/jwks.json",
+      "signed_jwks_uri": "http://identity.paperopoli.derrigo.it:8001/oidc/rp/openid_relying_party/jwks.jose",
+      "jwks": {
+        "keys": [
+          {
+            "alg": "RS256",
+            "kty": "RSA",
+            "use": "sig",
+            "n": "uXfJA-wTlTCA4FdsoE0qZfmKIgedmarrtWgQbElKbWg9RDR7Z8JVBaRLFqwyfyG1JJFm64G51cBJwLIFwWoF7nxsH9VYLm5ocjAnsR4RhlfVE0y_60wjf8skJgBRpiXQPlwH9jDGaqVE_PEBTObDO5w3XourD1F360-v5cLDLRHdFJIitdEVtqATqY5DglRDaKiBhis7a5_1bk839PDLaQhju4XJk4tvDy5-LVkMy5sP2zU6-1tJdA-VmaBZLXy9n0967FGIWmMzpafrBMOuHFcUOH56o-clDah_CITH1dq2D64K0MYhEpACO2p8AH4K8Q6YuJ1dnkVDDwZp2C84sQ",
+            "e": "AQAB",
+            "kid": "YhuIJU6o15EUCyqA0LHEqJd-xVPJgoyW5wZ1o4padWs"
+          },
+          {
+            "alg": "RSA-OAEP",
+            "use": "enc",
+            "kty": "RSA",
+            "n": "rZDx5jxztL4RL4obgFtOZCCelabRolJo_WHdvHVM0Pe5M1rCYXmcnGq5I2M7MdXrFHLa_Yl5rAzkxKyFgpB48vkmqIGNl8NX-6c95XDMQttHmp_atrPnKyJ0E2Zk1ZTomZMWnQCIXQYfcJI2x4W5Mjyh8Ip0ZDDUiqlYsADkHCThj0q6RjJRXtmK_rrt1-tcHOQbIHDVKXYACMWOzUr1YDGWgrFjPu2D2QAXmO3qxhaqIdABwim6XKuLYwzTlIeHJyeEZQiVLEY_Notu5GVQGeL8qMnW3SsqBw7rMYxKgLOcSk2-2J5_orToRNy0x1LQfMtHG3ic8KcFefV7UZeR3w",
+            "e": "AQAB",
+            "kid": "dlDtBxB1sKzY5hZTxJRLpvKVLeWHy5QYsFTSxETF5qM"
+          }
+        ]
+      },
+      "client_name": "Servizi online del Comune di Paperopoli",
+      "contacts": [
+        "servizionline@paperopoli.demo"
+      ],
+      "grant_types": [
+        "refresh_token",
+        "authorization_code"
+      ],
+      "redirect_uris": [
+        "http://identity.paperopoli.derrigo.it:8001/oidc/rp/callback"
+      ],
+      "response_types": [
+        "code"
+      ],
+      "subject_type": "pairwise",
+      "id_token_signed_response_alg": "RS256",
+      "userinfo_signed_response_alg": "RS256",
+      "userinfo_encrypted_response_alg": "RSA-OAEP",
+      "userinfo_encrypted_response_enc": "A128CBC-HS256",
+      "token_endpoint_auth_method": "private_key_jwt"
+    }
+  }
+}

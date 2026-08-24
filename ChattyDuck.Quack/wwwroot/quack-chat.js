@@ -200,7 +200,13 @@
         if (q && q.trim()) {
             chat.ask(q.trim());
         } else {
-            chat.input.focus();
+            // Focus di cortesia: marcato come interazione mouse per non far
+            // comparire l'anello di focus di Bootstrap Italia all'apertura.
+            chat.input.setAttribute('data-focus-mouse', 'true');
+            chat.input.focus({ preventScroll: true });
+            chat.input.addEventListener('blur', function () {
+                chat.input.removeAttribute('data-focus-mouse');
+            }, { once: true });
         }
     }
 

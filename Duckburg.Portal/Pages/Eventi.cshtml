@@ -1,0 +1,37 @@
+@page "/vivere-il-comune/eventi"
+@model EventiModel
+@{
+    ViewData["Title"] = "Eventi";
+    ViewData["Nav"] = "vivere";
+}
+
+<nav class="wrap container-xl briciole" aria-label="Percorso di navigazione">
+    <ol class="breadcrumb" data-element="breadcrumb">
+        <li class="breadcrumb-item"><a href="/"><span>Home</span></a></li>
+        <li class="breadcrumb-item"><a href="/vivere-il-comune"><span>Vivere il Comune</span></a></li>
+        <li class="breadcrumb-item active"><a><span aria-current="page">Eventi</span></a></li>
+    </ol>
+</nav>
+
+<section class="wrap container-xl" aria-labelledby="titolo-eventi">
+    <span class="sezione-eyebrow">Vivere il Comune</span>
+    <h1 class="display sezione-titolo" id="titolo-eventi" data-element="page-name">Eventi</h1>
+
+    <div class="card-grid row">
+        @foreach (var e in Model.Eventi)
+        {
+            <div class="col-12 col-md-4 mb-3">
+                <div class="card card-fumetto h-100">
+                    <div class="card-body">
+                        <span class="card-data">@e.Ricorrenza</span>
+                        <h2 style="font-size:1.02rem;">
+                            <a href="/vivere-il-comune/eventi/@e.Slug" data-element="event-link">@e.Titolo</a>
+                        </h2>
+                        <p>@e.Sommario</p>
+                        @if (!string.IsNullOrWhiteSpace(e.LuogoTesto)) { <p><strong>Dove:</strong> @e.LuogoTesto</p> }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>

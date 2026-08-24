@@ -1,0 +1,33 @@
+@page "/argomenti"
+@model ArgomentiModel
+@{
+    ViewData["Title"] = "Tutti gli argomenti";
+    ViewData["Nav"] = "";
+}
+
+<nav class="wrap container-xl briciole" aria-label="Percorso di navigazione">
+    <ol class="breadcrumb" data-element="breadcrumb">
+        <li class="breadcrumb-item"><a href="/"><span>Home</span></a></li>
+        <li class="breadcrumb-item active"><a><span aria-current="page">Tutti gli argomenti</span></a></li>
+    </ol>
+</nav>
+
+<section class="wrap container-xl" aria-labelledby="titolo-argomenti">
+    <span class="sezione-eyebrow">Argomenti</span>
+    <h1 class="display sezione-titolo" id="titolo-argomenti">Tutti gli argomenti</h1>
+    <p class="sezione-sub">Gli argomenti del vocabolario controllato usati per organizzare i contenuti del sito.</p>
+
+    <div class="card-grid row">
+        @foreach (var a in Model.Argomenti)
+        {
+            <div class="col-12 col-md-4 mb-3">
+                <div class="card card-fumetto h-100">
+                    <div class="card-body">
+                        <a href="/argomenti/@a.Slug" data-element="topic-element"><h2 style="font-size:1.05rem;">@a.Nome</h2></a>
+                        <p>@a.Descrizione</p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>

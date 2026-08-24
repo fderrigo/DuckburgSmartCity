@@ -1,51 +1,61 @@
 @page "/vivere-il-comune"
+@model VivereIlComuneModel
 @{
     ViewData["Title"] = "Vivere il Comune";
     ViewData["Nav"] = "vivere";
 }
 
-<nav class="wrap briciole" aria-label="Percorso di navigazione">
-    <ol>
-        <li><a href="/">Home</a></li>
-        <li><span aria-current="page">Vivere il Comune</span></li>
+<nav class="wrap container-xl briciole" aria-label="Percorso di navigazione">
+    <ol class="breadcrumb" data-element="breadcrumb">
+        <li class="breadcrumb-item"><a href="/"><span>Home</span></a></li>
+        <li class="breadcrumb-item active"><a><span aria-current="page">Vivere il Comune</span></a></li>
     </ol>
 </nav>
 
-<section class="wrap" aria-labelledby="titolo-vivere">
+<section class="wrap container-xl" aria-labelledby="titolo-vivere">
     <span class="sezione-eyebrow">Vivere il Comune</span>
-    <h1 class="display sezione-titolo" id="titolo-vivere">Luoghi ed eventi</h1>
+    <h1 class="display sezione-titolo" id="titolo-vivere">Vivere il Comune</h1>
     <p class="sezione-sub">Cosa vedere e cosa fare a Paperopoli. Contenuti dimostrativi.</p>
 
     <h2 class="display" style="font-size:1.6rem; margin-bottom:1rem;">Luoghi</h2>
-    <div class="card-grid" style="margin-bottom:2.4rem;">
-        <div class="card-fumetto">
-            <span class="card-data">Piazza</span>
-            <h3>Piazza del Doblone</h3>
-            <p>Il cuore della città, con la fontana dorata e il mercato del sabato.</p>
-        </div>
-        <div class="card-fumetto">
-            <span class="card-data">Parco</span>
-            <h3>Parco della Fontana Dorata</h3>
-            <p>Aree gioco, laghetto delle papere e percorso ciclabile lungo l'ansa del fiume.</p>
-        </div>
-        <div class="card-fumetto">
-            <span class="card-data">Cultura</span>
-            <h3>Biblioteca civica di Dogburg</h3>
-            <p>Sala studio, emeroteca e la più grande collezione di fumetti della regione.</p>
-        </div>
+    <div class="card-grid row" style="margin-bottom:1rem;">
+        @foreach (var l in Model.Luoghi.Take(3))
+        {
+            <div class="col-12 col-md-4 mb-3">
+                <div class="card card-fumetto h-100">
+                    <div class="card-body">
+                        <span class="card-data">@l.Categoria</span>
+                        <a href="/vivere-il-comune/luoghi/@l.Slug"><h3 style="font-size:1.02rem;">@l.Nome</h3></a>
+                        <p>@l.Descrizione</p>
+                    </div>
+                </div>
+            </div>
+        }
     </div>
+    <p style="margin-bottom:2.4rem;">
+        <button type="button" class="btn btn-fumetto" data-element="live-button-locations" onclick="location.href='/vivere-il-comune/luoghi';">
+            <span>Tutti i luoghi</span>
+        </button>
+    </p>
 
     <h2 class="display" style="font-size:1.6rem; margin-bottom:1rem;">Eventi</h2>
-    <div class="card-grid">
-        <article class="card-fumetto">
-            <span class="card-data">Festa patronale · settembre</span>
-            <h3>Festa di San Quaquaraqua</h3>
-            <p>Sfilata dei carri, mercatino dei Dobloni e spettacolo pirotecnico sul fiume.</p>
-        </article>
-        <article class="card-fumetto">
-            <span class="card-data">Mercato · ogni sabato</span>
-            <h3>Mercato dei Dobloni</h3>
-            <p>Prodotti locali e artigianato in Piazza del Doblone, dalle 8 alle 13.</p>
-        </article>
+    <div class="card-grid row" style="margin-bottom:1rem;">
+        @foreach (var e in Model.Eventi.Take(3))
+        {
+            <div class="col-12 col-md-4 mb-3">
+                <div class="card card-fumetto h-100">
+                    <div class="card-body">
+                        <span class="card-data">@e.Ricorrenza</span>
+                        <a href="/vivere-il-comune/eventi/@e.Slug"><h3 style="font-size:1.02rem;">@e.Titolo</h3></a>
+                        <p>@e.Sommario</p>
+                    </div>
+                </div>
+            </div>
+        }
     </div>
+    <p>
+        <button type="button" class="btn btn-fumetto" data-element="live-button-events" onclick="location.href='/vivere-il-comune/eventi';">
+            <span>Tutti gli eventi</span>
+        </button>
+    </p>
 </section>

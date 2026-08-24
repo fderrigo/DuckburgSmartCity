@@ -1,0 +1,41 @@
+@page "/vivere-il-comune/luoghi/{slug}"
+@model LuogoDettaglioModel
+@{
+    var l = Model.Luogo;
+    ViewData["Title"] = l.Nome;
+    ViewData["Nav"] = "vivere";
+}
+
+<nav class="wrap container-xl briciole" aria-label="Percorso di navigazione">
+    <ol class="breadcrumb" data-element="breadcrumb">
+        <li class="breadcrumb-item"><a href="/"><span>Home</span></a></li>
+        <li class="breadcrumb-item"><a href="/vivere-il-comune"><span>Vivere il Comune</span></a></li>
+        <li class="breadcrumb-item"><a href="/vivere-il-comune/luoghi"><span>Luoghi</span></a></li>
+        <li class="breadcrumb-item active"><a><span aria-current="page">@l.Nome</span></a></li>
+    </ol>
+</nav>
+
+<section class="wrap container-xl" aria-labelledby="titolo-luogo">
+    <span class="sezione-eyebrow">@l.Categoria</span>
+    <h1 class="display sezione-titolo" id="titolo-luogo">@l.Nome</h1>
+
+    <div class="row scheda-grid">
+        <div class="col-12 col-lg-8 scheda-corpo">
+            <h2>Descrizione</h2>
+            <p>@l.Descrizione</p>
+            @if (!string.IsNullOrWhiteSpace(l.ModalitaAccesso))
+            {
+                <h2>Modalità di accesso</h2>
+                <p>@l.ModalitaAccesso</p>
+            }
+        </div>
+        <aside class="col-12 col-lg-4 pannello-lato" aria-label="Informazioni sul luogo">
+            <h2 class="display">Informazioni</h2>
+            <dl>
+                @if (!string.IsNullOrWhiteSpace(l.Indirizzo)) { <dt>Indirizzo</dt><dd>@l.Indirizzo</dd> }
+                @if (!string.IsNullOrWhiteSpace(l.Orari)) { <dt>Orari</dt><dd>@l.Orari</dd> }
+                @if (!string.IsNullOrWhiteSpace(l.Contatti)) { <dt>Contatti</dt><dd>@l.Contatti</dd> }
+            </dl>
+        </aside>
+    </div>
+</section>

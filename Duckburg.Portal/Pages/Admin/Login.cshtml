@@ -1,0 +1,44 @@
+@page "/admin/login"
+@model LoginModel
+@{
+    Layout = null;
+    ViewData["Title"] = "Accedi";
+}
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Accedi · CMS Paperopoli</title>
+    <style>
+        :root{--oro:#F2B705;--acqua:#1D9BB8;--rosso:#E23A2E;--inchiostro:#17120E;--carta:#FFF6E0;}
+        *{box-sizing:border-box;}
+        body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;
+            font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+            background:radial-gradient(circle at 30% 20%,#2a2119,#17120E);}
+        .box{background:var(--carta);border:3px solid var(--inchiostro);border-radius:1rem;
+            padding:2rem;width:340px;box-shadow:6px 6px 0 var(--oro);}
+        h1{margin:.2rem 0 .1rem;font-size:1.4rem;color:var(--inchiostro);}
+        p.sub{margin:0 0 1.3rem;color:#6b6257;font-size:.9rem;}
+        label{display:block;font-weight:700;font-size:.85rem;margin:.7rem 0 .25rem;}
+        input{width:100%;padding:.55rem .6rem;border:2px solid var(--inchiostro);border-radius:.5rem;font-size:.95rem;}
+        button{margin-top:1.2rem;width:100%;background:var(--oro);border:2px solid var(--inchiostro);
+            border-radius:.5rem;padding:.6rem;font-weight:800;font-size:1rem;cursor:pointer;box-shadow:3px 3px 0 var(--inchiostro);}
+        .err{background:#f3d4d0;border:2px solid var(--inchiostro);border-radius:.5rem;padding:.5rem .7rem;font-size:.85rem;margin-top:1rem;font-weight:600;}
+        .duck{font-size:2.4rem;}
+    </style>
+</head>
+<body>
+    <form class="box" method="post">
+        <div class="duck">🦆</div>
+        <h1>CMS Paperopoli</h1>
+        <p class="sub">Area di amministrazione dei contenuti</p>
+        <label for="u">Utente</label>
+        <input id="u" name="Username" autocomplete="username" value="@Model.Username" required />
+        <label for="p">Password</label>
+        <input id="p" name="Password" type="password" autocomplete="current-password" required />
+        <button type="submit">Accedi</button>
+        @if (Model.Errore != null) { <div class="err">@Model.Errore</div> }
+    </form>
+</body>
+</html>

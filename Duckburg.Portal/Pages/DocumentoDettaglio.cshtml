@@ -1,0 +1,37 @@
+@page "/documenti/{slug}"
+@model DocumentoDettaglioModel
+@{
+    var d = Model.Documento;
+    ViewData["Title"] = d.Titolo;
+    ViewData["Nav"] = "amministrazione";
+    var it = new System.Globalization.CultureInfo("it-IT");
+}
+
+<nav class="wrap container-xl briciole" aria-label="Percorso di navigazione">
+    <ol class="breadcrumb" data-element="breadcrumb">
+        <li class="breadcrumb-item"><a href="/"><span>Home</span></a></li>
+        <li class="breadcrumb-item"><a href="/amministrazione"><span>Amministrazione</span></a></li>
+        <li class="breadcrumb-item"><a href="/amministrazione/documenti-e-dati"><span>Documenti e dati</span></a></li>
+        <li class="breadcrumb-item active"><a><span aria-current="page">@d.Titolo</span></a></li>
+    </ol>
+</nav>
+
+<section class="wrap container-xl" aria-labelledby="titolo-doc" style="max-width:900px;">
+    <span class="sezione-eyebrow">@d.Tipo · @d.Data.ToString("d MMMM yyyy", it)</span>
+    <h1 class="display sezione-titolo" id="titolo-doc">@d.Titolo</h1>
+    <div class="scheda-corpo">
+        <p>@d.Descrizione</p>
+        @if (!string.IsNullOrWhiteSpace(d.UrlFile))
+        {
+            <p class="mt-3">
+                <a class="btn btn-fumetto" href="@d.UrlFile">Scarica il documento</a>
+                <span class="muted" style="font-size:.85rem;"> (file dimostrativo)</span>
+            </p>
+        }
+        @if (d.UfficioResponsabile != null)
+        {
+            <h2>Ufficio responsabile</h2>
+            <p><a href="/amministrazione/uffici/@d.UfficioResponsabile.Slug">@d.UfficioResponsabile.Nome</a></p>
+        }
+    </div>
+</section>

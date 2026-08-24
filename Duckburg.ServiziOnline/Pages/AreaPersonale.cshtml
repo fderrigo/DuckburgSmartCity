@@ -1,0 +1,61 @@
+@page "/area-personale"
+@using System.Security.Claims
+@{
+    ViewData["Title"] = "Area personale del cittadino";
+    ViewData["Nav"] = "area-personale";
+    string? C(string tipo) => User.FindFirstValue(tipo);
+}
+
+<nav class="wrap container-xl briciole" aria-label="Percorso di navigazione">
+    <ol>
+        <li><a href="/">Servizi online</a></li>
+        <li><span aria-current="page">Area personale</span></li>
+    </ol>
+</nav>
+
+<section class="wrap container-xl" aria-labelledby="titolo-area">
+    <span class="sezione-eyebrow">Area riservata</span>
+    <h1 class="display sezione-titolo" id="titolo-area">Area personale del cittadino</h1>
+    <p class="sezione-sub">
+        Benvenuto, ti sei identificato con SPID/CIE: questi sono i dati restituiti
+        dal tuo gestore di identità digitale.
+    </p>
+
+    <div class="scheda-grid row">
+        <div class="scheda-corpo col-12 col-lg-8">
+            <h2>I tuoi dati</h2>
+            <dl>
+                <dt><strong>Nome</strong></dt>
+                <dd>@C(ClaimTypes.GivenName)</dd>
+                <dt style="margin-top:.5rem;"><strong>Cognome</strong></dt>
+                <dd>@C(ClaimTypes.Surname)</dd>
+                <dt style="margin-top:.5rem;"><strong>Email</strong></dt>
+                <dd>@C(ClaimTypes.Email)</dd>
+                <dt style="margin-top:.5rem;"><strong>Codice fiscale</strong></dt>
+                <dd>@C("fiscal_number")</dd>
+            </dl>
+
+            <h2 style="margin-top:1.4rem;">Le tue pratiche</h2>
+            <p>
+                Non c'è ancora nulla qui: questo è il primo servizio online del Comune e le pratiche
+                digitali arriveranno una alla volta. Torna a trovarci!
+            </p>
+            <p style="margin-top:.6rem;">
+                <a class="btn-fumetto" href="http://localhost:5100/servizi">Guarda le schede dei servizi</a>
+            </p>
+        </div>
+
+        <aside class="pannello-lato col-12 col-lg-4" aria-label="Sessione">
+            <h2 class="display">La tua sessione</h2>
+            <dl>
+                <dt>Accesso</dt>
+                <dd>Identità digitale SPID / CIE</dd>
+                <dt>Gestita da</dt>
+                <dd>Sistema di accesso del Comune</dd>
+            </dl>
+            <p style="margin-top:.8rem;">
+                <a class="btn-fumetto" href="/esci">Esci</a>
+            </p>
+        </aside>
+    </div>
+</section>

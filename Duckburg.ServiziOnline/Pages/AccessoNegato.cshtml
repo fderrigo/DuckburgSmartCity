@@ -1,0 +1,17 @@
+@page "/accesso-negato"
+@{
+    ViewData["Title"] = "Accesso non riuscito";
+}
+
+<section class="wrap" aria-labelledby="titolo-negato" style="padding-top:2rem;">
+    <span class="sezione-eyebrow">Area riservata</span>
+    <h1 class="display sezione-titolo" id="titolo-negato">Accesso non riuscito</h1>
+    <p class="sezione-sub">
+        Il login con identità digitale non è andato a buon fine oppure la sessione è scaduta.
+        Riprova: se il problema continua, contatta l'URP.
+    </p>
+    <p>
+        <a class="btn-fumetto" href="/accedi">Riprova ad accedere</a>
+        <a class="btn-fumetto" href="/">Torna ai servizi online</a>
+    </p>
+</section>

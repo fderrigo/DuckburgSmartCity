@@ -1,0 +1,31 @@
+@page "/admin"
+@model IndexModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="lockbar">
+    <strong>Protezione contenuti di default:</strong>
+    @if (Model.Protezione)
+    {
+        <span class="chip lock">🔒 Attiva</span>
+        <span class="muted"> — i contenuti di default (Paperopoli) non sono modificabili né eliminabili. Regola con <code>Cms:ProtectDefaultContent</code> in appsettings.</span>
+    }
+    else
+    {
+        <span class="chip off">🔓 Disattivata</span>
+        <span class="muted"> — tutti i contenuti, compresi i default, sono modificabili.</span>
+    }
+</div>
+
+<div class="grid">
+    @foreach (var e in AdminRegistry.All)
+    {
+        <a href="/admin/@e.Key" class="card dash-card">
+            <span class="e">@e.Emoji</span>
+            <span class="n">@(Model.Counts.TryGetValue(e.Key, out var c) ? c : 0)</span>
+            <span>@e.Plurale</span>
+            <span class="muted" style="font-size:.8rem;">@e.Descrizione</span>
+        </a>
+    }
+</div>

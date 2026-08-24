@@ -1,0 +1,59 @@
+@page "/argomenti/{slug}"
+@model ArgomentoDettaglioModel
+@{
+    var a = Model.Argomento;
+    ViewData["Title"] = a.Nome;
+    ViewData["Nav"] = "";
+    var it = new System.Globalization.CultureInfo("it-IT");
+}
+
+<nav class="wrap container-xl briciole" aria-label="Percorso di navigazione">
+    <ol class="breadcrumb" data-element="breadcrumb">
+        <li class="breadcrumb-item"><a href="/"><span>Home</span></a></li>
+        <li class="breadcrumb-item"><a href="/argomenti"><span>Tutti gli argomenti</span></a></li>
+        <li class="breadcrumb-item active"><a><span aria-current="page">@a.Nome</span></a></li>
+    </ol>
+</nav>
+
+<section class="wrap container-xl" aria-labelledby="titolo-argomento">
+    <span class="sezione-eyebrow">Argomento</span>
+    <h1 class="display sezione-titolo" id="titolo-argomento">@a.Nome</h1>
+    <p class="sezione-sub">@a.Descrizione</p>
+
+    @if (Model.Servizi.Count > 0)
+    {
+        <h2 class="display" style="font-size:1.5rem; margin-bottom:1rem;">Servizi</h2>
+        <div class="card-grid row" style="margin-bottom:2rem;">
+            @foreach (var s in Model.Servizi)
+            {
+                <div class="col-12 col-md-4 mb-3">
+                    <div class="card card-fumetto h-100">
+                        <div class="card-body">
+                            <a href="/servizi/@s.Slug"><h3 style="font-size:1.02rem;">@s.Titolo</h3></a>
+                            <p>@s.DescrizioneBreve</p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    @if (Model.Novita.Count > 0)
+    {
+        <h2 class="display" style="font-size:1.5rem; margin-bottom:1rem;">Novità</h2>
+        <div class="card-grid row">
+            @foreach (var n in Model.Novita)
+            {
+                <div class="col-12 col-md-4 mb-3">
+                    <div class="card card-fumetto h-100">
+                        <div class="card-body">
+                            <span class="card-data">@n.Data.ToString("d MMMM yyyy", it)</span>
+                            <a href="/novita/dettaglio/@n.Slug"><h3 style="font-size:1.02rem;">@n.Titolo</h3></a>
+                            <p>@n.Sommario</p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</section>

@@ -1,0 +1,75 @@
+/* ============================================================
+   Duckburg.Identity — accesso SPID/CIE in stile Paperopoli.
+   Integra i componenti ufficiali AgID (SPID/CIE button) nel
+   design system "fumetto istituzionale" del Comune.
+   ============================================================ */
+
+.accesso-hero { padding: 2.2rem 0 1rem; }
+
+.card-accesso {
+    background: #fff;
+    border: var(--bordo);
+    box-shadow: var(--ombra);
+    border-radius: 14px;
+    padding: 1.6rem;
+    margin: 1.2rem 0;
+}
+
+.login-buttons { display: flex; flex-direction: column; align-items: stretch; gap: 14px; max-width: 320px; }
+
+/* Pulsanti SPID/CIE in stile fumetto Paperopoli: stessa struttura di .btn-fumetto
+   (bordo spesso, ombra netta, pressione al click) ma dimensionati per icona + testo. */
+.btn-identita {
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+    font-family: 'Bangers', cursive;
+    letter-spacing: .04em;
+    font-size: 1.15rem;
+    color: #fff;
+    border: var(--bordo);
+    border-radius: 10px;
+    padding: .6rem 1.1rem;
+    box-shadow: 4px 4px 0 var(--inchiostro);
+    text-decoration: none;
+    transition: transform .08s ease, box-shadow .08s ease;
+}
+.btn-identita:hover { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--inchiostro); }
+.btn-identita:active { transform: translate(4px, 4px); box-shadow: 0 0 0 var(--inchiostro); }
+.btn-identita img {
+    height: 30px; width: 30px;
+    border-radius: 50%;
+    padding: 3px;
+    flex: none;
+}
+.btn-identita.spid { background: #1D82BF; } /* colore ufficiale SPID */
+.btn-identita.cie { background: var(--acqua-scuro); } /* colore ufficiale CIE */
+/* Logo SPID (spid-ico-circle-bb) e' un badge blu autonomo: sfondo bianco per staccarlo.
+   Logo CIE (Logo_CIE_ID) e' tutto bianco: va su cerchio blu CIE, altrimenti sparisce. */
+.btn-identita.spid img { background: #fff; }
+.btn-identita.cie img { background: #0662C6; }
+
+.profilo-tabella { border-collapse: collapse; width: 100%; }
+.profilo-tabella td, .profilo-tabella th {
+    border-bottom: 2px solid var(--carta-scura);
+    padding: .5rem .6rem;
+    text-align: left;
+    vertical-align: top;
+    font-size: .92rem;
+}
+.profilo-tabella th { white-space: nowrap; }
+
+code {
+    background: var(--carta-scura);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: .82rem;
+    word-break: break-all;
+}
+
+.ok { color: var(--acqua-scuro); font-weight: 600; }
+.err { color: var(--rosso-scuro); }
+.hint { color: var(--grigio-testo); font-size: .9rem; }
+
+.btn-fumetto.fumetto { background: var(--carta-scura); }
+.btn-fumetto.pericolo { background: var(--rosso); color: #fff; }

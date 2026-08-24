@@ -1,0 +1,56 @@
+@model LandingViewModel
+@{
+    ViewData["Title"] = "Accedi con SPID o CIE";
+}
+
+<section class="wrap accesso-hero" aria-labelledby="titolo-accesso">
+    <span class="sezione-eyebrow">Identità digitale</span>
+    <h1 class="display sezione-titolo" id="titolo-accesso">Accedi ai servizi online</h1>
+    <p class="sezione-sub">
+        Per usare i servizi online del Comune di Paperopoli serve l'identità digitale:
+        entra con SPID oppure con la Carta d'Identità Elettronica (CIE).
+    </p>
+
+    <div class="card-accesso">
+        <div class="login-buttons">
+            @foreach (var p in Model.Spid)
+            {
+                <a class="btn-identita spid" href="/oidc/rp/authorization?profile=spid&provider=@Uri.EscapeDataString(p.EntityId)@Html.Raw(Model.ReturnSuffix)">
+                    <img src="~/lib/spid-sp-access-button/img/spid-ico-circle-bb.svg" alt="" aria-hidden="true" />
+                    <span>Entra con SPID</span>
+                </a>
+            }
+            @foreach (var p in Model.Cie)
+            {
+                <a class="btn-identita cie" href="/oidc/rp/authorization?profile=cie&provider=@Uri.EscapeDataString(p.EntityId)@Html.Raw(Model.ReturnSuffix)">
+                    <img src="~/lib/cie-graphics/Logo_CIE_ID.svg" alt="" aria-hidden="true" />
+                    <span>Entra con CIE</span>
+                </a>
+            }
+        </div>
+    </div>
+
+    <div class="card-accesso">
+        <h2 class="display" style="font-size:1.3rem;">Credenziali di prova</h2>
+        <p class="hint" style="margin-bottom:.6rem;">
+            Ambiente di test su federazione locale. Dopo aver scelto SPID o CIE, inserisci
+            una di queste utenze nel gestore di identit&agrave;:
+        </p>
+        <table class="profilo-tabella">
+            <tr>
+                <th>Zio Paperone <span class="hint">(amministratore)</span></th>
+                <td>utente <code>paperone</code> &middot; password <code>numero1</code></td>
+            </tr>
+            <tr>
+                <th>Paperino <span class="hint">(cittadino)</span></th>
+                <td>utente <code>paperino</code> &middot; password <code>paperopoli</code></td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="card-accesso">
+        <p><b>client_id:</b> <code>@Model.ClientId</code></p>
+        <p>Entity configuration:
+            <a href="/.well-known/openid-federation">/.well-known/openid-federation</a></p>
+    </div>
+</section>

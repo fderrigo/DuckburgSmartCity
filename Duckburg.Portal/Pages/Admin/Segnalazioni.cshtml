@@ -1,0 +1,45 @@
+@page "/admin/segnalazioni"
+@model SegnalazioniModel
+@{
+    ViewData["Title"] = "Segnalazioni disservizi";
+}
+
+<table>
+    <thead>
+        <tr><th>Codice</th><th>Ricevuta</th><th>Categoria</th><th>Luogo</th><th>Oggetto</th><th>Allegati</th><th>Cittadino</th><th>Stato</th></tr>
+    </thead>
+    <tbody>
+        @foreach (var s in Model.Segnalazioni)
+        {
+            <tr>
+                <td><strong>@s.Codice</strong></td>
+                <td>@s.CreatedAt.ToLocalTime().ToString("dd/MM HH:mm")</td>
+                <td>@s.Categoria</td>
+                <td>@s.Indirizzo</td>
+                <td title="@s.Descrizione">@s.Oggetto</td>
+                <td>
+                    @foreach (var a in s.Allegati)
+                    {
+                        <a href="@a" target="_blank">📎</a>
+                    }
+                </td>
+                <td>@s.Nome<br /><span class="muted">@s.Email</span></td>
+                <td>
+                    <form method="post" asp-page-handler="Stato" asp-route-id="@s.Id" style="margin:0;display:flex;gap:.3rem;">
+                        <select name="stato" class="sm" style="padding:.25rem;border:2px solid var(--inchiostro);border-radius:.4rem;">
+                            @foreach (StatoSegnalazione st in Enum.GetValues<StatoSegnalazione>())
+                            {
+                                <option value="@st" selected="@(s.Stato == st)">@st</option>
+                            }
+                        </select>
+                        <button class="btn ghost sm" type="submit">OK</button>
+                    </form>
+                </td>
+            </tr>
+        }
+        @if (Model.Segnalazioni.Count == 0)
+        {
+            <tr><td colspan="8" class="muted">Nessuna segnalazione ricevuta.</td></tr>
+        }
+    </tbody>
+</table>

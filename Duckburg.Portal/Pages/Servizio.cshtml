@@ -1,0 +1,254 @@
+@page "/servizi/{slug}"
+@model ServizioModel
+@{
+    var s = Model.Servizio!;
+    ViewData["Title"] = s.Titolo;
+    ViewData["Nav"] = "servizi";
+    var uff = s.UnitaOrganizzativa;
+    var categoria = s.Categoria?.Nome ?? "Servizi al cittadino";
+    var haCosti = !string.IsNullOrWhiteSpace(s.Costi);
+}
+
+<script type="application/ld+json" data-element="metatag">
+{
+  "@@context": "https://schema.org",
+  "@@type": "GovernmentService",
+  "name": "@s.Titolo",
+  "serviceType": "@categoria",
+  "description": "@s.DescrizioneBreve",
+  "provider": { "@@type": "GovernmentOrganization", "name": "Comune di Paperopoli" },
+  "serviceOperator": { "@@type": "GovernmentOrganization", "name": "@(uff?.Nome ?? "Comune di Paperopoli")" },
+  "areaServed": { "@@type": "City", "name": "Paperopoli" },
+  "audience": { "@@type": "Audience", "audienceType": "Cittadini" },
+  "availableChannel": {
+    "@@type": "ServiceChannel",
+    "serviceUrl": "http://localhost:5100/servizi/@s.Slug",
+    "serviceLocation": {
+      "@@type": "Place",
+      "name": "@(uff?.Nome ?? "Palazzo Comunale")",
+      "address": {
+        "@@type": "PostalAddress",
+        "streetAddress": "@(string.IsNullOrWhiteSpace(uff?.Sede) ? "via dei Dobloni 13" : uff!.Sede)",
+        "postalCode": "00313",
+        "addressLocality": "Paperopoli"
+      }
+    }
+  }
+}
+</script>
+
+<nav class="wrap container-xl briciole" aria-label="Percorso di navigazione">
+    <ol class="breadcrumb" data-element="breadcrumb">
+        <li class="breadcrumb-item"><a href="/"><span>Home</span></a></li>
+        <li class="breadcrumb-item"><a href="/servizi"><span>Servizi</span></a></li>
+        <li class="breadcrumb-item"><a href="@(s.Categoria != null ? $"/servizi/categoria/{s.Categoria.Slug}" : "/servizi")"><span>@categoria</span></a></li>
+        <li class="breadcrumb-item active"><a><span aria-current="page">@s.Titolo</span></a></li>
+    </ol>
+</nav>
+
+<section class="wrap container-xl" aria-labelledby="titolo-servizio">
+    <div class="row">
+        <div class="col-12">
+            <span class="sezione-eyebrow">Scheda servizio</span>
+            <h1 class="display sezione-titolo" id="titolo-servizio" data-element="service-title">@s.Titolo</h1>
+            <ul class="list-unstyled"><li>
+                @if (s.Attivo)
+                {
+                    <div class="chip chip-simple chip-attivo" data-element="service-status">
+                        <span class="chip-label">Servizio attivo</span>
+                    </div>
+                }
+                else
+                {
+                    <div class="chip chip-simple chip-danger" data-element="service-status">
+                        <span class="chip-label">Servizio non attivo@(string.IsNullOrWhiteSpace(s.MotivoStato) ? "" : $": {s.MotivoStato}")</span>
+                    </div>
+                }
+            </li></ul>
+            <p class="sezione-sub" data-element="service-description">@(string.IsNullOrWhiteSpace(s.DescrizioneBreve) ? s.Sottotitolo : s.DescrizioneBreve)</p>
+        </div>
+    </div>
+
+    <div class="row scheda-servizio">
+        <!-- Indice della pagina (C.SI.1.3) -->
+        <aside class="col-12 col-lg-3 scheda-indice" aria-label="Indice della pagina">
+            <div class="pannello-lato">
+                <h2 class="display" style="font-size:1.1rem;">In questa pagina</h2>
+                <ul data-element="page-index" class="list-unstyled">
+                    <li><a href="#a-chi-e-rivolto"><span>A chi è rivolto</span></a></li>
+                    <li><a href="#descrizione"><span>Descrizione</span></a></li>
+                    <li><a href="#come-fare"><span>Come fare</span></a></li>
+                    <li><a href="#cosa-serve"><span>Cosa serve</span></a></li>
+                    <li><a href="#cosa-si-ottiene"><span>Cosa si ottiene</span></a></li>
+                    <li><a href="#tempi-e-scadenze"><span>Tempi e scadenze</span></a></li>
+                    @if (haCosti)
+                    {
+                        <li><a href="#quanto-costa"><span>Quanto costa</span></a></li>
+                    }
+                    <li><a href="#accedi-al-servizio"><span>Accedi al servizio</span></a></li>
+                    <li><a href="#condizioni-di-servizio"><span>Condizioni di servizio</span></a></li>
+                    <li><a href="#contatti"><span>Contatti</span></a></li>
+                </ul>
+            </div>
+        </aside>
+
+        <div class="col-12 col-lg-9 scheda-corpo">
+            <section id="a-chi-e-rivolto">
+                <h2>A chi è rivolto</h2>
+                <div data-element="service-addressed"><p>@s.AChiERivolto</p></div>
+            </section>
+
+            <section id="descrizione">
+                <h2>Descrizione</h2>
+                <p>@s.Descrizione</p>
+            </section>
+
+            <section id="come-fare">
+                <h2>Come fare</h2>
+                <div data-element="service-how-to"><p>@s.ComeFare</p></div>
+            </section>
+
+            <section id="cosa-serve">
+                <h2>Cosa serve</h2>
+                <div data-element="service-needed"><p>@s.CosaServe</p></div>
+            </section>
+
+            <section id="cosa-si-ottiene">
+                <h2>Cosa si ottiene</h2>
+                <div data-element="service-achieved"><p>@s.CosaSiOttiene</p></div>
+            </section>
+
+            <section id="tempi-e-scadenze">
+                <h2>Tempi e scadenze</h2>
+                <div data-element="service-calendar-text"><p>@s.Tempi</p></div>
+                @if (s.Scadenze.Count > 0)
+                {
+                    <div class="calendar-vertical" data-element="service-calendar-list">
+                        <ul class="list-unstyled scadenze-lista">
+                            @foreach (var sc in s.Scadenze)
+                            {
+                                <li class="scadenza-item"><span>@sc</span></li>
+                            }
+                        </ul>
+                    </div>
+                }
+            </section>
+
+            @if (haCosti)
+            {
+                <section id="quanto-costa">
+                    <h2>Quanto costa</h2>
+                    <div data-element="service-cost"><p>@s.Costi</p></div>
+                </section>
+            }
+
+            <section id="accedi-al-servizio">
+                <h2>Accedi al servizio</h2>
+                <p data-element="service-generic-access">
+                    Puoi rivolgerti direttamente allo sportello dell'ufficio responsabile negli orari di apertura,
+                    oppure prenotare un appuntamento scegliendo data e orario.
+                </p>
+                <button type="button" class="btn btn-fumetto"
+                        onclick="location.href='/prenota-appuntamento?servizio=@s.Slug';"
+                        data-element="service-booking-access">
+                    <span>Prenota appuntamento</span>
+                </button>
+                <a class="btn btn-fumetto btn-secondario" href="/assistente?q=@Uri.EscapeDataString("Informazioni sul servizio " + s.Titolo)">Chiedi all'assistente</a>
+            </section>
+
+            <section id="condizioni-di-servizio">
+                <h2>Condizioni di servizio</h2>
+                <p>@s.CondizioniServizio</p>
+                <div>
+                    <a href="@(string.IsNullOrWhiteSpace(s.CondizioniServizioUrl) ? "/note-legali" : s.CondizioniServizioUrl)" data-element="service-file">
+                        Leggi le condizioni di servizio
+                    </a>
+                </div>
+            </section>
+
+            <section id="contatti">
+                <h2>Contatti</h2>
+                @if (uff != null)
+                {
+                    <div class="card card-fumetto contatti-card">
+                        <div class="card-body">
+                            <p class="card-title">
+                                <a href="/amministrazione/uffici/@uff.Slug" data-element="service-area">@uff.Nome</a>
+                            </p>
+                            <div class="card-text">
+                                @if (!string.IsNullOrWhiteSpace(uff.Sede)) { <p><strong>Sede:</strong> @uff.Sede</p> }
+                                @if (!string.IsNullOrWhiteSpace(uff.Orari)) { <p><strong>Ricevimento:</strong> @uff.Orari</p> }
+                                @if (!string.IsNullOrWhiteSpace(uff.Telefono)) { <p><strong>Telefono:</strong> @uff.Telefono</p> }
+                                @if (!string.IsNullOrWhiteSpace(uff.Email)) { <p><strong>Email:</strong> @uff.Email</p> }
+                            </div>
+                        </div>
+                    </div>
+                }
+                @if (s.Argomento != null)
+                {
+                    <div class="scheda-meta">
+                        <span class="scheda-meta-label">Argomenti</span>
+                        <ul class="list-unstyled argomenti">
+                            <li><a class="argomento" href="/argomenti/@s.Argomento.Slug" data-element="service-topic"><span>@s.Argomento.Nome</span></a></li>
+                        </ul>
+                    </div>
+                }
+                @if (s.Fonti.Count > 0)
+                {
+                    <div class="scheda-meta">
+                        <span class="scheda-meta-label">Fonti certificate</span>
+                        <div class="scheda-fonti">
+                            @foreach (var f in s.Fonti) { <span class="fonte-chip">@f</span> }
+                        </div>
+                    </div>
+                }
+            </section>
+
+            <script>
+            // Indice "In questa pagina": evidenzia la sezione visibile durante lo scorrimento.
+            document.addEventListener('DOMContentLoaded', function () {
+                var links = document.querySelectorAll('ul[data-element="page-index"] a[href^="#"]');
+                var byId = {};
+                links.forEach(function (a) { byId[a.getAttribute('href').slice(1)] = a; });
+                var osservatore = new IntersectionObserver(function (voci) {
+                    voci.forEach(function (v) {
+                        if (v.isIntersecting && byId[v.target.id]) {
+                            links.forEach(function (a) { a.classList.remove('attivo'); });
+                            byId[v.target.id].classList.add('attivo');
+                        }
+                    });
+                }, { rootMargin: '-20% 0px -70% 0px' });
+                Object.keys(byId).forEach(function (id) {
+                    var sez = document.getElementById(id);
+                    if (sez) osservatore.observe(sez);
+                });
+            });
+            </script>
+
+            <!-- Funzione trasversale: prenotazione appuntamento (C.SI.2.1) -->
+            <div class="funzioni-trasversali">
+                <h2 class="display">Contatta il comune</h2>
+                <ul class="list-unstyled azioni-comune">
+                    <li>
+                        <a href="/faq">
+                            <span class="azione-icona" aria-hidden="true">❓</span>
+                            <span>Leggi le domande frequenti</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/prenota-appuntamento?servizio=@s.Slug" data-element="appointment-booking">
+                            <span class="azione-icona" aria-hidden="true">📅</span>
+                            <span>Prenota un appuntamento</span>
+                        </a>
+                    </li>
+                    <li>
+                        <span class="azione-statica">
+                            <span class="azione-icona" aria-hidden="true">☎</span>
+                            <span class="numero-verde">Numero verde 800-PAPERINO</span>
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>

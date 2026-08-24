@@ -1,0 +1,319 @@
+[
+ {
+  "model": "spid_cie_oidc_accounts.user",
+  "pk": 1,
+  "fields": {
+   "password": "pbkdf2_sha256$600000$Cy6dIFC18WBdmBnScDx33I$6Wm16BC67tdVxTUHgR3e9ja1QeLF5PoFDAH1Y3V/x6w=",
+   "last_login": "2022-04-23T15:44:06.367Z",
+   "is_superuser": true,
+   "username": "paperone",
+   "is_staff": true,
+   "date_joined": "2022-03-02T22:51:34.537Z",
+   "first_name": "Zio",
+   "last_name": "Paperone",
+   "is_active": true,
+   "email": "paperone@paperopoli.demo",
+   "origin": null,
+   "attributes": {
+    "https://attributes.eid.gov.it/fiscal_number": "TINIT-PPRPRN67T24D969P",
+    "given_name": "Paperon",
+    "family_name": "de' Paperoni",
+    "place_of_birth": {
+     "region": "PP",
+     "locality": "D969"
+    },
+    "birthdate": "1867-12-24",
+    "gender": "M",
+    "email": "paperone@paperopoli.demo",
+    "email_verified": "true",
+    "document_details": {
+     "type": "cartaIdentita",
+     "document_number": "AS09452389",
+     "issuer": {
+      "name": "ComuneNapoli"
+     },
+     "date_of_issuance": "2017-01-02",
+     "date_of_expiry": "2027-01-31"
+    },
+    "sub": "5f32567af7e0e77ea09de8521ae5f6a0fd6984176e99a6bc694a8a0198231dc3",
+    "username": "http://trust-anchor.paperopoli.derrigo.it:8000/oidc/op/__5f32567af7e0e77ea09de8521ae5f6a0fd6984176e99a6bc694a8a0198231dc3",
+    "phone_number": "39000000001",
+    "phone_number_verified": "true",
+    "https://attributes.eid.gov.it/e_delivery_service": "paperone@pec.paperopoli.demo",
+    "https://attributes.eid.gov.it/landline_number ": "12345678901",
+    "address": {
+     "street_address": "Collina Ammazzamotori 1",
+     "postal_code": "00313",
+     "locality": "Paperopoli",
+     "region": "Palmipedia",
+     "country_code": "PP"
+    },
+    "https://attributes.eid.gov.it/spid_code": "PPRN000000001A",
+    "https://attributes.eid.gov.it/company_name": "Deposito de' Paperoni S.p.A.",
+    "https://attributes.eid.gov.it/registered_office": {
+     "formatted": "Collina Ammazzamotori 1, Paperopoli"
+    },
+    "https://attributes.eid.gov.it/company_fiscal_number": "TINIT-PPRPRN67T24D969P",
+    "https://attributes.eid.gov.it/vat_number": "VATIT-00000000001"
+   },
+   "groups": [],
+   "user_permissions": []
+  }
+ },
+ {
+  "model": "spid_cie_oidc_accounts.user",
+  "pk": 2,
+  "fields": {
+   "password": "pbkdf2_sha256$600000$xSfhMW3rdoCre9CTNrridc$vwI5DAEQAvMMrbjwAfst672OdgUyumLTXTudD3atKLg=",
+   "last_login": "2022-04-23T15:48:20.734Z",
+   "is_superuser": false,
+   "username": "paperino",
+   "is_staff": false,
+   "date_joined": "2022-03-11T22:09:22.789Z",
+   "first_name": "Paperino",
+   "last_name": "de' Paperoni",
+   "is_active": true,
+   "email": "paperino@paperopoli.demo",
+   "origin": null,
+   "attributes": {
+    "https://attributes.eid.gov.it/fiscal_number": "TINIT-PPRPLN34H09D969Q",
+    "given_name": "Paolino",
+    "family_name": "Paperino",
+    "place_of_birth": {
+     "region": "PP",
+     "locality": "D969"
+    },
+    "birthdate": "1934-06-09",
+    "gender": "M",
+    "email": "paperino@paperopoli.demo",
+    "email_verified": "true",
+    "document_details": {
+     "type": "cartaIdentita",
+     "document_number": "AS01111189",
+     "issuer": {
+      "name": "ComuneRoma"
+     },
+     "date_of_issuance": "2017-01-02",
+     "date_of_expiry": "2027-01-31"
+    },
+    "sub": "5f32567af7e0e77ea09de8521ae5f6a0fd6984176e99a6bc694a8a0198231dc3",
+    "username": "http://trust-anchor.paperopoli.derrigo.it:8000/oidc/op/__5f32567af7e0e77ea09de8521ae5f6a0fd6984176e99a6bc694a8a0198231dc3",
+    "phone_number": "39000000002",
+    "phone_number_verified": "true",
+    "https://attributes.eid.gov.it/e_delivery_service": "paperino@pec.paperopoli.demo",
+    "address": {
+     "street_address": "Via dei Peschi 1313",
+     "postal_code": "00313",
+     "locality": "Paperopoli",
+     "region": "Palmipedia",
+     "country_code": "PP"
+    },
+    "https://attributes.eid.gov.it/spid_code": "PPRN000000002B",
+    "https://attributes.eid.gov.it/company_name": "Paperino Tuttofare",
+    "https://attributes.eid.gov.it/registered_office": {
+     "formatted": "Via dei Peschi 1313, Paperopoli"
+    },
+    "https://attributes.eid.gov.it/company_fiscal_number": "TINIT-PPRPLN34H09D969Q",
+    "https://attributes.eid.gov.it/vat_number": "VATIT-00000000002"
+   },
+   "groups": [],
+   "user_permissions": []
+  }
+ },
+ {
+  "model": "spid_cie_oidc_entity.federationentityconfiguration",
+  "pk": 1,
+  "fields": {
+   "created": "2022-03-16T09:48:07.724Z",
+   "modified": "2022-03-23T16:12:05.478Z",
+   "uuid": "dca85f48-0dbe-4b35-b74d-9ed42f9d00a7",
+   "sub": "http://cie-provider.paperopoli.derrigo.it:8002/oidc/op",
+   "default_exp": 2880,
+   "default_signature_alg": "RS256",
+   "authority_hints": [
+    "http://trust-anchor.paperopoli.derrigo.it:8000"
+   ],
+   "jwks_fed": [
+    {
+     "use": "sig",
+     "kty": "RSA",
+     "n": "tg3aE9fd6ltXzNrim_4CGKYWfC3nqc_tv4Xjaw473CcrfiqDzeTKHfRfbvbqb1DwmI4fvCOi51EVcmKLnThzXynAUpyUvswvL8_uzgDWO1RSmBG1L0RE-CkKih4keXh1ku9hNs1_V-82dK5oLOR-VJLnhZCqThR4HH6TqLjjWrrXfsHVRvauJilX6FxGb5JFoc27VxxdH2c6P2SHC9wuB8tnfG7OSrSD1g2h7lTXbIfm78a0op67d_jupzkoKoCTmzkR2zvwTVVDd99vkDLY2WXmb8hIwG6dQZXYlkhqAYKzTuTZ0tjVh0OrqfDxYtLH3wQzzaJORewZYqLyB09P8w",
+     "e": "AQAB",
+     "d": "QjX5eTwKJoDABu4YenlAE-zbwqADYBwSMJSmKDpOBPxt8f3OX-R0qb5Fsxq0GnYKesE9w3QGfDBeJ3K1qiFsvFB39NOjuVyTUMVD6cIeKAe73jiad61RlBuBDMh3pYHs6NqMtZy5UqbaXEdN9f3IAERJVadOeQUyxdI3K6bKcSVjuA-J_pKm2x-HOdKDSz9wRF9rsHQUIaUafcmlERohdhTU_f4VBvPjifgUswwlWoQNP-DN1JNgtOoCD2qdmi4wwZJvMolQXuTGLEhQwmpV5UiskhpGY43NcnjZqhfYcjSpjGegBxdNPUPa_WUgf7bzn_BU9yFWo4rJyTvoEMKjqQ",
+     "p": "34kWBXizCjTq5Qa1PujAJcNM-NCbMcs3QPTh0QVuepZEN1B0g8gtReEwLfXt--7D3N_MtwZkW7wBjZNDTzo4mtuNMdDkuT7Qr3zoJqXuS3mai8bNOUzmDzusAlxn98dWPW0Xd1wprnV9uac5aoSZrH3TGRjHCqTMvUsOmxI4mac",
+     "q": "0H6DX4XzwjYmoiAL_-oIo0VCwRZoi7TWtT2I2y3jE_HUvp1BzRe0QA1sA-yJAgVnPmxSpVy3mDGnM5vdDCFK1E8InHYgfkDYqi4r5DGKb_iErCPVEN7yekdy5Rzvs-Inb8Jc6ocEV8AD9VOlNySZzNMjaUSwq3hLEfB8wBQLyNU",
+     "kid": "ZhSoaOedVOsBw6m2vclwSWiqqnGeOStT-gUclot_67w"
+    }
+   ],
+   "jwks_core": [
+    {
+     "use": "sig",
+     "kty": "RSA",
+     "e": "AQAB",
+     "n": "rJoSYv1stwlbM11tR9SYGIJuzqlJe2bv2N35oPRbwV_epjNWvGG2ZqEj53YFMC8AMZNFhuLa_LNwr1kLVE-jXQe8xjiLhe7DgMf1OnSzq9yAEXVo19BPBwkgJe2jp9HIgM_nfbIsUbSSkFAM2CKvGb0Bk2GvvqXZ12P-fpbVyA9hIQr6rNTqnCGx2-v4oViGG4u_3iTw7D1ZvLWmrmZOaKnDAqG3MJSdQ-2ggQ-Aiahg48si9C9D_JgnBV9tJ2eCS58ZC6kVG5sftElQVdH6e26mz464TZj5QgCwZCTsAQfIvBoXSdCKxpnvsFfrajz4q9BiXAryxIOl5fLmCFVNhw",
+     "d": "ElMxTI03c59srWFn7s5lb4S5mvtiL9XX9SBsFmibLUaubtrYhJujL_Y_x51CI8F5tcm7Af0n3th2SEed6k-iOohNxIXQWmHlI9EW-iPVx5NbjX73qKIXIdoYLa6zR2gAb5yjKTc3eV1Aik3Vb0UPbh4hArLGY-lb3YBiTrJY9CpxFpZ1m8Q-KiTpt3EowutwWX1Awn5ZOhfQnEzzc-VKthmaLSt6UFUCz0U_DOnCWT37l8uOoBxZ3iABsvq_wt8AlH3ErrpjIcfRYZCx5MXeNCgPfj49YGY-bPO6LC-lQMQ_Ce_7Q8uSystQ-Rju7ikT4vDEtgIChog1nwcdDhM-MQ",
+     "p": "4hTyExGzt1ga8isTv5VOOx34UZIzurWAtrepA_sa2nHyjGG7UC410at2A2Kgs6O3KxnTU1IR2fnA0aG509729Z_2tdTrmsRDT_Ezob3zI9VAEe_UjHxwtNNM67OxCh-MJCDs7ZwCDOKkOYDB1Qjmr3ZPkf3-y1MEHRqw6j-Wy-U",
+     "q": "w3FdsulIIQCoMrCqTHhsL-CZKUip6zcRAx3dCRlBWX7opuPNCObf5NMcptN-gEKSn5yGLmwRa6-fMfV5fpX4L4gHta8C34N1bF9NLz0Apr6tAyps2RWtpTm3Qk0MAHoKsrpD2ywxlpnuEUSihaxRuNX3cdtC9G3waDli8j9_lPs",
+     "kid": "Pd2N9-TZz_AWS3GFCkoYdRaXXls8YPhx_d_Ez7JwjQI"
+    }
+   ],
+   "trust_marks": [],
+   "trust_mark_issuers": {},
+   "entity_type": "openid_provider",
+   "metadata": {
+    "federation_entity": {
+     "federation_resolve_endpoint": "http://cie-provider.paperopoli.derrigo.it:8002/oidc/op/resolve",
+     "organization_name": "CIE OIDC identity provider",
+     "homepage_uri": "http://cie-provider.paperopoli.derrigo.it:8002",
+     "policy_uri": "http://cie-provider.paperopoli.derrigo.it:8002/oidc/op/en/website/legal-information",
+     "logo_uri": "http://cie-provider.paperopoli.derrigo.it:8002/static/svg/logo-cie.svg",
+     "contacts": [
+      "tech@example.it"
+     ]
+    },
+    "openid_provider": {
+     "authorization_endpoint": "http://cie-provider.paperopoli.derrigo.it:8002/oidc/op/authorization",
+     "revocation_endpoint": "http://cie-provider.paperopoli.derrigo.it:8002/oidc/op/revocation",
+     "id_token_encryption_alg_values_supported": [
+      "RSA-OAEP"
+     ],
+     "id_token_encryption_enc_values_supported": [
+      "A128CBC-HS256"
+     ],
+     "token_endpoint": "http://cie-provider.paperopoli.derrigo.it:8002/oidc/op/token",
+     "userinfo_endpoint": "http://cie-provider.paperopoli.derrigo.it:8002/oidc/op/userinfo",
+     "introspection_endpoint": "http://cie-provider.paperopoli.derrigo.it:8002/oidc/op/introspection",
+     "claims_parameter_supported": true,
+     "contacts": [
+      "ops@https://idp.it"
+     ],
+     "code_challenge_methods_supported": [
+      "S256"
+     ],
+     "client_registration_types_supported": [
+      "automatic"
+     ],
+     "request_authentication_methods_supported": {
+      "ar": [
+       "request_object"
+      ]
+     },
+     "acr_values_supported": [
+      "https://www.spid.gov.it/SpidL1",
+      "https://www.spid.gov.it/SpidL2",
+      "https://www.spid.gov.it/SpidL3"
+     ],
+     "claims_supported": [
+      "given_name",
+      "family_name",
+      "birthdate",
+      "gender",
+      "phone_number",
+      "https://attributes.eid.gov.it/fiscal_number",
+      "phone_number_verified",
+      "email",
+      "address",
+      "document_details",
+      "https://attributes.eid.gov.it/physical_phone_number"
+     ],
+     "grant_types_supported": [
+      "authorization_code",
+      "refresh_token"
+     ],
+     "id_token_signing_alg_values_supported": [
+      "RS256",
+      "ES256"
+     ],
+     "issuer": "http://cie-provider.paperopoli.derrigo.it:8002/oidc/op",
+     "jwks_uri": "http://cie-provider.paperopoli.derrigo.it:8002/oidc/op/openid_provider/jwks.json",
+     "signed_jwks_uri": "http://cie-provider.paperopoli.derrigo.it:8002/oidc/op/openid_provider/jwks.jose",
+     "jwks": {
+      "keys": [
+       {
+        "kty": "RSA",
+        "use": "sig",
+        "e": "AQAB",
+        "n": "rJoSYv1stwlbM11tR9SYGIJuzqlJe2bv2N35oPRbwV_epjNWvGG2ZqEj53YFMC8AMZNFhuLa_LNwr1kLVE-jXQe8xjiLhe7DgMf1OnSzq9yAEXVo19BPBwkgJe2jp9HIgM_nfbIsUbSSkFAM2CKvGb0Bk2GvvqXZ12P-fpbVyA9hIQr6rNTqnCGx2-v4oViGG4u_3iTw7D1ZvLWmrmZOaKnDAqG3MJSdQ-2ggQ-Aiahg48si9C9D_JgnBV9tJ2eCS58ZC6kVG5sftElQVdH6e26mz464TZj5QgCwZCTsAQfIvBoXSdCKxpnvsFfrajz4q9BiXAryxIOl5fLmCFVNhw",
+        "kid": "Pd2N9-TZz_AWS3GFCkoYdRaXXls8YPhx_d_Ez7JwjQI"
+       }
+      ]
+     },
+     "scopes_supported": [
+      "openid",
+      "offline_access"
+     ],
+     "logo_uri": "http://cie-provider.paperopoli.derrigo.it:8002/static/images/logo-cie.png",
+     "organization_name": "SPID OIDC identity provider",
+     "op_policy_uri": "http://cie-provider.paperopoli.derrigo.it:8002/oidc/op/en/website/legal-information",
+     "request_parameter_supported": true,
+     "request_uri_parameter_supported": true,
+     "require_request_uri_registration": true,
+     "response_types_supported": [
+      "code"
+     ],
+     "response_modes_supported": [
+      "query",
+      "form_post"
+     ],
+     "subject_types_supported": [
+      "pairwise",
+      "public"
+     ],
+     "token_endpoint_auth_methods_supported": [
+      "private_key_jwt"
+     ],
+     "token_endpoint_auth_signing_alg_values_supported": [
+      "RS256",
+      "RS384",
+      "RS512",
+      "ES256",
+      "ES384",
+      "ES512"
+     ],
+     "userinfo_encryption_alg_values_supported": [
+      "RSA-OAEP",
+      "RSA-OAEP-256"
+     ],
+     "userinfo_encryption_enc_values_supported": [
+      "A128CBC-HS256",
+      "A192CBC-HS384",
+      "A256CBC-HS512",
+      "A128GCM",
+      "A192GCM",
+      "A256GCM"
+     ],
+     "userinfo_signing_alg_values_supported": [
+      "RS256",
+      "RS384",
+      "RS512",
+      "ES256",
+      "ES384",
+      "ES512"
+     ],
+     "request_object_encryption_alg_values_supported": [
+      "RSA-OAEP",
+      "RSA-OAEP-256"
+     ],
+     "request_object_encryption_enc_values_supported": [
+      "A128CBC-HS256",
+      "A192CBC-HS384",
+      "A256CBC-HS512",
+      "A128GCM",
+      "A192GCM",
+      "A256GCM"
+     ],
+     "request_object_signing_alg_values_supported": [
+      "RS256",
+      "RS384",
+      "RS512",
+      "ES256",
+      "ES384",
+      "ES512"
+     ]
+    }
+   },
+   "constraints": {},
+   "is_active": true
+  }
+ }
+]

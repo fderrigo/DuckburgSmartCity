@@ -1,0 +1,42 @@
+@page "/servizi/categoria/{slug}"
+@model ServiziCategoriaModel
+@{
+    var c = Model.Categoria;
+    ViewData["Title"] = c.Nome;
+    ViewData["Nav"] = "servizi";
+}
+
+<nav class="wrap container-xl briciole" aria-label="Percorso di navigazione">
+    <ol class="breadcrumb" data-element="breadcrumb">
+        <li class="breadcrumb-item"><a href="/"><span>Home</span></a></li>
+        <li class="breadcrumb-item"><a href="/servizi"><span>Servizi</span></a></li>
+        <li class="breadcrumb-item active"><a><span aria-current="page">@c.Nome</span></a></li>
+    </ol>
+</nav>
+
+<section class="wrap container-xl" aria-labelledby="titolo-categoria">
+    <span class="sezione-eyebrow">Servizi</span>
+    <h1 class="display sezione-titolo" id="titolo-categoria" data-element="page-name">@c.Nome</h1>
+    <p class="sezione-sub">@c.Descrizione</p>
+
+    <div class="card-grid row">
+        @foreach (var s in Model.Servizi)
+        {
+            <div class="col-12 col-md-4 mb-3">
+                <div class="card card-fumetto h-100">
+                    <div class="card-body">
+                        <span class="icona @s.ColoreIcona" aria-hidden="true">@PortalIcons.Render(s.IconaKey)</span>
+                        <h2 style="font-size:1.02rem;">
+                            <a href="/servizi/@s.Slug" data-element="service-link">@s.Titolo</a>
+                        </h2>
+                        <p>@s.DescrizioneBreve</p>
+                    </div>
+                </div>
+            </div>
+        }
+        @if (Model.Servizi.Count == 0)
+        {
+            <p>Nessun servizio in questa categoria. <a href="/servizi">Vedi tutti i servizi</a>.</p>
+        }
+    </div>
+</section>

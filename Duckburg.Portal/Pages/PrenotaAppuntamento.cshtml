@@ -1,0 +1,145 @@
+@page "/prenota-appuntamento"
+@model PrenotaAppuntamentoModel
+@{
+    ViewData["Title"] = "Prenota appuntamento";
+    ViewData["Nav"] = "servizi";
+    var it = new System.Globalization.CultureInfo("it-IT");
+}
+
+<nav class="wrap container-xl briciole" aria-label="Percorso di navigazione">
+    <ol class="breadcrumb" data-element="breadcrumb">
+        <li class="breadcrumb-item"><a href="/"><span>Home</span></a></li>
+        <li class="breadcrumb-item"><a href="/servizi"><span>Servizi</span></a></li>
+        <li class="breadcrumb-item active"><a><span aria-current="page">Prenota appuntamento</span></a></li>
+    </ol>
+</nav>
+
+<section class="wrap container-xl" aria-labelledby="titolo-prenota" style="max-width:820px;">
+    <span class="sezione-eyebrow">Servizi</span>
+    <h1 class="display sezione-titolo" id="titolo-prenota">Prenota appuntamento</h1>
+
+    @if (Model.Confermato != null)
+    {
+        var a = Model.Confermato;
+        <div class="card card-fumetto">
+            <div class="card-body">
+                <h2 style="font-size:1.3rem;">Appuntamento confermato! 🦆</h2>
+                <p>La prenotazione è completata: non serve nessuna ulteriore conferma.</p>
+                <dl>
+                    <dt>Codice prenotazione</dt><dd><strong class="fonte-chip">@a.Codice</strong></dd>
+                    <dt>Ufficio</dt><dd>@Model.UfficioScelto!.Nome — @Model.UfficioScelto.Sede</dd>
+                    <dt>Quando</dt><dd>@a.Data.ToString("dddd d MMMM yyyy", it), ore @a.Ora.ToString("HH:mm")</dd>
+                    <dt>Argomento</dt><dd>@a.Argomento</dd>
+                    <dt>Nominativo</dt><dd>@a.Nome</dd>
+                </dl>
+                <p>Porta con te un documento d'identità. Se non puoi presentarti, avvisa l'URP al numero verde 800-PAPERINO.</p>
+                <a class="btn btn-fumetto" href="/servizi">Torna ai servizi</a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <p class="sezione-sub">
+            Scegli l'ufficio, il giorno e l'orario: la prenotazione è immediata e
+            <strong>non richiede autenticazione</strong>.
+            @if (Model.ServizioContesto != null)
+            {
+                <text>Stai prenotando per il servizio <strong>@Model.ServizioContesto.Titolo</strong>.</text>
+            }
+        </p>
+
+        @if (Model.Errore != null)
+        {
+            <div class="alert alert-danger" role="alert">@Model.Errore</div>
+        }
+
+        <!-- Passo 1: ufficio e giorno (GET, ricarica gli orari disponibili) -->
+        <form method="get" class="card card-fumetto mb-3">
+            <div class="card-body row align-items-end">
+                <input type="hidden" name="servizio" value="@Model.Servizio" />
+                <div class="col-12 col-md-5 mb-2">
+                    <label class="form-label fw-bold" for="pren-ufficio">Ufficio</label>
+                    <select class="form-select" id="pren-ufficio" name="ufficio" required>
+                        <option value="">Scegli l'ufficio…</option>
+                        @foreach (var u in Model.Uffici)
+                        {
+                            <option value="@u.Slug" selected="@(Model.UfficioScelto?.Slug == u.Slug)">@u.Nome</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-12 col-md-4 mb-2">
+                    <label class="form-label fw-bold" for="pren-data">Giorno (lun–ven)</label>
+                    <input class="form-control" type="date" id="pren-data" name="data" required
+                           min="@Model.PrimaDataUtile.ToString("yyyy-MM-dd")"
+                           value="@(Model.DataScelta?.ToString("yyyy-MM-dd"))" />
+                </div>
+                <div class="col-12 col-md-3 mb-2">
+                    <button type="submit" class="btn btn-fumetto w-100">Vedi gli orari</button>
+                </div>
+            </div>
+        </form>
+
+        @if (Model.UfficioScelto != null && Model.DataScelta != null)
+        {
+            <!-- Passo 2: orario e dati (POST, completa la prenotazione) -->
+            <form method="post" class="card card-fumetto">
+                <div class="card-body">
+                    <input type="hidden" name="ufficio" value="@Model.UfficioScelto.Slug" />
+                    <input type="hidden" name="data" value="@Model.DataScelta.Value.ToString("yyyy-MM-dd")" />
+                    <input type="hidden" name="servizio" value="@Model.Servizio" />
+
+                    <h2 style="font-size:1.1rem;">
+                        @Model.UfficioScelto.Nome — @Model.DataScelta.Value.ToString("dddd d MMMM yyyy", it)
+                    </h2>
+
+                    @if (Model.Slot.Count == 0)
+                    {
+                        <p>Nessun orario disponibile in questo giorno: scegli un'altra data.</p>
+                    }
+                    else
+                    {
+                        <fieldset class="mb-3">
+                            <legend class="form-label fw-bold" style="font-size:1rem;">Orario disponibile</legend>
+                            <div class="slot-griglia">
+                                @foreach (var slot in Model.Slot)
+                                {
+                                    <label class="slot-chip">
+                                        <input type="radio" name="Ora" value="@slot.ToString("HH:mm")" required />
+                                        <span>@slot.ToString("HH:mm")</span>
+                                    </label>
+                                }
+                            </div>
+                        </fieldset>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold" for="pren-argomento">Argomento *</label>
+                            <input class="form-control" id="pren-argomento" name="Argomento" value="@Model.Argomento" required
+                                   placeholder="Es. TARI, carta d'identità…" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold" for="pren-motivo">Motivo della richiesta</label>
+                            <textarea class="form-control" id="pren-motivo" name="Motivo" rows="3"
+                                      placeholder="Spiega in breve di cosa hai bisogno">@Model.Motivo</textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-md-4 mb-3">
+                                <label class="form-label fw-bold" for="pren-nome">Nome e cognome *</label>
+                                <input class="form-control" id="pren-nome" name="Nome" value="@Model.Nome" autocomplete="name" required />
+                            </div>
+                            <div class="col-12 col-md-4 mb-3">
+                                <label class="form-label fw-bold" for="pren-email">Email</label>
+                                <input class="form-control" type="email" id="pren-email" name="Email" value="@Model.Email" autocomplete="email" />
+                            </div>
+                            <div class="col-12 col-md-4 mb-3">
+                                <label class="form-label fw-bold" for="pren-telefono">Telefono</label>
+                                <input class="form-control" type="tel" id="pren-telefono" name="Telefono" value="@Model.Telefono" autocomplete="tel" />
+                            </div>
+                        </div>
+                        <p class="form-text">* campi obbligatori. Serve almeno un contatto tra email e telefono.</p>
+                        <button type="submit" class="btn btn-fumetto">Completa la prenotazione</button>
+                    }
+                </div>
+            </form>
+        }
+    }
+</section>

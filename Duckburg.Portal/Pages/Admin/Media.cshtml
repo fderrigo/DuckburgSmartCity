@@ -1,0 +1,98 @@
+@page "/admin/media"
+@model MediaModel
+@{
+    ViewData["Title"] = "Libreria media";
+    if (Model.Picker) { Layout = null; }
+}
+
+@if (Model.Picker)
+{
+    <!-- Modalità picker: aperta in popup dall'editor per scegliere un file -->
+    <!DOCTYPE html>
+    <html lang="it">
+    <head>
+        <meta charset="utf-8" />
+        <title>Scegli un file · Libreria media</title>
+        <style>
+            body{font-family:system-ui,sans-serif;background:#f4efe1;margin:0;padding:1rem;color:#17120E;}
+            h1{font-size:1.1rem;margin:.2rem 0 1rem;}
+            .griglia{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.8rem;}
+            .item{background:#fff;border:2px solid #17120E;border-radius:.6rem;overflow:hidden;cursor:pointer;text-align:center;}
+            .item:hover{box-shadow:3px 3px 0 #F2B705;}
+            .item img{width:100%;height:90px;object-fit:cover;display:block;background:#eee;}
+            .item .doc{height:90px;display:flex;align-items:center;justify-content:center;font-size:2rem;background:#FFF6E0;}
+            .item span{display:block;font-size:.72rem;padding:.3rem;word-break:break-all;}
+            form.up{background:#fff;border:2px dashed #17120E;border-radius:.6rem;padding:.8rem;margin-bottom:1rem;display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;}
+            .btn{background:#F2B705;border:2px solid #17120E;border-radius:.5rem;padding:.4rem .8rem;font-weight:700;cursor:pointer;}
+        </style>
+    </head>
+    <body>
+        <h1>Scegli un file o caricane uno nuovo</h1>
+        <form class="up" method="post" enctype="multipart/form-data" asp-page-handler="Upload" asp-route-picker="true">
+            <input type="file" name="file" required />
+            <input type="text" name="alt" placeholder="Testo alternativo (per le immagini)" style="flex:1;min-width:160px;padding:.35rem;" />
+            <button class="btn" type="submit">Carica</button>
+        </form>
+        <div class="griglia">
+            @foreach (var m in Model.Files)
+            {
+                <div class="item" onclick="window.opener.duckMediaScelto('@m.Url'); window.close();" title="@m.FileName">
+                    @if (m.ContentType.StartsWith("image/"))
+                    {
+                        <img src="@m.Url" alt="@m.Alt" loading="lazy" />
+                    }
+                    else
+                    {
+                        <div class="doc">📄</div>
+                    }
+                    <span>@m.FileName</span>
+                </div>
+            }
+        </div>
+        @if (Model.Files.Count == 0) { <p>Libreria vuota: carica il primo file qui sopra.</p> }
+    </body>
+    </html>
+}
+else
+{
+    <div class="card" style="margin-bottom:1.2rem;">
+        <h2 style="margin-top:0;font-size:1.05rem;">Carica un nuovo file</h2>
+        <form method="post" enctype="multipart/form-data" asp-page-handler="Upload" class="upload-riga">
+            <input class="campo-file" type="file" name="file" required />
+            <input class="campo-testo" type="text" name="alt" placeholder="Testo alternativo (descrivi l'immagine per chi non la vede)" />
+            <button class="btn" type="submit">⬆️ Carica</button>
+        </form>
+        <p class="muted" style="margin:.5rem 0 0;font-size:.82rem;">Immagini (jpg, png, gif, webp, svg) e PDF, fino a 10 MB.</p>
+    </div>
+
+    <div class="media-griglia">
+        @foreach (var m in Model.Files)
+        {
+            <div class="media-item card">
+                @if (m.ContentType.StartsWith("image/"))
+                {
+                    <img src="@m.Url" alt="@m.Alt" loading="lazy" />
+                }
+                else
+                {
+                    <div class="media-doc">📄</div>
+                }
+                <div class="media-info">
+                    <strong title="@m.FileName">@m.FileName</strong>
+                    <span class="muted">@((m.Size / 1024.0).ToString("0")) KB</span>
+                    <div class="row-actions" style="margin-top:.4rem;">
+                        <button class="btn ghost sm" type="button" onclick="navigator.clipboard.writeText('@m.Url'); this.textContent='Copiato!';">Copia URL</button>
+                        <form method="post" asp-page-handler="Delete" asp-route-id="@m.Id"
+                              onsubmit="return confirm('Eliminare questo file dalla libreria?');" style="margin:0;">
+                            <button class="btn rosso sm" type="submit">Elimina</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    @if (Model.Files.Count == 0)
+    {
+        <p class="muted">La libreria è vuota. Carica il primo file per usarlo nei contenuti.</p>
+    }
+}

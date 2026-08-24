@@ -1,0 +1,70 @@
+@model ProfileViewModel
+@{
+    ViewData["Title"] = "Autenticazione riuscita";
+}
+
+<section class="wrap accesso-hero" aria-labelledby="titolo-profilo">
+    <span class="sezione-eyebrow">Identità digitale</span>
+    <h1 class="display sezione-titolo" id="titolo-profilo">Autenticazione riuscita</h1>
+
+    @if (Model.Refreshed)
+    {
+        <p class="ok">Token aggiornati via refresh_token</p>
+    }
+
+    <div class="card-accesso">
+        <table class="profilo-tabella">
+            <tr><th>Nome</th><td>@Model.Profile.GivenName</td></tr>
+            <tr><th>Cognome</th><td>@Model.Profile.FamilyName</td></tr>
+            <tr><th>Email</th><td>@Model.Profile.Email</td></tr>
+            <tr><th>Codice fiscale</th><td>@Model.Profile.FiscalNumber</td></tr>
+            <tr><th>sub</th><td><code>@Model.Profile.Sub</code></td></tr>
+        </table>
+    </div>
+
+    <div class="card-accesso">
+        <h2 class="display">Token</h2>
+        <table class="profilo-tabella">
+            <tr>
+                <th>access_token</th>
+                <td><code>@ProfileViewModel.Short(Model.AccessToken)</code> · scade tra @ProfileViewModel.Ttl(Model.AccessTokenExp)</td>
+            </tr>
+            <tr>
+                <th>refresh_token</th>
+                <td>
+                    @if (Model.HasRefreshToken)
+                    {
+                        <code>@ProfileViewModel.Short(Model.RefreshToken)</code><text> · scade tra @ProfileViewModel.Ttl(Model.RefreshTokenExp)</text>
+                    }
+                    else
+                    {
+                        <text>—</text>
+                    }
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="card-accesso">
+        <h2 class="display">Claim grezzi (userinfo)</h2>
+        <table class="profilo-tabella">
+            @foreach (var kv in Model.Profile.Raw)
+            {
+                <tr><th>@kv.Key</th><td><code>@kv.Value</code></td></tr>
+            }
+        </table>
+    </div>
+
+    <div class="card-accesso">
+        @if (Model.HasRefreshToken)
+        {
+            <a class="btn-fumetto fumetto" href="/oidc/rp/refresh">Refresh token</a>
+        }
+        else
+        {
+            <span class="hint">(refresh_token non emesso dall'OP)</span>
+        }
+        <a class="btn-fumetto pericolo" href="/oidc/rp/logout">Esci (revoca)</a>
+        <a class="btn-fumetto fumetto" href="/oidc/rp/landing">Torna all'accesso</a>
+    </div>
+</section>
