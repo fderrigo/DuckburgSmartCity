@@ -36,7 +36,7 @@
      "date_of_expiry": "2027-01-31"
     },
     "sub": "5f32567af7e0e77ea09de8521ae5f6a0fd6984176e99a6bc694a8a0198231dc3",
-    "username": "https://trust-anchor.paperopoli.derrigo.it/oidc/op/__5f32567af7e0e77ea09de8521ae5f6a0fd6984176e99a6bc694a8a0198231dc3",
+    "username": "http://trust-anchor.paperopoli.derrigo.it:8000/oidc/op/__5f32567af7e0e77ea09de8521ae5f6a0fd6984176e99a6bc694a8a0198231dc3",
     "phone_number": "39000000001",
     "phone_number_verified": "true",
     "https://attributes.eid.gov.it/e_delivery_service": "paperone@pec.paperopoli.demo",
@@ -97,7 +97,7 @@
      "date_of_expiry": "2027-01-31"
     },
     "sub": "5f32567af7e0e77ea09de8521ae5f6a0fd6984176e99a6bc694a8a0198231dc3",
-    "username": "https://trust-anchor.paperopoli.derrigo.it/oidc/op/__5f32567af7e0e77ea09de8521ae5f6a0fd6984176e99a6bc694a8a0198231dc3",
+    "username": "http://trust-anchor.paperopoli.derrigo.it:8000/oidc/op/__5f32567af7e0e77ea09de8521ae5f6a0fd6984176e99a6bc694a8a0198231dc3",
     "phone_number": "39000000002",
     "phone_number_verified": "true",
     "https://attributes.eid.gov.it/e_delivery_service": "paperino@pec.paperopoli.demo",
@@ -127,11 +127,11 @@
    "created": "2022-03-16T09:48:07.724Z",
    "modified": "2022-03-23T16:12:05.478Z",
    "uuid": "dca85f48-0dbe-4b35-b74d-9ed42f9d00a7",
-   "sub": "https://cie-provider.paperopoli.derrigo.it/oidc/op",
+   "sub": "http://cie-provider.paperopoli.derrigo.it:8002/oidc/op",
    "default_exp": 2880,
    "default_signature_alg": "RS256",
    "authority_hints": [
-    "https://trust-anchor.paperopoli.derrigo.it"
+    "http://trust-anchor.paperopoli.derrigo.it:8000"
    ],
    "jwks_fed": [
     {
@@ -162,27 +162,27 @@
    "entity_type": "openid_provider",
    "metadata": {
     "federation_entity": {
-     "federation_resolve_endpoint": "https://cie-provider.paperopoli.derrigo.it/oidc/op/resolve",
+     "federation_resolve_endpoint": "http://cie-provider.paperopoli.derrigo.it:8002/oidc/op/resolve",
      "organization_name": "CIE OIDC identity provider",
-     "homepage_uri": "https://cie-provider.paperopoli.derrigo.it",
-     "policy_uri": "https://cie-provider.paperopoli.derrigo.it/oidc/op/en/website/legal-information",
-     "logo_uri": "https://cie-provider.paperopoli.derrigo.it/static/svg/logo-cie.svg",
+     "homepage_uri": "http://cie-provider.paperopoli.derrigo.it:8002",
+     "policy_uri": "http://cie-provider.paperopoli.derrigo.it:8002/oidc/op/en/website/legal-information",
+     "logo_uri": "http://cie-provider.paperopoli.derrigo.it:8002/static/svg/logo-cie.svg",
      "contacts": [
       "tech@example.it"
      ]
     },
     "openid_provider": {
-     "authorization_endpoint": "https://cie-provider.paperopoli.derrigo.it/oidc/op/authorization",
-     "revocation_endpoint": "https://cie-provider.paperopoli.derrigo.it/oidc/op/revocation",
+     "authorization_endpoint": "http://cie-provider.paperopoli.derrigo.it:8002/oidc/op/authorization",
+     "revocation_endpoint": "http://cie-provider.paperopoli.derrigo.it:8002/oidc/op/revocation",
      "id_token_encryption_alg_values_supported": [
       "RSA-OAEP"
      ],
      "id_token_encryption_enc_values_supported": [
       "A128CBC-HS256"
      ],
-     "token_endpoint": "https://cie-provider.paperopoli.derrigo.it/oidc/op/token",
-     "userinfo_endpoint": "https://cie-provider.paperopoli.derrigo.it/oidc/op/userinfo",
-     "introspection_endpoint": "https://cie-provider.paperopoli.derrigo.it/oidc/op/introspection",
+     "token_endpoint": "http://cie-provider.paperopoli.derrigo.it:8002/oidc/op/token",
+     "userinfo_endpoint": "http://cie-provider.paperopoli.derrigo.it:8002/oidc/op/userinfo",
+     "introspection_endpoint": "http://cie-provider.paperopoli.derrigo.it:8002/oidc/op/introspection",
      "claims_parameter_supported": true,
      "contacts": [
       "ops@https://idp.it"
@@ -224,9 +224,9 @@
       "RS256",
       "ES256"
      ],
-     "issuer": "https://cie-provider.paperopoli.derrigo.it/oidc/op",
-     "jwks_uri": "https://cie-provider.paperopoli.derrigo.it/oidc/op/openid_provider/jwks.json",
-     "signed_jwks_uri": "https://cie-provider.paperopoli.derrigo.it/oidc/op/openid_provider/jwks.jose",
+     "issuer": "http://cie-provider.paperopoli.derrigo.it:8002/oidc/op",
+     "jwks_uri": "http://cie-provider.paperopoli.derrigo.it:8002/oidc/op/openid_provider/jwks.json",
+     "signed_jwks_uri": "http://cie-provider.paperopoli.derrigo.it:8002/oidc/op/openid_provider/jwks.jose",
      "jwks": {
       "keys": [
        {
@@ -242,9 +242,9 @@
       "openid",
       "offline_access"
      ],
-     "logo_uri": "https://cie-provider.paperopoli.derrigo.it/static/images/logo-cie.png",
+     "logo_uri": "http://cie-provider.paperopoli.derrigo.it:8002/static/images/logo-cie.png",
      "organization_name": "SPID OIDC identity provider",
-     "op_policy_uri": "https://cie-provider.paperopoli.derrigo.it/oidc/op/en/website/legal-information",
+     "op_policy_uri": "http://cie-provider.paperopoli.derrigo.it:8002/oidc/op/en/website/legal-information",
      "request_parameter_supported": true,
      "request_uri_parameter_supported": true,
      "require_request_uri_registration": true,

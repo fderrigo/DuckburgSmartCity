@@ -1,22 +1,22 @@
-# TLS e reverse proxy per la federazione SPID/CIE, su 217.61.62.212.
+# TLS e reverse proxy per la federazione SPID/CIE.
 #
-# I nomi dei servizi nel compose coincidono con gli hostname pubblici, quindi il
-# DNS interno di Docker li risolve senza bisogno di indirizzi o porte pubblicate.
+# Gli hostname arrivano dall'ambiente (deploy/.env), quindi questo file non
+# contiene riferimenti a un dominio specifico.
 #
 # Caddy ottiene i certificati da Let's Encrypt in automatico al primo avvio: i
-# record DNS devono gia' puntare qui e le porte 80 e 443 devono essere aperte,
-# altrimenti la richiesta fallisce e si consumano tentativi.
+# record DNS devono gia' puntare a questa macchina e le porte 80 e 443 devono
+# essere aperte, altrimenti la richiesta fallisce e si consumano tentativi.
 
 {
-	# Indirizzo per gli avvisi di scadenza dei certificati.
-	email filippo.derrigo@gmail.com
+	email {$ACME_EMAIL}
 }
 
 # Intestazioni comuni a tutti e tre gli host.
 (comuni) {
 	header {
-		# La demo non deve finire nei motori di ricerca: una pagina di login
-		# raggiunta senza contesto e' l'unico modo in cui puo' essere fraintesa.
+		# Una federazione dimostrativa non deve finire nei motori di ricerca: una
+		# pagina di login raggiunta senza contesto e' l'unico modo in cui puo'
+		# essere fraintesa per quella di un servizio reale.
 		X-Robots-Tag "noindex, nofollow"
 		Strict-Transport-Security "max-age=31536000"
 		X-Content-Type-Options "nosniff"
@@ -24,19 +24,19 @@
 	}
 }
 
-trust-anchor.paperopoli.derrigo.it {
+{$TRUST_ANCHOR_HOST} {
 	import comuni
-	reverse_proxy trust-anchor.paperopoli.derrigo.it:8000
+	reverse_proxy trust-anchor:8000
 }
 
-cie-provider.paperopoli.derrigo.it {
+{$CIE_PROVIDER_HOST} {
 	import comuni
-	reverse_proxy cie-provider.paperopoli.derrigo.it:8002
+	reverse_proxy cie-provider:8002
 }
 
-identity.paperopoli.derrigo.it {
+{$IDENTITY_HOST} {
 	import comuni
-	reverse_proxy identity.paperopoli.derrigo.it:8001
+	reverse_proxy identity:8001
 }
 
 # Chi arriva sull'IP nudo in http non deve vedere nulla.

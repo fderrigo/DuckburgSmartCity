@@ -48,3 +48,11 @@ Duckburg.Portal/wwwroot/media/
 /lg1-4-1.pdf
 /slide1-4-1.pdf
 /app-valutazione-modelli-docs.pdf
+
+# Deploy: la configurazione del singolo ambiente non e' versionata.
+# Il repository resta neutro, chi lo scarica lo deploya dove vuole.
+/deploy/.env
+/deploy/runtime/
+
+# Runbook operativo: contiene indirizzi, percorsi e dettagli del proprio server.
+/docs/RUNBOOK.md

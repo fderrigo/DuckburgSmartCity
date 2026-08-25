@@ -1,7 +1,7 @@
 {
-  "sub": "https://identity.paperopoli.derrigo.it",
+  "sub": "http://identity.paperopoli.derrigo.it:8001",
   "authority_hints": [
-    "https://trust-anchor.paperopoli.derrigo.it"
+    "http://trust-anchor.paperopoli.derrigo.it:8000"
   ],
   "default_signature_alg": "RS256",
   "trust_marks": [
@@ -12,11 +12,11 @@
   ],
   "metadata": {
     "federation_entity": {
-      "federation_resolve_endpoint": "https://identity.paperopoli.derrigo.it/resolve",
+      "federation_resolve_endpoint": "http://identity.paperopoli.derrigo.it:8001/resolve",
       "organization_name": "Comune di Paperopoli",
-      "homepage_uri": "https://identity.paperopoli.derrigo.it",
-      "policy_uri": "https://identity.paperopoli.derrigo.it/en/website/legal-information",
-      "logo_uri": "https://trust-anchor.paperopoli.derrigo.it/static/svg/spid-logo-c-lb.svg",
+      "homepage_uri": "http://identity.paperopoli.derrigo.it:8001",
+      "policy_uri": "http://identity.paperopoli.derrigo.it:8001/en/website/legal-information",
+      "logo_uri": "http://trust-anchor.paperopoli.derrigo.it:8000/static/svg/spid-logo-c-lb.svg",
       "contacts": [
         "servizionline@paperopoli.demo"
       ]
@@ -24,12 +24,12 @@
     "openid_relying_party": {
       "application_type": "web",
       "organization_name": "Comune di Paperopoli",
-      "client_id": "https://identity.paperopoli.derrigo.it",
+      "client_id": "http://identity.paperopoli.derrigo.it:8001",
       "client_registration_types": [
         "automatic"
       ],
-      "jwks_uri": "https://identity.paperopoli.derrigo.it/oidc/rp/openid_relying_party/jwks.json",
-      "signed_jwks_uri": "https://identity.paperopoli.derrigo.it/oidc/rp/openid_relying_party/jwks.jose",
+      "jwks_uri": "http://identity.paperopoli.derrigo.it:8001/oidc/rp/openid_relying_party/jwks.json",
+      "signed_jwks_uri": "http://identity.paperopoli.derrigo.it:8001/oidc/rp/openid_relying_party/jwks.jose",
       "jwks": {
         "keys": [
           {
@@ -59,7 +59,7 @@
         "authorization_code"
       ],
       "redirect_uris": [
-        "https://identity.paperopoli.derrigo.it/oidc/rp/callback"
+        "http://identity.paperopoli.derrigo.it:8001/oidc/rp/callback"
       ],
       "response_types": [
         "code"

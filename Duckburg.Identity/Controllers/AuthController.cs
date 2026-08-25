@@ -24,7 +24,7 @@ public sealed class AuthController(
         var prod = cfg.GetSection("Oidc:ProductionProviders").Get<List<ProviderOption>>()
             ?.FirstOrDefault(p => p.Profile == profile);
         return prod?.EntityId
-            ?? (profile == "cie" ? "https://cie-provider.paperopoli.derrigo.it/oidc/op" : "https://trust-anchor.paperopoli.derrigo.it/oidc/op");
+            ?? (profile == "cie" ? "http://cie-provider.paperopoli.derrigo.it:8002/oidc/op" : "http://trust-anchor.paperopoli.derrigo.it:8000/oidc/op");
     }
 
     [HttpGet("/oidc/rp/authorization")]
