@@ -6,21 +6,22 @@ namespace Duckburg.Identity.Controllers;
 
 /// <summary>RP authorization-code flow endpoints: begin, callback, refresh, logout.</summary>
 public sealed class AuthController(
-    RpConfig rp, OidcClient client, SsoHandoff sso, IConfiguration cfg, IWebHostEnvironment env,
+    RpConfig rp, OidcClient client, SsoHandoff sso, IConfiguration cfg,
     ILogger<AuthController> log) : Controller
 {
     private const string StateCookie = "rp_state";
 
-    // Fallback when the button did not pass an explicit ?provider=: prefer the local
-    // provider in Development, otherwise the first production provider of that profile.
+    // Ripiego per quando il pulsante non passa un ?provider= esplicito.
+    // Si preferiscono sempre i provider configurati in Oidc:LocalProviders, perche'
+    // sono quelli che la landing mostra davvero: legare la scelta all'ambiente
+    // faceva ripiegare la demo in produzione su un gestore CIE reale, che non
+    // risponde e produce un 404 sulla risoluzione della trust chain.
     private string ProviderFor(string profile)
     {
-        if (env.IsDevelopment())
-        {
-            var local = cfg.GetSection("Oidc:LocalProviders").Get<List<ProviderOption>>()
-                ?.FirstOrDefault(p => p.Profile == profile);
-            if (local is not null) return local.EntityId;
-        }
+        var local = cfg.GetSection("Oidc:LocalProviders").Get<List<ProviderOption>>()
+            ?.FirstOrDefault(p => p.Profile == profile);
+        if (local is not null) return local.EntityId;
+
         var prod = cfg.GetSection("Oidc:ProductionProviders").Get<List<ProviderOption>>()
             ?.FirstOrDefault(p => p.Profile == profile);
         return prod?.EntityId
