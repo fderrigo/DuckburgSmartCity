@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ChattyDuck.Quack\ChattyDuck.Quack.csproj" />
+    <ProjectReference Include="..\Duckburg.Portal.Cms\Duckburg.Portal.Cms.csproj" />
   </ItemGroup>
 
   <ItemGroup>

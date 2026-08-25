@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Modello dati del CMS del portale: entita', DbContext e opzioni.
+
+    Sta in una libreria e non dentro l'applicazione web perche' ha due consumatori:
+    il portale, che lo usa per servire le pagine, e l'adattatore di ingestione, che lo
+    legge per costruire il corpus. Far referenziare all'adattatore l'intera applicazione
+    web funzionava, ma si portava dietro anche i suoi appsettings.json, che in
+    pubblicazione entravano in conflitto con i propri.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>Duckburg.Portal.Cms</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.11" />
+  </ItemGroup>
+
+</Project>
