@@ -99,6 +99,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Duckburg.DockerLaunch", "Du
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Duckburg.Valutazione", "Duckburg.Valutazione\Duckburg.Valutazione.csproj", "{20AE5B09-54E3-4E42-BDE2-9606E6F321A0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChattyDuck.Corpus", "ChattyDuck.Corpus\ChattyDuck.Corpus.csproj", "{A2FC251E-B3D5-48CF-A84B-7877C674FD88}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -217,6 +219,18 @@ Global
 		{20AE5B09-54E3-4E42-BDE2-9606E6F321A0}.Release|x64.Build.0 = Release|Any CPU
 		{20AE5B09-54E3-4E42-BDE2-9606E6F321A0}.Release|x86.ActiveCfg = Release|Any CPU
 		{20AE5B09-54E3-4E42-BDE2-9606E6F321A0}.Release|x86.Build.0 = Release|Any CPU
+		{A2FC251E-B3D5-48CF-A84B-7877C674FD88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2FC251E-B3D5-48CF-A84B-7877C674FD88}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2FC251E-B3D5-48CF-A84B-7877C674FD88}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A2FC251E-B3D5-48CF-A84B-7877C674FD88}.Debug|x64.Build.0 = Debug|Any CPU
+		{A2FC251E-B3D5-48CF-A84B-7877C674FD88}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A2FC251E-B3D5-48CF-A84B-7877C674FD88}.Debug|x86.Build.0 = Debug|Any CPU
+		{A2FC251E-B3D5-48CF-A84B-7877C674FD88}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2FC251E-B3D5-48CF-A84B-7877C674FD88}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2FC251E-B3D5-48CF-A84B-7877C674FD88}.Release|x64.ActiveCfg = Release|Any CPU
+		{A2FC251E-B3D5-48CF-A84B-7877C674FD88}.Release|x64.Build.0 = Release|Any CPU
+		{A2FC251E-B3D5-48CF-A84B-7877C674FD88}.Release|x86.ActiveCfg = Release|Any CPU
+		{A2FC251E-B3D5-48CF-A84B-7877C674FD88}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -125,18 +125,35 @@ public sealed class CorpusService
             Works: works);
     }
 
+    /// <summary>
+    /// Parole troppo comuni per discriminare. Senza questo elenco una domanda come
+    /// "quanto costa il servizio mensa" viene vinta dai testi piu' lunghi, che
+    /// contengono molte volte "il" e "servizio" senza parlare di mense.
+    /// </summary>
+    private static readonly HashSet<string> Vuote = new(StringComparer.Ordinal)
+    {
+        "il", "lo", "la", "gli", "le", "un", "uno", "una", "di", "del", "dei", "della",
+        "delle", "dello", "da", "dal", "dai", "in", "nel", "nei", "nella", "con", "su",
+        "sul", "per", "tra", "fra", "ed", "che", "chi", "cosa", "come", "quanto",
+        "quanta", "quanti", "quante", "quando", "dove", "qual", "quale", "quali", "non",
+        "piu", "meno", "al", "allo", "alla", "ai", "agli", "alle", "si", "se", "sono",
+        "essere", "ho", "hai", "ha", "mi", "ti", "ci", "vi", "ne", "io", "tu", "lui",
+        "lei", "noi", "voi", "loro", "questo", "questa", "quello", "quella", "vorrei",
+        "posso", "devo", "mio", "mia", "sul", "sulla", "sui", "anche", "ma", "o", "e"
+    };
+
     public IReadOnlyList<SearchHit> Search(string query, int limit = 5)
     {
         var index = _snapshot.Index;
-        var terms = Normalize(query)
-            .Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-            .Where(t => t.Length > 1)
-            .Distinct()
-            .ToArray();
+        var tutti = Tokenizza(query).Where(t => t.Length > 1).Distinct().ToArray();
+        // Le parole vuote si scartano, ma se la domanda e' fatta solo di quelle si
+        // ripiega su tutto: meglio un risultato mediocre che nessun risultato.
+        var terms = tutti.Where(t => t.Length >= 3 && !Vuote.Contains(t)).ToArray();
+        if (terms.Length == 0) terms = tutti;
         if (terms.Length == 0) return [];
 
         return index
-            .Select(e => (e.Work, e.Passage, Score: Score(e.NormalizedText, Normalize(e.Work.Title), terms)))
+            .Select(e => (e.Work, e.Passage, Score: Score(e.Tokens, e.TitleTokens, terms, _snapshot.LunghezzaMedia)))
             .Where(e => e.Score > 0)
             .OrderByDescending(e => e.Score)
             .ThenBy(e => e.Passage.Seq)
@@ -147,18 +164,62 @@ public sealed class CorpusService
             .ToList();
     }
 
-    private static double Score(string normalizedText, string normalizedTitle, string[] terms)
+    /// <summary>
+    /// Punteggio di un passaggio, in stile BM25 semplificato.
+    /// <list type="bullet">
+    /// <item>confronto per parola intera, non per sottostringa: senza, "il" fa
+    /// punteggio dentro "facile" e i testi lunghi vincono per accumulo;</item>
+    /// <item>saturazione della frequenza: ripetere venti volte un termine non vale
+    /// venti volte una;</item>
+    /// <item>premio a chi copre piu' termini della domanda;</item>
+    /// <item>penalita' di lunghezza mite, per non far vincere il passaggio piu' corto
+    /// solo perche' e' corto.</item>
+    /// </list>
+    /// </summary>
+    private static double Score(string[] corpo, string[] titolo, string[] terms, double lunghezzaMedia)
     {
+        const double Saturazione = 1.2;
         double score = 0;
+        var coperti = 0;
+
         foreach (var term in terms)
         {
-            var occurrences = CountOccurrences(normalizedText, term);
-            if (occurrences == 0) continue;
-            score += occurrences;
-            if (normalizedTitle.Contains(term)) score += 2; // il titolo dell'area pesa di piu
+            var radice = term.Length >= 5 ? term[..^1] : term;
+
+            int esatte = 0, affini = 0;
+            foreach (var tok in corpo)
+            {
+                if (tok.Equals(term, StringComparison.Ordinal)) esatte++;
+                // Riduzione morfologica povera ma efficace: senza, "costa" non trova
+                // "costi" e "eventi" non trova "evento", che e' come si fanno le domande.
+                else if (term.Length >= 5 && tok.StartsWith(radice, StringComparison.Ordinal)) affini++;
+            }
+            var frequenza = esatte + 0.4 * affini;
+
+            // Il titolo dell'area e' un campo a se': dice di CHE COSA parla il passaggio,
+            // e vale come una corrispondenza forte ma non si somma per ripetizione. Senza
+            // questa separazione, tutti i passaggi di una scheda risultano ugualmente
+            // pertinenti e a decidere resta solo la lunghezza.
+            var nelTitolo = titolo.Contains(term)
+                || (term.Length >= 5 && titolo.Any(t => t.StartsWith(radice, StringComparison.Ordinal)));
+
+            if (frequenza <= 0 && !nelTitolo) continue;
+            coperti++;
+
+            if (frequenza > 0) score += frequenza * (Saturazione + 1) / (frequenza + Saturazione);
+            if (nelTitolo) score += 2;
         }
-        return score;
+
+        if (coperti == 0) return 0;
+        score += 1.5 * coperti;
+
+        var rapporto = corpo.Length / Math.Max(lunghezzaMedia, 1);
+        return score / (0.7 + 0.3 * rapporto);
     }
+
+    /// <summary>Normalizza e spezza in parole: e' su queste che si confronta.</summary>
+    private static string[] Tokenizza(string s) =>
+        Normalize(s).Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
     private static int CountOccurrences(string text, string term)
     {
@@ -188,20 +249,26 @@ public sealed class CorpusService
     /// <summary>Documento e indice pre-calcolato: si sostituiscono insieme, mai a meta'.</summary>
     private sealed record Snapshot(
         CorpusDocument Document,
-        IReadOnlyList<(Work Work, Passage Passage, string NormalizedText)> Index,
+        IReadOnlyList<(Work Work, Passage Passage, string[] Tokens, string[] TitleTokens)> Index,
+        double LunghezzaMedia,
         IReadOnlyList<string> Sorgenti,
         DateTime? CaricatoIl)
     {
         public static readonly Snapshot Vuoto = new(
             new CorpusDocument("vuoto", DateTime.UtcNow.ToString("O"), "", null, []),
-            [], [], null);
+            [], 1, [], null);
 
-        public static Snapshot Crea(CorpusDocument document, IReadOnlyList<string> sorgenti) =>
-            new(document,
-                document.Works
-                    .SelectMany(w => w.Passages.Select(p => (w, p, Normalize($"{w.Title} {p.Text}"))))
-                    .ToList(),
-                sorgenti,
-                DateTime.UtcNow);
+        public static Snapshot Crea(CorpusDocument document, IReadOnlyList<string> sorgenti)
+        {
+            var index = document.Works
+                .SelectMany(w =>
+                {
+                    var titolo = Tokenizza(w.Title);
+                    return w.Passages.Select(p => (w, p, Tokenizza(p.Text), titolo));
+                })
+                .ToList();
+            var media = index.Count == 0 ? 1 : index.Average(e => e.Item3.Length);
+            return new Snapshot(document, index, media, sorgenti, DateTime.UtcNow);
+        }
     }
 }

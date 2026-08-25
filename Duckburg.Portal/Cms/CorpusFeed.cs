@@ -98,7 +98,7 @@ public sealed class CorpusFeed
             b.Add("Riferimenti normativi", Join(s.Fonti));
             b.Add("Pagina sul portale", $"/servizi/{s.Slug}");
 
-            return b.Build(s.Titolo, "Scheda servizio del Comune di Paperopoli (CMS)");
+            return b.Build($"Servizio: {s.Titolo}", "Scheda servizio del Comune di Paperopoli (CMS)");
         }).ToList();
     }
 
@@ -136,7 +136,7 @@ public sealed class CorpusFeed
             b.Add("Biografia", p.Biografia);
             b.Add("Ricevimento", p.Ricevimento);
             b.Add("Contatti", $"Email: {p.Email}. Telefono: {p.Telefono}");
-            return b.Build(p.Nome, "Amministrazione del Comune di Paperopoli (CMS)");
+            return b.Build($"Amministrazione: {p.Nome}", "Amministrazione del Comune di Paperopoli (CMS)");
         }).ToList();
     }
 
@@ -153,7 +153,7 @@ public sealed class CorpusFeed
             b.Add("Sommario", n.Sommario);
             b.Add("Testo", Html(n.Corpo));
             b.Add("A cura di", n.ACuraDi?.Nome);
-            return b.Build(n.Titolo, "Novita' del Comune di Paperopoli (CMS)");
+            return b.Build($"{n.Tipo}: {n.Titolo}", "Novita' del Comune di Paperopoli (CMS)");
         }).ToList();
     }
 
@@ -171,7 +171,7 @@ public sealed class CorpusFeed
             b.Add("Dove", e.LuogoTesto);
             b.Add("Costo", e.Costo);
             b.Add("Contatti", e.Contatti);
-            return b.Build(e.Titolo, "Eventi del Comune di Paperopoli (CMS)");
+            return b.Build($"Evento: {e.Titolo}", "Eventi del Comune di Paperopoli (CMS)");
         }).ToList();
     }
 
@@ -189,7 +189,7 @@ public sealed class CorpusFeed
             b.Add("Modalita' di accesso", l.ModalitaAccesso);
             b.Add("Orari", l.Orari);
             b.Add("Contatti", l.Contatti);
-            return b.Build(l.Nome, "Luoghi del territorio di Paperopoli (CMS)");
+            return b.Build($"Luogo: {l.Nome}", "Luoghi del territorio di Paperopoli (CMS)");
         }).ToList();
     }
 
@@ -206,7 +206,7 @@ public sealed class CorpusFeed
             b.Add("Descrizione", Html(d.Descrizione));
             b.Add("Ufficio responsabile", d.UfficioResponsabile?.Nome);
             b.Add("File", d.UrlFile);
-            return b.Build(d.Titolo, "Documenti e dati del Comune di Paperopoli (CMS)");
+            return b.Build($"{d.Tipo}: {d.Titolo}", "Documenti e dati del Comune di Paperopoli (CMS)");
         }).ToList();
     }
 
@@ -220,7 +220,7 @@ public sealed class CorpusFeed
             var b = new PassageBuilder($"pagina:{p.Slug}", p.UpdatedAt);
             b.Add("Sottotitolo", p.Sottotitolo);
             b.Add("Testo", Html(p.Corpo));
-            return b.Build(p.Titolo, "Pagine del portale del Comune di Paperopoli (CMS)");
+            return b.Build($"Pagina: {p.Titolo}", "Pagine del portale del Comune di Paperopoli (CMS)");
         }).ToList();
     }
 

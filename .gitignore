@@ -56,3 +56,6 @@ Duckburg.Portal/wwwroot/media/
 
 # Runbook operativo: contiene indirizzi, percorsi e dettagli del proprio server.
 /docs/RUNBOOK.md
+
+# Corpus: archivio locale del servizio
+ChattyDuck.Corpus/App_Data/

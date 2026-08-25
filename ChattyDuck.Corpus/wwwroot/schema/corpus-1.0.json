@@ -1,0 +1,167 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chattyduck.dev/schema/corpus-1.0.json",
+  "title": "Corpus ChattyDuck 1.0",
+  "description": "Istantanea dei contenuti pubblicati di un ente. La produce un adattatore che conosce il CMS di partenza; il servizio del corpus non conosce alcun CMS. I termini sono quelli del modello Comuni: le informazioni di un ente sono le stesse ovunque, cambiano solo le strutture che le contengono.",
+  "type": "object",
+  "required": ["modello", "ente", "contenuti"],
+  "additionalProperties": false,
+  "properties": {
+    "modello": { "const": "1.0", "description": "Versione del modello, non del contenuto." },
+    "ente": {
+      "type": "object",
+      "required": ["id", "nome"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9-]{2,64}$" },
+        "nome": { "type": "string", "minLength": 1 },
+        "url": { "type": "string", "format": "uri" }
+      }
+    },
+    "generato_il": { "type": "string", "format": "date-time" },
+    "sorgente": {
+      "type": "object",
+      "required": ["sistema"],
+      "additionalProperties": false,
+      "properties": {
+        "sistema": { "type": "string", "description": "Il CMS di partenza, es. 'duckburg-cms'." },
+        "versione": { "type": "string" }
+      }
+    },
+    "disclaimer": { "type": "string" },
+    "principio": { "type": "string", "description": "Regola di comportamento che l'ente detta a chi consuma il corpus." },
+    "contenuti": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/contenuto" }
+    }
+  },
+
+  "$defs": {
+    "contenuto": {
+      "type": "object",
+      "required": ["id", "tipo", "titolo"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+:[a-z0-9._-]+$",
+          "description": "Stabile nel tempo, nella forma tipo:slug. Cambiarlo spezza le citazioni gia' date."
+        },
+        "tipo": { "$ref": "#/$defs/tipo" },
+        "titolo": { "type": "string", "minLength": 1 },
+        "sommario": { "type": "string" },
+        "url": { "type": "string", "format": "uri", "description": "URL pubblica canonica della pagina." },
+        "lingua": { "type": "string", "default": "it" },
+        "validita": { "$ref": "#/$defs/periodo" },
+        "aggiornato_il": { "type": "string", "format": "date-time" },
+        "attributi": { "type": "array", "items": { "$ref": "#/$defs/attributo" } },
+        "relazioni": { "type": "array", "items": { "$ref": "#/$defs/relazione" } },
+        "sezioni": { "type": "array", "items": { "$ref": "#/$defs/sezione" } },
+        "provenienza": { "$ref": "#/$defs/provenienza" }
+      }
+    },
+
+    "tipo": {
+      "description": "Tipi dell'architettura dell'informazione del modello Comuni. Valori fuori elenco sono accettati e conservati, ma non godono di filtri e confronti.",
+      "anyOf": [
+        {
+          "enum": [
+            "servizio", "evento", "luogo", "unita-organizzativa", "persona",
+            "documento", "novita", "pagina", "faq", "argomento", "categoria", "ente"
+          ]
+        },
+        { "type": "string" }
+      ]
+    },
+
+    "periodo": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Assente significa sempre valido. Serve a non far citare scadenze scadute.",
+      "properties": {
+        "da": { "type": ["string", "null"], "format": "date-time" },
+        "a": { "type": ["string", "null"], "format": "date-time" }
+      }
+    },
+
+    "attributo": {
+      "type": "object",
+      "required": ["chiave", "tipo", "valore"],
+      "additionalProperties": false,
+      "description": "Un fatto tipizzato, interrogabile senza leggere la prosa.",
+      "properties": {
+        "chiave": { "type": "string", "examples": ["costo", "scadenza", "orario", "prenotabile"] },
+        "etichetta": { "type": "string", "description": "Come l'ente lo chiama sul proprio sito." },
+        "tipo": {
+          "enum": ["testo", "numero", "booleano", "data", "periodo", "importo", "elenco", "tabella", "contatto", "indirizzo"]
+        },
+        "valore": {
+          "description": "La forma dipende da tipo. data: stringa ISO. importo: { valore, valuta }. elenco: array di stringhe. tabella: array di oggetti omogenei."
+        }
+      }
+    },
+
+    "relazione": {
+      "type": "object",
+      "required": ["tipo", "verso"],
+      "additionalProperties": false,
+      "description": "Un arco del grafo dei contenuti.",
+      "properties": {
+        "tipo": {
+          "anyOf": [
+            { "enum": ["erogato-da", "responsabile-di", "argomento", "categoria", "si-svolge-in", "riguarda", "allegato", "correlato"] },
+            { "type": "string" }
+          ]
+        },
+        "verso": { "type": "string", "pattern": "^[a-z0-9-]+:[a-z0-9._-]+$" },
+        "etichetta": { "type": "string" }
+      }
+    },
+
+    "sezione": {
+      "type": "object",
+      "required": ["chiave", "testo"],
+      "additionalProperties": false,
+      "description": "Prosa citabile. E' l'unita' che una risposta indica come fonte, quindi porta con se' tutto cio' che serve a verificarla.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Nella forma idContenuto#chiave. Se omesso lo compone il corpus."
+        },
+        "chiave": {
+          "type": "string",
+          "description": "Per una scheda servizio sono gli attributi obbligatori del modello Comuni.",
+          "examples": ["descrizione", "a-chi-e-rivolto", "come-fare", "cosa-serve", "cosa-si-ottiene", "tempi-e-scadenze", "costi", "condizioni-di-servizio", "riferimenti-normativi"]
+        },
+        "etichetta": { "type": "string" },
+        "ordine": { "type": "integer", "minimum": 0 },
+        "testo": { "type": "string", "minLength": 1, "description": "Testo semplice, non HTML." },
+        "versione": { "type": "string", "description": "Istante dell'ultima modifica del contenuto d'origine." },
+        "hash": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "description": "Se omesso lo calcola il corpus. Se dichiarato viene verificato, e un'istantanea con impronte incoerenti viene rifiutata."
+        }
+      }
+    },
+
+    "provenienza": {
+      "type": "object",
+      "required": ["sistema"],
+      "additionalProperties": false,
+      "description": "Da dove viene il contenuto e come e' stato ricavato.",
+      "properties": {
+        "sistema": { "type": "string" },
+        "id_sorgente": { "type": "string" },
+        "url_sorgente": { "type": "string", "format": "uri" },
+        "estratto_il": { "type": "string", "format": "date-time" },
+        "metodo": {
+          "enum": ["mappatura", "estrazione"],
+          "description": "mappatura: scritta da chi conosce il CMS di partenza. estrazione: ricavata automaticamente da una sorgente non strutturata, e allora la confidenza va dichiarata."
+        },
+        "confidenza": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    }
+  }
+}
