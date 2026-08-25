@@ -8,6 +8,6 @@
     <p class="sezione-sub">La sessione è stata chiusa e i token sono stati revocati.</p>
     <div class="card-accesso">
         <a class="btn-fumetto" href="/oidc/rp/landing">Accedi di nuovo</a>
-        <a class="btn-fumetto fumetto" href="http://localhost:5300/">Torna ai servizi online</a>
+        <a class="btn-fumetto fumetto" href="@(Cfg["Siti:ServiziOnline"] ?? "http://localhost:5300")/">Torna ai servizi online</a>
     </div>
 </section>

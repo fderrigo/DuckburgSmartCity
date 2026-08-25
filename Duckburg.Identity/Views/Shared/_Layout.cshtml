@@ -53,10 +53,10 @@
     <footer class="footer-sito">
         <div class="wrap">
             <div class="footer-legale">
-                <a href="http://localhost:5100/">Portale del cittadino</a>
-                <a href="http://localhost:5300/">Servizi online</a>
-                <a href="http://localhost:5100/privacy">Privacy</a>
-                <a href="http://localhost:5100/note-legali">Note legali</a>
+                <a href="@(Cfg["Siti:Portale"] ?? "http://localhost:5100")/">Portale del cittadino</a>
+                <a href="@(Cfg["Siti:ServiziOnline"] ?? "http://localhost:5300")/">Servizi online</a>
+                <a href="@(Cfg["Siti:Portale"] ?? "http://localhost:5100")/privacy">Privacy</a>
+                <a href="@(Cfg["Siti:Portale"] ?? "http://localhost:5100")/note-legali">Note legali</a>
             </div>
             <p class="footer-nota">
                 Il Comune di Paperopoli è un ente immaginario. Accesso di prova con la federazione

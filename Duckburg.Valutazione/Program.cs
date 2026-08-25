@@ -7,6 +7,9 @@ builder.Services.AddSingleton<ScanService>();
 
 var app = builder.Build();
 
+// Indirizzo del portale: cablarlo renderebbe il modulo inservibile fuori da localhost.
+var sitoPortale = builder.Configuration["Siti:Portale"] is { Length: > 0 } sp ? sp : "http://localhost:5100";
+
 var scans = app.Services.GetRequiredService<ScanService>();
 
 // I report generati dal validatore vengono serviti come file statici.
@@ -17,7 +20,7 @@ app.UseStaticFiles(new StaticFileOptions
     ServeUnknownFileTypes = true,
 });
 
-static string Pagina(string titolo, string corpo, int? refreshSeconds = null) => $$"""
+string Pagina(string titolo, string corpo, int? refreshSeconds = null) => $$"""
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -55,7 +58,7 @@ h2{font-size:1.2rem;} dt{font-weight:700;margin-top:.6rem;} dd{margin:0 0 .3rem;
     <span style="font-size:1.6rem;">🦆</span>
     <div><h1>Valutazione adesione al modello Comuni</h1>
     <small>Misura 1.4.1 · validatore ufficiale pa-website-validator-ng · Comune di Paperopoli (demo)</small></div>
-    <nav><a href="/">Scansioni</a><a href="/deviazioni">Deviazioni dichiarate</a><a href="http://localhost:5100/">↗ Portale</a></nav>
+    <nav><a href="/">Scansioni</a><a href="/deviazioni">Deviazioni dichiarate</a><a href="{{sitoPortale}}/">↗ Portale</a></nav>
 </header>
 <main>{{corpo}}</main>
 </body>
@@ -82,7 +85,7 @@ app.MapGet("/", (ScanService s) =>
         il report dei criteri di conformità della misura 1.4.1, pacchetto Cittadino Informato.</p>
         <form method="post" action="/avvia">
             <label for="website">Sito da valutare</label>
-            <input id="website" name="website" value="http://localhost:5100" required />
+            <input id="website" name="website" value="{{sitoPortale}}" required />
             <label for="accuracy">Accuratezza (numero di pagine analizzate)</label>
             <select id="accuracy" name="accuracy">
                 <option value="min">min · veloce, poche pagine</option>
@@ -128,7 +131,7 @@ app.MapPost("/avvia", (HttpRequest req, ScanService s) =>
 {
     var website = req.Form["website"].ToString();
     var accuracy = req.Form["accuracy"].ToString();
-    if (string.IsNullOrWhiteSpace(website)) website = "http://localhost:5100";
+    if (string.IsNullOrWhiteSpace(website)) website = sitoPortale;
     if (accuracy is not ("min" or "suggested" or "high" or "all")) accuracy = "suggested";
     var job = s.Start(website, accuracy);
     return Results.Redirect($"/scansione/{job.Id}");

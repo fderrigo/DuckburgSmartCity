@@ -11,8 +11,17 @@ namespace Duckburg.Portal.Cms;
 public sealed class CmsSeeder
 {
     private readonly CmsDbContext _db;
+    private readonly IConfiguration _cfg;
 
-    public CmsSeeder(CmsDbContext db) => _db = db;
+    public CmsSeeder(CmsDbContext db, IConfiguration cfg)
+    {
+        _db = db;
+        _cfg = cfg;
+    }
+
+    /// <summary>Indirizzo di un altro portale della soluzione, con ripiego locale.</summary>
+    private string Sito(string chiave, string locale) =>
+        _cfg[$"Siti:{chiave}"] is { Length: > 0 } v ? v : locale;
 
     public async Task SeedAsync()
     {
@@ -612,7 +621,7 @@ public sealed class CmsSeeder
             ("Note legali", "/note-legali", "legal-notes"),
             ("Domande frequenti (FAQ)", "/faq", "faq"),
             ("Segnalazione disservizio", "/segnalazione-disservizio", "report-inefficiency"),
-            ("Valutazione adesione al modello", "http://localhost:5400/", ""),
+            ("Valutazione adesione al modello", Sito("Valutazione", "http://localhost:5400/"), ""),
         };
         i = 0;
         foreach (var m in footer)

@@ -30,7 +30,7 @@
     <div class="header-slim">
         <div class="wrap container-xl">
             <span>@Get("ente.regione", "Regione Palmipedia") <span aria-hidden="true">·</span> ente immaginario</span>
-            <a href="http://localhost:5300/" data-element="personal-area-login" title="Servizi online: accesso con SPID/CIE">Area personale</a>
+            <a href="@(Cfg["Siti:ServiziOnline"] ?? "http://localhost:5300")/" data-element="personal-area-login" title="Servizi online: accesso con SPID/CIE">Area personale</a>
         </div>
     </div>
 

@@ -7,6 +7,9 @@
     var uff = s.UnitaOrganizzativa;
     var categoria = s.Categoria?.Nome ?? "Servizi al cittadino";
     var haCosti = !string.IsNullOrWhiteSpace(s.Costi);
+    // URL assoluto della pagina per il JSON-LD: preso dalla richiesta, cosi'
+    // resta corretto in qualunque ambiente senza configurazione.
+    var urlServizio = $"{Request.Scheme}://{Request.Host}/servizi/{s.Slug}";
 }
 
 <script type="application/ld+json" data-element="metatag">
@@ -22,7 +25,7 @@
   "audience": { "@@type": "Audience", "audienceType": "Cittadini" },
   "availableChannel": {
     "@@type": "ServiceChannel",
-    "serviceUrl": "http://localhost:5100/servizi/@s.Slug",
+    "serviceUrl": "@urlServizio",
     "serviceLocation": {
       "@@type": "Place",
       "name": "@(uff?.Nome ?? "Palazzo Comunale")",

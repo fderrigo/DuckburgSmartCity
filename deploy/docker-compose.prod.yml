@@ -87,6 +87,10 @@ services:
       - Oidc__LocalProviders__1__Profile=cie
       - Oidc__LocalProviders__1__Name=IPZP
       - Oidc__LocalProviders__1__EntityId=https://${CIE_PROVIDER_HOST}/oidc/op
+      # Link incrociati verso gli altri portali: cablarli renderebbe le pagine
+      # di Identity piene di collegamenti a localhost.
+      - Siti__Portale=${PORTALE_URL}
+      - Siti__ServiziOnline=${SERVIZIONLINE_URL}
       # Whitelist dei ritorni SSO: protezione contro l'open redirect.
       - Sso__AllowedReturnUrls__0=${SERVIZIONLINE_URL}/auth/callback
       - Sso__AllowedPostLogoutUrls__0=${SERVIZIONLINE_URL}/

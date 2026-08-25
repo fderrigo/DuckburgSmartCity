@@ -55,7 +55,7 @@
                     <span class="display testata-nome" style="display:block">Comune di Paperopoli</span>
                 </span>
             </a>
-            <form class="testata-cerca col" role="search" action="http://localhost:5100/assistente" method="get">
+            <form class="testata-cerca col" role="search" action="@(Cfg["Siti:Portale"] ?? "http://localhost:5100")/assistente" method="get">
                 <label class="visually-hidden" for="cerca-sito">Cerca nel sito: la domanda viene inviata all'assistente virtuale</label>
                 <input type="search" class="form-control" id="cerca-sito" name="q" placeholder="Cerca o chiedi…" />
                 <button type="submit" class="btn btn-fumetto" style="font-size:1rem; padding:.4rem .9rem;">Cerca</button>
@@ -75,10 +75,10 @@
                 <span aria-hidden="true">☰</span> Menu
             </button>
             <ul id="menu-principale" class="navbar-nav">
-                <li class="nav-item"><a class="nav-link" href="http://localhost:5100/">Portale del cittadino</a></li>
+                <li class="nav-item"><a class="nav-link" href="@(Cfg["Siti:Portale"] ?? "http://localhost:5100")/">Portale del cittadino</a></li>
                 <li class="nav-item"><a class="nav-link" href="/" aria-current="@Current("servizi")">Servizi online</a></li>
                 <li class="nav-item"><a class="nav-link" href="/area-personale" aria-current="@Current("area-personale")">Area personale</a></li>
-                <li class="nav-item nav-assistente"><a class="nav-link" href="http://localhost:5100/assistente"><span aria-hidden="true">💬</span>&nbsp;Assistente virtuale</a></li>
+                <li class="nav-item nav-assistente"><a class="nav-link" href="@(Cfg["Siti:Portale"] ?? "http://localhost:5100")/assistente"><span aria-hidden="true">💬</span>&nbsp;Assistente virtuale</a></li>
             </ul>
         </div>
     </nav>
@@ -111,8 +111,8 @@
                 <div class="col-12 col-md-3">
                     <h2>Collegamenti</h2>
                     <ul>
-                        <li><a href="http://localhost:5100/">Portale del cittadino</a></li>
-                        <li><a href="http://localhost:5100/servizi">Schede dei servizi</a></li>
+                        <li><a href="@(Cfg["Siti:Portale"] ?? "http://localhost:5100")/">Portale del cittadino</a></li>
+                        <li><a href="@(Cfg["Siti:Portale"] ?? "http://localhost:5100")/servizi">Schede dei servizi</a></li>
                         <li><a href="/area-personale">Area personale</a></li>
                     </ul>
                 </div>
@@ -126,9 +126,9 @@
                 </div>
             </div>
             <div class="footer-legale">
-                <a href="http://localhost:5100/dichiarazione-accessibilita">Dichiarazione di accessibilità</a>
-                <a href="http://localhost:5100/privacy">Privacy</a>
-                <a href="http://localhost:5100/note-legali">Note legali</a>
+                <a href="@(Cfg["Siti:Portale"] ?? "http://localhost:5100")/dichiarazione-accessibilita">Dichiarazione di accessibilità</a>
+                <a href="@(Cfg["Siti:Portale"] ?? "http://localhost:5100")/privacy">Privacy</a>
+                <a href="@(Cfg["Siti:Portale"] ?? "http://localhost:5100")/note-legali">Note legali</a>
             </div>
             <p class="footer-nota">
                 Il Comune di Paperopoli è un ente immaginario. Questo portale è una simulazione dimostrativa:
