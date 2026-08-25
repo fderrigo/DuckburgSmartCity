@@ -108,13 +108,24 @@ cp "$RADICE/Duckburg.Identity/rp_public.json" "$RUNTIME/rp_public.json"
 sostituisci "$RUNTIME/rp_public.json"
 echo "Generato runtime/rp_public.json."
 
-# --- 5. allineamento della catena di fiducia ----------------------------------
+# --- 5. allineamento delle chiavi ---------------------------------------------
+# Due allineamenti distinti, e servono entrambi:
+#   - la chiave di FEDERAZIONE, che il Trust Anchor attribuisce al RP e con cui
+#     ne verifica l'entity configuration
+#   - le chiavi CORE, che il RP pubblica nei propri metadati e con cui firma e
+#     cifra le richieste verso l'OP
+# Se le core restano quelle demo, la trust chain si risolve ma l'OP rifiuta la
+# richiesta con "Invalid jwk ... error=unauthorized_client", perche' il kid con
+# cui la richiesta e' firmata non compare fra quelli dichiarati.
 CHIAVI="$RP_SECRETS_DIR/rp_private_keys.json"
 if [ -f "$CHIAVI" ]; then
-    python3 - "$CHIAVI" "$RUNTIME/federation_authority/dumps/example.json" "https://$IDENTITY_HOST" <<'PY'
+    python3 - "$CHIAVI" "$RUNTIME/federation_authority/dumps/example.json" "https://$IDENTITY_HOST" "$RUNTIME/rp_public.json" <<'PY'
 import json, sys
-chiavi, dump, rp = sys.argv[1], sys.argv[2], sys.argv[3]
-fed = json.load(open(chiavi))["jwks_fed"]["keys"][0]
+chiavi, dump, rp, pubblico = sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]
+priv = json.load(open(chiavi))
+
+# Chiave di federazione nel dump del Trust Anchor.
+fed = priv["jwks_fed"]["keys"][0]
 pub = {"kty": fed["kty"], "e": fed["e"], "n": fed["n"], "kid": fed["kid"]}
 d = json.load(open(dump))
 n = 0
@@ -124,7 +135,26 @@ for r in d:
         f["jwks"] = [pub] if isinstance(f["jwks"], list) else {"keys": [pub]}
         n += 1
 json.dump(d, open(dump, "w"), indent=2, ensure_ascii=False)
-print(f"  Trust Anchor allineato alla chiave del RP ({n} record), kid {pub['kid']}")
+print(f"  Trust Anchor allineato alla chiave di federazione ({n} record), kid {fed['kid']}")
+
+# Chiavi core nei metadati pubblicati dal RP.
+def parte_pubblica(k):
+    out = {"kty": k["kty"], "e": k["e"], "n": k["n"], "kid": k["kid"]}
+    if k.get("use"): out["use"] = k["use"]
+    # La chiave di firma dichiara l'algoritmo, come nel formato atteso dall'OP.
+    out["alg"] = k.get("alg") or ("RS256" if k.get("use") == "sig" else None)
+    if out["alg"] is None: del out["alg"]
+    return out
+
+core = [parte_pubblica(k) for k in priv["jwks_core"]["keys"]]
+rpub = json.load(open(pubblico))
+meta = rpub.get("metadata", {}).get("openid_relying_party")
+if meta is not None and "jwks" in meta:
+    meta["jwks"] = {"keys": core} if isinstance(meta["jwks"], dict) else core
+    json.dump(rpub, open(pubblico, "w"), indent=2, ensure_ascii=False)
+    print("  Metadati del RP allineati alle chiavi core, kid " + ", ".join(k["kid"] for k in core))
+else:
+    print("  ATTENZIONE: nessun jwks in metadata.openid_relying_party di rp_public.json")
 PY
 else
     echo "  ATTENZIONE: $CHIAVI non trovato."
