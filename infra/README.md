@@ -10,9 +10,9 @@ locale riproducibile e autonoma (clone + run, senza dipendere da repo esterni a 
 - Licenza: **Apache-2.0** (vedi `UPSTREAM_LICENSE`). Solo materiale di test/demo.
 - Generazione: prodotta dallo script upstream `docker-prepare.sh`, che applica il
   rewrite degli host alle fixtures `examples/`:
-  - `127.0.0.1:8000` → `trust-anchor.paperopoli.derrigo.it:8000`
+  - `127.0.0.1:8000` → `trust-anchor.paperopoli.test:8000`
   - `127.0.0.1:8001` → `relying-party.org:8001`
-  - `127.0.0.1:8002` → `cie-provider.paperopoli.derrigo.it:8002`
+  - `127.0.0.1:8002` → `cie-provider.paperopoli.test:8002`
 
 ## Contenuto
 

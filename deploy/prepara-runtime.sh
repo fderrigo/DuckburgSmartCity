@@ -62,9 +62,9 @@ echo "Copiata infra/ in runtime/, senza database e log."
 sostituisci() {
     local f="$1"
     sed -i \
-        -e "s|http://identity\.paperopoli\.derrigo\.it:8001|https://$IDENTITY_HOST|g" \
-        -e "s|http://trust-anchor\.paperopoli\.derrigo\.it:8000|https://$TRUST_ANCHOR_HOST|g" \
-        -e "s|http://cie-provider\.paperopoli\.derrigo\.it:8002|https://$CIE_PROVIDER_HOST|g" \
+        -e "s|http://identity.paperopoli.test:8001|https://$IDENTITY_HOST|g" \
+        -e "s|http://trust-anchor.paperopoli.test:8000|https://$TRUST_ANCHOR_HOST|g" \
+        -e "s|http://cie-provider.paperopoli.test:8002|https://$CIE_PROVIDER_HOST|g" \
         "$f"
 }
 

@@ -28,7 +28,7 @@ try
     proc.WaitForExit();
 
     Console.WriteLine(proc.ExitCode == 0
-        ? "[Duckburg.DockerLaunch] Federazione avviata (trust-anchor:8000, cie-provider:8002, identity.paperopoli.derrigo.it:8001)."
+        ? "[Duckburg.DockerLaunch] Federazione avviata (trust-anchor:8000, cie-provider:8002, identity.paperopoli.test:8001)."
         : $"[Duckburg.DockerLaunch] docker compose ha restituito il codice {proc.ExitCode}. Controlla che Docker Desktop sia avviato.");
 }
 catch (Exception ex)

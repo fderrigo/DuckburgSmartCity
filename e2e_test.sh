@@ -34,11 +34,11 @@ CSRF2=$(python -c "import re;print(re.search(r'name=\"csrfmiddlewaretoken\" valu
 CB=$(curl -s -i -b $OPJ -c $OPJ -H "Host: $OP_AUTH" -H "Referer: http://$OP_AUTH/oidc/op/consent" \
   --data-urlencode "csrfmiddlewaretoken=$CSRF2" --data-urlencode "agree=True" \
   "http://localhost:$OP_PORT/oidc/op/consent" | grep -i "^location:" | sed 's/[Ll]ocation: //; s/\r//')
-CBURL=$(echo "$CB" | sed 's#http://identity.paperopoli.derrigo.it:8001#http://localhost:8001#')
+CBURL=$(echo "$CB" | sed 's#http://identity.paperopoli.test:8001#http://localhost:8001#')
 echo "callback: code received"
 
 say "5. RP callback (token + userinfo)"
-curl -s -c $RPJ -H "Host: identity.paperopoli.derrigo.it" "$CBURL" -o profile.html
+curl -s -c $RPJ -H "Host: identity.paperopoli.test" "$CBURL" -o profile.html
 grep -ioE "Autenticazione riuscita|Codice fiscale|refresh_token non emesso|scade tra [0-9]+s" profile.html | sort -u
 python -c "
 import re;h=open('profile.html',encoding='utf-8').read()
@@ -49,11 +49,11 @@ print('rp_state cookie set:', 'rp_state' in open('$RPJ',encoding='utf-8',errors=
 "
 
 say "6. RP refresh"
-curl -s -b $RPJ -c $RPJ -H "Host: identity.paperopoli.derrigo.it" "http://localhost:8001/oidc/rp/refresh" -o refresh.html
+curl -s -b $RPJ -c $RPJ -H "Host: identity.paperopoli.test" "http://localhost:8001/oidc/rp/refresh" -o refresh.html
 grep -ioE "Token aggiornati|Refresh failed|scade tra [0-9]+s" refresh.html | sort -u | head
 
 say "7. RP logout (revocation)"
-curl -s -b $RPJ -H "Host: identity.paperopoli.derrigo.it" "http://localhost:8001/oidc/rp/logout" -o logout.html
+curl -s -b $RPJ -H "Host: identity.paperopoli.test" "http://localhost:8001/oidc/rp/logout" -o logout.html
 grep -ioE "Logout effettuato|Token revocati" logout.html | sort -u
 
 rm -f login.html consent.html profile.html refresh.html logout.html $OPJ $RPJ

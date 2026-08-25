@@ -17,7 +17,7 @@ public sealed class SsoTokenValidator(IHttpClientFactory httpFactory, IConfigura
     private static readonly TimeSpan JwksTtl = TimeSpan.FromMinutes(10);
     private readonly SemaphoreSlim _lock = new(1, 1);
 
-    private string IdentityBaseUrl => cfg["Sso:IdentityBaseUrl"] ?? "http://identity.paperopoli.derrigo.it:8001";
+    private string IdentityBaseUrl => cfg["Sso:IdentityBaseUrl"] ?? "http://identity.paperopoli.test:8001";
     private string Issuer => cfg["Sso:Issuer"] ?? IdentityBaseUrl;
     private string Audience => cfg["Sso:Audience"] ?? "duckburg-servizionline";
 

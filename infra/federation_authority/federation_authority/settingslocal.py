@@ -26,7 +26,7 @@ ADMIN_PATH = 'admin/'
 APPEND_SLASH = False
 
 # required for onboarding checks and also for all the leafs
-OIDCFED_DEFAULT_TRUST_ANCHOR = "http://trust-anchor.paperopoli.derrigo.it:8000"
+OIDCFED_DEFAULT_TRUST_ANCHOR = "http://trust-anchor.paperopoli.test:8000"
 
 OIDCFED_TRUST_ANCHORS = [OIDCFED_DEFAULT_TRUST_ANCHOR]
 
@@ -38,10 +38,10 @@ OIDCFED_PROVIDER_MAX_REFRESH = 10 #used in SPID
 # for RP only
 OIDCFED_IDENTITY_PROVIDERS = {
   "spid": {
-    "http://trust-anchor.paperopoli.derrigo.it:8000/oidc/op" : OIDCFED_DEFAULT_TRUST_ANCHOR,
+    "http://trust-anchor.paperopoli.test:8000/oidc/op" : OIDCFED_DEFAULT_TRUST_ANCHOR,
   },
   "cie": {
-    "http://cie-provider.paperopoli.derrigo.it:8002/oidc/op" : OIDCFED_DEFAULT_TRUST_ANCHOR,
+    "http://cie-provider.paperopoli.test:8002/oidc/op" : OIDCFED_DEFAULT_TRUST_ANCHOR,
   }
 }
 

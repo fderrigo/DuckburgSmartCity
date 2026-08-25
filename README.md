@@ -13,7 +13,7 @@ Prototipo dimostrativo sul Comune di Paperopoli (fittizio). L'ente pubblica i pr
 | `Duckburg.Registry` | Server MCP dell'ente (porta 5000). Minimal API, trasporto Streamable HTTP su `/mcp`. Espone il tool `cerca(query, limite)` e le risorse del corpus. Il corpus è caricato in memoria in sola lettura dal feed del CMS del portale, con `corpus/out/corpus.json` come ripiego. Access token opzionale. |
 | `Duckburg.Portal` | Portale del Comune (porta 5100), Razor Pages in stile Designers Italia. Assistente come widget su tutte le pagine e a pagina intera su `/assistente`. Il "cittadino informato". |
 | `Duckburg.ServiziOnline` | Portale dei servizi online (porta 5300), stesso layout e assistente del Portal. Il "cittadino attivo" (PNRR Missione 1): Area personale accessibile solo con SPID/CIE tramite Duckburg.Identity. |
-| `Duckburg.Identity` | Sistema di accesso del Comune: Relying Party OpenID Connect Federation 1.0 (profilo SPID/CIE), fork di [SPID-CIE-OIDC](https://github.com/fderrigo/SPID-CIE-OIDC) in stile Paperopoli. Entity id `http://identity.paperopoli.derrigo.it:8001`; dopo il login rimanda al portale chiamante con un token firmato (SSO). |
+| `Duckburg.Identity` | Sistema di accesso del Comune: Relying Party OpenID Connect Federation 1.0 (profilo SPID/CIE), fork di [SPID-CIE-OIDC](https://github.com/fderrigo/SPID-CIE-OIDC) in stile Paperopoli. Entity id `http://identity.paperopoli.test:8001`; dopo il login rimanda al portale chiamante con un token firmato (SSO). |
 | `Duckburg.Valutazione` | Modulo di valutazione (porta 5400): wrapper web del validatore ufficiale del modello Comuni. |
 | `Duckburg.DockerLaunch` | Helper di avvio: esegue `docker compose up -d --build` per la federazione SPID/CIE prima degli altri progetti. Se Docker non è disponibile, avvisa e prosegue. |
 | `ChattyDuck.Quack` | Razor Class Library dell'assistente: UI chat, endpoint `POST /chat`, `GET /chat/usage`, `GET /debug/tools`, orchestrazione dei modelli. |
@@ -128,8 +128,8 @@ Il flusso di login usa la federazione OIDC italiana emulata in locale con l'infr
 
 ```
 Browser -> Duckburg.ServiziOnline (5300) -> /accedi
-        -> Duckburg.Identity (identity.paperopoli.derrigo.it:8001)  [RP federato]
-        -> OP SPID (trust-anchor.paperopoli.derrigo.it:8000) o OP CIE (cie-provider.paperopoli.derrigo.it:8002)
+        -> Duckburg.Identity (identity.paperopoli.test:8001)  [RP federato]
+        -> OP SPID (trust-anchor.paperopoli.test:8000) o OP CIE (cie-provider.paperopoli.test:8002)
         <- callback OIDC su Identity -> token SSO firmato -> /auth/callback su ServiziOnline
         -> sessione cookie -> /area-personale
 ```
@@ -159,13 +159,13 @@ Le pagine Django della federazione **non** sono del Comune di Paperopoli: rappre
 
 | Servizio | Ruolo reale (Italia) | Equivalente Palmipedia | Stile |
 |---|---|---|---|
-| `trust-anchor.paperopoli.derrigo.it` (onboarding) | AgID, autorità di federazione | **AIDP**: Agenzia per l'Identità Digitale di Palmipedia | navy/argento/oro, sigillo di Stato |
-| `trust-anchor.paperopoli.derrigo.it` (login SPID locale) | Gestore SPID privato (es. Poste, Aruba) | **BeccoID S.p.A.**: soggetto privato accreditato AIDP | viola/giallo, fumetto "da startup" |
-| `cie-provider.paperopoli.derrigo.it` (login CIE) | Istituto Poligrafico e Zecca dello Stato, per conto del Ministero dell'Interno | **IPZP**: Istituto Poligrafico e Zecca di Palmipedia, per conto del Ministero dell'Interno di Palmipedia | verde/oro, medaglione a conio |
+| `trust-anchor.paperopoli.test` (onboarding) | AgID, autorità di federazione | **AIDP**: Agenzia per l'Identità Digitale di Palmipedia | navy/argento/oro, sigillo di Stato |
+| `trust-anchor.paperopoli.test` (login SPID locale) | Gestore SPID privato (es. Poste, Aruba) | **BeccoID S.p.A.**: soggetto privato accreditato AIDP | viola/giallo, fumetto "da startup" |
+| `cie-provider.paperopoli.test` (login CIE) | Istituto Poligrafico e Zecca dello Stato, per conto del Ministero dell'Interno | **IPZP**: Istituto Poligrafico e Zecca di Palmipedia, per conto del Ministero dell'Interno di Palmipedia | verde/oro, medaglione a conio |
 
 Il test end-to-end della federazione (login CIE, refresh, logout via curl) è in `e2e_test.sh`.
 
-I dump del Trust Anchor registrano il RP con entity id `http://identity.paperopoli.derrigo.it:8001`; le chiavi private demo vivono in `secrets/` (solo il `.sample.json` è versionato).
+I dump del Trust Anchor registrano il RP con entity id `http://identity.paperopoli.test:8001`; le chiavi private demo vivono in `secrets/` (solo il `.sample.json` è versionato).
 
 ## Dettagli tecnici
 

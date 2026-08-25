@@ -1,12 +1,12 @@
 # SPID/CIE OIDC local test federation.
-#   trust-anchor.paperopoli.derrigo.it:8000  Federation Authority (Trust Anchor) - official italia image
-#   cie-provider.paperopoli.derrigo.it:8002  OpenID Provider (CIE)               - official italia image
-#   identity.paperopoli.derrigo.it:8001 .NET Relying Party (Duckburg.Identity)
+#   trust-anchor.paperopoli.test:8000  Federation Authority (Trust Anchor) - official italia image
+#   cie-provider.paperopoli.test:8002  OpenID Provider (CIE)               - official italia image
+#   identity.paperopoli.test:8001 .NET Relying Party (Duckburg.Identity)
 #
 # Add to your hosts file (see scripts/):
-#   127.0.0.1  trust-anchor.paperopoli.derrigo.it  identity.paperopoli.derrigo.it  cie-provider.paperopoli.derrigo.it
+#   127.0.0.1  trust-anchor.paperopoli.test  identity.paperopoli.test  cie-provider.paperopoli.test
 services:
-  trust-anchor.paperopoli.derrigo.it:
+  trust-anchor.paperopoli.test:
     # pinned by digest for reproducibility (the committed infra/ dumps must match this image)
     image: ghcr.io/italia/spid-cie-oidc-django@sha256:80b594f122139f9264a2ef035d975e29ef49dbf766b087a78f54f67dce24c5be
     ports:
@@ -21,7 +21,7 @@ services:
       python3 manage.py loaddata dumps/example.json &&
       python3 manage.py runserver 0.0.0.0:8000"
 
-  cie-provider.paperopoli.derrigo.it:
+  cie-provider.paperopoli.test:
     # pinned by digest for reproducibility (the committed infra/ dumps must match this image)
     image: ghcr.io/italia/spid-cie-oidc-django@sha256:80b594f122139f9264a2ef035d975e29ef49dbf766b087a78f54f67dce24c5be
     ports:
@@ -31,14 +31,14 @@ services:
     networks:
       - oidcfed
     depends_on:
-      - trust-anchor.paperopoli.derrigo.it
+      - trust-anchor.paperopoli.test
     command: >
       bash -c "cd /django-project/ &&
       python3 manage.py migrate &&
       python3 manage.py loaddata dumps/example.json &&
       python3 manage.py runserver 0.0.0.0:8002"
 
-  identity.paperopoli.derrigo.it:
+  identity.paperopoli.test:
     build:
       context: ./Duckburg.Identity
       dockerfile: Dockerfile
@@ -55,8 +55,8 @@ services:
     networks:
       - oidcfed
     depends_on:
-      - trust-anchor.paperopoli.derrigo.it
-      - cie-provider.paperopoli.derrigo.it
+      - trust-anchor.paperopoli.test
+      - cie-provider.paperopoli.test
 
 networks:
   oidcfed:

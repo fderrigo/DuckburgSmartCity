@@ -1,9 +1,41 @@
 # Adds the federation hostnames to the Windows hosts file. Run as Administrator.
 #   PowerShell (admin):  ./scripts/add-hosts.ps1
+#
+# I nomi usano il dominio .test, riservato dalla RFC 6761 e per definizione non
+# risolvibile su Internet: cosi' l'ambiente locale non puo' finire per sbaglio
+# contro un server reale.
 $ErrorActionPreference = "Stop"
 $hostsPath = "$env:SystemRoot\System32\drivers\etc\hosts"
-$names = @("trust-anchor.paperopoli.derrigo.it", "cie-provider.paperopoli.derrigo.it", "identity.paperopoli.derrigo.it", "servizionline.paperopoli.org")
+$names = @("trust-anchor.paperopoli.test", "cie-provider.paperopoli.test", "identity.paperopoli.test", "servizionline.paperopoli.test")
 
+# --- Pulizia delle voci del vecchio schema ------------------------------------
+# Prima gli hostname locali erano sotto un dominio reale. Se restano nel file,
+# dirottano su 127.0.0.1 anche il dominio vero, rendendo irraggiungibile un
+# eventuale deploy. Si rimuovono solo le righe i cui hostname appartengono tutti
+# al progetto: qualunque altra voce resta intatta.
+$righe = Get-Content $hostsPath
+$obsolete = @()
+$tenute = foreach ($riga in $righe) {
+    $senzaCommento = ($riga -split "#")[0].Trim()
+    if ($senzaCommento -match "paperopoli\.(derrigo\.it|org)") {
+        $campi = $senzaCommento -split "\s+" | Where-Object { $_ }
+        $hostnames = $campi | Select-Object -Skip 1
+        $tuttiDelProgetto = $hostnames.Count -gt 0 -and
+            -not ($hostnames | Where-Object { $_ -notmatch "paperopoli\.(derrigo\.it|org)$" })
+        if ($tuttiDelProgetto) { $obsolete += $riga; continue }
+    }
+    # Via anche il commento che introduceva quel blocco, se resta orfano.
+    if ($riga -match "^\s*#\s*SPID/CIE OIDC local test \(Duckburg\)\s*$") { continue }
+    $riga
+}
+
+if ($obsolete.Count -gt 0) {
+    Set-Content -Path $hostsPath -Value $tenute -Encoding ASCII
+    Write-Host "Rimosse $($obsolete.Count) voci del vecchio schema:" -ForegroundColor Yellow
+    $obsolete | ForEach-Object { Write-Host "  $_" }
+}
+
+# --- Voci correnti -------------------------------------------------------------
 $current = Get-Content $hostsPath -Raw
 $missing = $names | Where-Object { $current -notmatch [regex]::Escape($_) }
 if (-not $missing) {

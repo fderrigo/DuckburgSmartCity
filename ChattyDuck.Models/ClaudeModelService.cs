@@ -12,7 +12,7 @@ namespace ChattyDuck.Models;
 /// Client 2: API Anthropic. Claude e' MCP-nativo: si passa al modello l'endpoint del
 /// server MCP (connettore MCP della Messages API) e si collega da solo. NIENTE ponte.
 /// L'endpoint deve essere raggiungibile da Anthropic: in sviluppo il dominio ngrok,
-/// in produzione mcp.derrigo.it.
+/// in produzione il dominio pubblico del server MCP.
 /// </summary>
 public sealed class ClaudeModelService(
     IConfiguration configuration,
