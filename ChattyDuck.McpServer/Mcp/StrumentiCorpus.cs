@@ -21,6 +21,21 @@ namespace ChattyDuck.McpServer.Mcp;
 [McpServerToolType]
 public sealed class StrumentiCorpus
 {
+    /// <summary>
+    /// L'indice, o un errore che dice cosa sta succedendo.
+    /// <para>
+    /// Restituire un elenco vuoto sarebbe la cosa peggiore: il modello lo leggerebbe come
+    /// "questa informazione non esiste" e risponderebbe che il Comune non se ne occupa.
+    /// Un errore esplicito lo porta invece a dire che il servizio si sta allineando, che
+    /// e' la verita'.
+    /// </para>
+    /// </summary>
+    private static IndiceCorpus Disponibile(ServizioCorpus corpus) =>
+        corpus.Indice ?? throw new McpException(
+            "Il corpus dell'ente non e' ancora disponibile: allineamento in corso. " +
+            "Dillo all'utente e invitalo a riprovare fra qualche istante. " +
+            "Non rispondere con informazioni che non provengono dal corpus.");
+
     [McpServerTool(Name = "cerca")]
     [Description(
         "Cerca fra i contenuti certificati del Comune. Restituisce le schede pertinenti, " +
@@ -34,7 +49,7 @@ public sealed class StrumentiCorpus
         [Description("Facoltativo: restringe a un tipo, es. 'servizio', 'evento', 'unita-organizzativa'")] string? tipo = null,
         [Description("Numero massimo di schede da restituire (default 4)")] int? limite = null,
         [Description("Sezioni per scheda (default 3)")] int? sezioni = null)
-        => corpus.Indice.Cerca(query, tipo,
+        => Disponibile(corpus).Cerca(query, tipo,
             Math.Clamp(limite ?? 4, 1, 10),
             Math.Clamp(sezioni ?? 3, 1, 12));
 
@@ -47,7 +62,8 @@ public sealed class StrumentiCorpus
         ServizioCorpus corpus,
         [Description("Id del contenuto, es. 'servizio:tari'")] string id)
     {
-        var c = corpus.Indice.Scheda(id) ?? throw new McpException($"Contenuto non trovato: {id}");
+        var indice = Disponibile(corpus);
+        var c = indice.Scheda(id) ?? throw new McpException($"Contenuto non trovato: {id}");
         return new
         {
             c.Id, c.Tipo, c.Titolo, c.Sommario, c.Url,
@@ -55,7 +71,7 @@ public sealed class StrumentiCorpus
             validita = c.Validita,
             attributi = c.Attributi,
             sezioni = c.Sezioni,
-            collegati = corpus.Indice.Collegati(id),
+            collegati = indice.Collegati(id),
         };
     }
 
@@ -71,7 +87,7 @@ public sealed class StrumentiCorpus
         [Description("Facoltativo: id di una scheda, per elencare i contenuti collegati")] string? collegatoA = null,
         [Description("Se true esclude i contenuti fuori dal periodo di validita' (default true)")] bool? soloValidi = null,
         [Description("Numero massimo di voci (default 50)")] int? limite = null)
-        => corpus.Indice.Elenca(tipo, collegatoA, soloValidi ?? true, Math.Clamp(limite ?? 50, 1, 300));
+        => Disponibile(corpus).Elenca(tipo, collegatoA, soloValidi ?? true, Math.Clamp(limite ?? 50, 1, 300));
 }
 
 /// <summary>Le risorse: servono a un client per capire cosa c'e' dentro, senza interrogare.</summary>
@@ -85,6 +101,7 @@ public sealed class RisorseCorpus
     public static string Indice(ServizioCorpus corpus)
     {
         var i = corpus.Indice;
+        if (i is null) return System.Text.Json.JsonSerializer.Serialize(new { stato = "allineamento", messaggio = corpus.Descrizione }, Leggibile);
         return System.Text.Json.JsonSerializer.Serialize(new
         {
             ente = i.Istantanea.Ente,
@@ -101,7 +118,8 @@ public sealed class RisorseCorpus
     [Description("Una scheda intera del corpus, con fatti, sezioni e collegamenti.")]
     public static string Contenuto(ServizioCorpus corpus, string id)
     {
-        var c = corpus.Indice.Scheda(id) ?? throw new McpException($"Contenuto non trovato: {id}");
+        var c = (corpus.Indice ?? throw new McpException(corpus.Descrizione)).Scheda(id)
+            ?? throw new McpException($"Contenuto non trovato: {id}");
         return System.Text.Json.JsonSerializer.Serialize(c, Leggibile);
     }
 }

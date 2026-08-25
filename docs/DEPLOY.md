@@ -34,18 +34,29 @@ una superficie di scrittura senza dare nulla in cambio.
 Le prime sette sono applicazioni .NET: girano ovunque giri ASP.NET Core, IIS compreso.
 Le ultime due richiedono Docker.
 
-## Ordine di avvio
+## Avvio: nessun ordine richiesto
 
-Conta, e non e' un dettaglio: **il server MCP non parte se il corpus non risponde**, per
-scelta. Rispondere ai cittadini su un corpus vuoto sarebbe peggio che non rispondere.
+I servizi partono in qualunque ordine e si allineano da soli. Non e' una comodita': un
+sistema che pretende un ordine di avvio si mette giu' da solo al primo riavvio della
+macchina fatto nel modo sbagliato.
 
-1. Corpus
-2. Ingestione, e una prima esecuzione (`POST /esegui`)
-3. Server MCP
-4. Portale e servizi online
+Cosa succede se il corpus non c'e' ancora:
 
-Al primo deploy il corpus e' vuoto finche' l'ingestione non gira: se avvii il server MCP
-prima, si ferma con un errore che dice esattamente questo.
+- **il server MCP parte lo stesso** e riprova ad allinearsi con attesa crescente, da due
+  secondi a un minuto. Finche' non ci riesce, `/health` risponde `503` con stato
+  `allineamento`, e gli strumenti MCP restituiscono un errore esplicito che dice al
+  modello di avvisare l'utente e di non rispondere con informazioni non verificate.
+- **l'ingestione insiste** finche' la prima esecuzione non riesce, invece di aspettare
+  l'intero intervallo. Al primo avvio il CMS o il corpus potrebbero non essere pronti, e
+  quindici minuti di silenzio non li avrebbe decisi nessuno.
+
+Perche' gli strumenti restituiscono un errore e non un elenco vuoto: un elenco vuoto il
+modello lo legge come "questa informazione non esiste", e risponderebbe al cittadino che
+il Comune non se ne occupa. Un errore esplicito lo porta a dire che il servizio si sta
+allineando, che e' la verita'.
+
+Quando un servizio riparte, gli altri se ne accorgono da soli entro
+`Corpus:RiallineamentoMinuti`. Per non aspettare, `POST /corpus/reload`.
 
 ## Corpus
 
@@ -183,14 +194,17 @@ ricrea il container del Trust Anchor.
 ## Verifica
 
 ```bash
-# la catena, dal basso
 curl -s http://<host-corpus>:5200/health         # ente e versione dell'istantanea
-curl -s http://<host-ingestione>:5250/           # esito dell'ultima esecuzione
-curl -s https://<dominio-mcp>/health             # contenuti e sezioni indicizzati
+curl -s http://<host-ingestione>:5250/health     # esito dell'ultima esecuzione
+curl -s https://<dominio-mcp>/health             # stato e numeri dell'indice
 ```
 
-I tre numeri devono coincidere. Se il server MCP ne ha meno del corpus, non si e' ancora
-riallineato.
+Ognuno dichiara il proprio stato. `503` con stato `allineamento` o `avvio` significa che
+il servizio e' partito e sta ancora lavorando: e' la condizione normale dei primi secondi,
+non un guasto. Diventa un problema solo se dura.
+
+I numeri di contenuti e sezioni devono coincidere fra corpus e server MCP. Se il server
+MCP ne ha meno, non si e' ancora riallineato.
 
 Da browser, il giro che tocca tutto: portale, widget della chat che risponde citando le
 fonti, `/admin` con una modifica che compare nelle risposte dopo l'ingestione, servizi

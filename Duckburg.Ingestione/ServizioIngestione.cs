@@ -89,6 +89,12 @@ public sealed class ServizioIngestione(
 /// resta un servizio autosufficiente: si installa dove serve e si porta dietro la propria
 /// pianificazione, che e' quello che serve quando gira dentro la rete di un cliente.
 /// </para>
+/// <para>
+/// Insiste finche' la prima esecuzione non riesce, con attesa crescente. Al primo avvio
+/// il corpus o il CMS potrebbero non essere ancora pronti, e aspettare l'intero
+/// intervallo lascerebbe l'assistente senza contenuti per un quarto d'ora buono senza
+/// che nessuno lo abbia deciso.
+/// </para>
 /// </summary>
 public sealed class Pianificatore(
     ServizioIngestione ingestione, IConfiguration cfg, ILogger<Pianificatore> log) : BackgroundService
@@ -96,20 +102,29 @@ public sealed class Pianificatore(
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         var minuti = cfg.GetValue<int?>("Ingestione:IntervalloMinuti") ?? 15;
+
+        // Prima esecuzione: si insiste finche' non riesce.
+        var attesa = TimeSpan.FromSeconds(5);
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            var esito = await ingestione.Esegui(stoppingToken);
+            if (esito.Riuscita) break;
+
+            log.LogInformation(
+                "Prima ingestione non riuscita ({Errore}). Riprovo fra {Secondi} secondi.",
+                esito.Errore, (int)attesa.TotalSeconds);
+
+            try { await Task.Delay(attesa, stoppingToken); } catch (OperationCanceledException) { return; }
+            attesa = TimeSpan.FromSeconds(Math.Min(attesa.TotalSeconds * 2, 120));
+        }
+
         if (minuti <= 0)
         {
             log.LogInformation("Pianificazione disattivata: resta l'innesco manuale su POST /esegui.");
             return;
         }
 
-        // Un attimo di attesa all'avvio: il portale e il corpus potrebbero non essere
-        // ancora in ascolto, e un primo tentativo fallito riempirebbe i log per niente.
-        try { await Task.Delay(TimeSpan.FromSeconds(10), stoppingToken); }
-        catch (OperationCanceledException) { return; }
-
         log.LogInformation("Ingestione pianificata ogni {Minuti} minuti.", minuti);
-        await ingestione.Esegui(stoppingToken);
-
         using var timer = new PeriodicTimer(TimeSpan.FromMinutes(minuti));
         while (await timer.WaitForNextTickAsync(stoppingToken))
         {

@@ -74,6 +74,21 @@ app.MapGet("/", (ServizioIngestione servizio, IConfiguration cfg) =>
 });
 
 app.MapGet("/health", (ServizioIngestione servizio) =>
-    Results.Ok(new { status = "ok", ultima = servizio.Ultima?.Istante, riuscita = servizio.Ultima?.Riuscita }));
+{
+    var u = servizio.Ultima;
+    var stato = u is null ? "avvio" : u.Riuscita ? "ok" : "errore";
+    var messaggio = u is null
+        ? "Prima ingestione non ancora eseguita: allineamento in corso."
+        : u.Riuscita
+            ? $"Ultima ingestione riuscita: {u.Contenuti} contenuti, {u.Sezioni} sezioni."
+            : $"Ultima ingestione fallita: {u.Errore}";
+
+    var corpo = new { stato, messaggio, ultima = u?.Istante, riuscita = u?.Riuscita };
+    // 503 finche' non c'e' stata una prima ingestione riuscita: per chi sorveglia e'
+    // la differenza fra "sta partendo" e "funziona".
+    return u is { Riuscita: true }
+        ? Results.Ok(corpo)
+        : Results.Json(corpo, statusCode: StatusCodes.Status503ServiceUnavailable);
+});
 
 app.Run();

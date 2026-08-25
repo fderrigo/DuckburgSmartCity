@@ -15,7 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 // consumare lo stesso endpoint. Per questo deve essere pubblico.
 builder.Services.AddHttpClient();
 builder.Services.AddSingleton<ServizioCorpus>();
-builder.Services.AddHostedService<RiallineamentoPeriodico>();
+builder.Services.AddHostedService<Allineatore>();
 
 builder.Services.AddMcpServer()
     .WithHttpTransport()
@@ -55,33 +55,48 @@ if (!string.IsNullOrWhiteSpace(accessToken))
     });
 }
 
-app.MapGet("/health", (ServizioCorpus corpus) => Results.Ok(new
+// Lo stato e' esplicito: "allineamento" non e' un guasto, e' la condizione normale
+// dei primi secondi. Il codice HTTP lo distingue per chi sorveglia, il corpo lo
+// spiega a chi legge.
+app.MapGet("/health", (ServizioCorpus corpus) =>
 {
-    status = corpus.Pronto ? "ok" : "in attesa del corpus",
-    ente = corpus.Pronto ? corpus.Indice.Istantanea.Ente.Id : null,
-    versione = corpus.Versione,
-    contenuti = corpus.Pronto ? corpus.Indice.NumeroContenuti : 0,
-    sezioni = corpus.Pronto ? corpus.Indice.NumeroSezioni : 0,
-    caricato_il = corpus.CaricatoIl,
-}));
+    var corpo = new
+    {
+        stato = corpus.Stato.ToString().ToLowerInvariant(),
+        pronto = corpus.Pronto,
+        messaggio = corpus.Descrizione,
+        ente = corpus.Indice?.Istantanea.Ente.Id,
+        versione = corpus.Versione,
+        contenuti = corpus.Indice?.NumeroContenuti ?? 0,
+        sezioni = corpus.Indice?.NumeroSezioni ?? 0,
+        caricato_il = corpus.CaricatoIl,
+        ultimo_errore = corpus.UltimoErrore,
+        tentativi_falliti = corpus.TentativiFalliti,
+    };
+    return corpus.Pronto
+        ? Results.Ok(corpo)
+        : Results.Json(corpo, statusCode: StatusCodes.Status503ServiceUnavailable);
+});
 
 // Riallineamento immediato: dopo una pubblicazione nel CMS evita di aspettare il giro.
 app.MapPost("/corpus/reload", async (ServizioCorpus corpus, CancellationToken ct) =>
 {
-    var cambiato = await corpus.Riallinea(obbligatorio: false, ct);
+    var cambiato = await corpus.Riallinea(ct);
     return Results.Ok(new
     {
         aggiornato = cambiato,
+        stato = corpus.Stato.ToString().ToLowerInvariant(),
+        messaggio = corpus.Descrizione,
         versione = corpus.Versione,
-        contenuti = corpus.Pronto ? corpus.Indice.NumeroContenuti : 0,
-        sezioni = corpus.Pronto ? corpus.Indice.NumeroSezioni : 0,
+        contenuti = corpus.Indice?.NumeroContenuti ?? 0,
+        sezioni = corpus.Indice?.NumeroSezioni ?? 0,
+        ultimo_errore = corpus.UltimoErrore,
     });
 });
 
 app.MapMcp("/mcp");
 
-// Primo caricamento prima di servire: rispondere su un corpus vuoto sarebbe peggio
-// che non partire.
-await app.Services.GetRequiredService<ServizioCorpus>().Riallinea(obbligatorio: true);
-
+// Nessun caricamento bloccante all'avvio: l'ordine con cui partono i servizi non deve
+// essere un requisito. L'allineatore ci pensa in sottofondo, e finche' non ha finito
+// gli strumenti dicono che l'allineamento e' in corso.
 app.Run();
