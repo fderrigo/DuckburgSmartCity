@@ -14,7 +14,7 @@ builder.Services.AddRazorPages(o =>
 builder.Services.AddQuack();
 
 // CMS: data layer con provider plug-and-play e contenuti di default Paperopoli.
-builder.Services.AddPortalCms(builder.Configuration);
+builder.Services.AddPortalCms(builder.Configuration, builder.Environment.ContentRootPath);
 
 // Autenticazione a cookie per l'area di amministrazione del CMS.
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
