@@ -457,6 +457,44 @@ a.card-fumetto:hover { transform: translate(2px, 2px); box-shadow: 4px 4px 0 var
 .balloon.pending { font-style: italic; color: #5f564c; }
 .balloon.errore { background: #FFD1CC; }
 .balloon.errore::after { background: #FFD1CC; }
+/* Risposta resa da markdown: qui il testo non e' piu' preformattato, sono elementi.
+   Con pre-wrap le interruzioni di riga verrebbero contate due volte, una dal markup e
+   una dallo spazio bianco della sorgente. */
+.balloon.md { white-space: normal; }
+.balloon.md > p { margin: 0 0 .55rem; }
+.balloon.md > p:last-child { margin-bottom: 0; }
+.balloon.md ul,
+.balloon.md ol { margin: 0 0 .55rem; padding-left: 1.25rem; }
+.balloon.md ul:last-child,
+.balloon.md ol:last-child { margin-bottom: 0; }
+.balloon.md li { margin-bottom: .25rem; }
+.balloon.md li:last-child { margin-bottom: 0; }
+.balloon.md h4,
+.balloon.md h5,
+.balloon.md h6 {
+    margin: .2rem 0 .4rem;
+    font-size: .95rem;
+    font-weight: 700;
+    color: var(--acqua-scuro);
+}
+.balloon.md strong { font-weight: 700; }
+.balloon.md code {
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    font-size: .85em;
+    background: var(--sabbia, #F3ECE0);
+    border: 1px solid rgba(23,18,14,.2);
+    border-radius: 4px;
+    padding: .05rem .3rem;
+    /* Un id di sezione non va spezzato a meta': e' la cosa che il cittadino ricopia
+       per ritrovare la fonte. */
+    white-space: nowrap;
+}
+.balloon.md a { color: var(--acqua-scuro); text-decoration: underline; }
+.balloon.md hr {
+    border: 0;
+    border-top: 2px dashed rgba(23,18,14,.25);
+    margin: .6rem 0;
+}
 .fonti-box {
     align-self: stretch;
     border: 3px dashed var(--inchiostro); border-radius: 12px;

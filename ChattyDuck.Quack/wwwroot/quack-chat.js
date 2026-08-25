@@ -70,6 +70,126 @@
         d.addEventListener('toggle', function () { if (d.open) refreshUsage(); });
     });
 
+
+    /**
+     * Rende il markdown della risposta come nodi DOM.
+     *
+     * Il modello risponde in markdown, perche' e' il modo in cui scrive: elenchi per le
+     * scadenze, grassetto per gli importi, id di sezione fra apici per le citazioni.
+     * Inserito come testo, quel markdown resta letterale e il cittadino legge asterischi.
+     *
+     * Il renderer e' minimo di proposito e costruisce nodi, senza mai passare da
+     * innerHTML. Il testo che arriva qui e' scritto da un modello a partire da contenuti
+     * del CMS: nessuno dei due e' un posto da cui accettare HTML.
+     */
+    function renderMarkdown(md) {
+        const frag = document.createDocumentFragment();
+        const righe = String(md ?? '').replace(/\r\n/g, '\n').split('\n');
+        let i = 0;
+
+        // Solo http, https e percorsi interni: esclude javascript: e data:.
+        function urlSicura(u) {
+            return /^https?:\/\//i.test(u) || /^\//.test(u);
+        }
+
+        function inline(testo, dove) {
+            const re = /(`[^`\n]+`)|(\*\*[^*\n]+\*\*)|(\*[^*\n]+\*)|(\[[^\]\n]+\]\([^)\s]+\))/g;
+            let ultimo = 0, m;
+            while ((m = re.exec(testo)) !== null) {
+                if (m.index > ultimo) {
+                    dove.appendChild(document.createTextNode(testo.slice(ultimo, m.index)));
+                }
+                const t = m[0];
+                if (t.startsWith('`')) {
+                    const el = document.createElement('code');
+                    el.textContent = t.slice(1, -1);
+                    dove.appendChild(el);
+                } else if (t.startsWith('**')) {
+                    const el = document.createElement('strong');
+                    el.textContent = t.slice(2, -2);
+                    dove.appendChild(el);
+                } else if (t.startsWith('*')) {
+                    const el = document.createElement('em');
+                    el.textContent = t.slice(1, -1);
+                    dove.appendChild(el);
+                } else {
+                    const taglio = t.indexOf('](');
+                    const etichetta = t.slice(1, taglio);
+                    const href = t.slice(taglio + 2, -1);
+                    if (urlSicura(href)) {
+                        const a = document.createElement('a');
+                        a.href = href;
+                        a.target = '_blank';
+                        a.rel = 'noopener';
+                        a.textContent = etichetta;
+                        dove.appendChild(a);
+                    } else {
+                        dove.appendChild(document.createTextNode(etichetta));
+                    }
+                }
+                ultimo = m.index + t.length;
+            }
+            if (ultimo < testo.length) {
+                dove.appendChild(document.createTextNode(testo.slice(ultimo)));
+            }
+        }
+
+        const VOCE = /^\s*([-*+]|\d+[.)])\s+(.*)$/;
+        const TITOLO = /^(#{1,6})\s+(.*)$/;
+
+        while (i < righe.length) {
+            const riga = righe[i];
+
+            if (riga.trim() === '') { i++; continue; }
+
+            const titolo = TITOLO.exec(riga);
+            if (titolo) {
+                // Dentro un fumetto un h1 sarebbe fuori scala: si parte da h4.
+                const liv = Math.min(6, 3 + titolo[1].length);
+                const el = document.createElement('h' + liv);
+                inline(titolo[2], el);
+                frag.appendChild(el);
+                i++;
+                continue;
+            }
+
+            const voce = VOCE.exec(riga);
+            if (voce) {
+                const numerato = /\d/.test(voce[1]);
+                const lista = document.createElement(numerato ? 'ol' : 'ul');
+                while (i < righe.length) {
+                    const v = VOCE.exec(righe[i]);
+                    if (!v) break;
+                    const li = document.createElement('li');
+                    inline(v[2], li);
+                    lista.appendChild(li);
+                    i++;
+                }
+                frag.appendChild(lista);
+                continue;
+            }
+
+            if (/^\s*([-*_])\1{2,}\s*$/.test(riga)) {
+                frag.appendChild(document.createElement('hr'));
+                i++;
+                continue;
+            }
+
+            // Paragrafo: righe consecutive fino alla prossima vuota o al blocco seguente.
+            const p = document.createElement('p');
+            const pezzi = [];
+            while (i < righe.length && righe[i].trim() !== '' &&
+                   !VOCE.test(righe[i]) && !TITOLO.test(righe[i])) {
+                pezzi.push(righe[i].trim());
+                i++;
+            }
+            inline(pezzi.join(' '), p);
+            frag.appendChild(p);
+        }
+
+        return frag;
+    }
+
     function initChat(root) {
         const messages = root.querySelector('[data-chat-messages]');
         const form = root.querySelector('[data-chat-form]');
@@ -88,6 +208,16 @@
             messages.appendChild(div);
             messages.scrollTop = messages.scrollHeight;
             return div;
+        }
+
+        /**
+         * Sostituisce il testo del fumetto con la risposta resa.
+         * L'intestazione con "Assistente" resta: e' il primo figlio.
+         */
+        function mostraRisposta(balloon, testo) {
+            while (balloon.childNodes.length > 1) balloon.removeChild(balloon.lastChild);
+            balloon.classList.add('md');
+            balloon.appendChild(renderMarkdown(testo));
         }
 
         function addFonti(fonti) {
@@ -163,7 +293,7 @@
                     return;
                 }
                 pending.classList.remove('pending');
-                pending.lastChild.textContent = data.reply;
+                mostraRisposta(pending, data.reply);
                 addFonti(data.fonti);
             } catch (err) {
                 pending.lastChild.textContent = 'Errore di rete: ' + err;
