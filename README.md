@@ -6,8 +6,6 @@ Prototipo dimostrativo sul Comune di Paperopoli (fittizio). L'ente pubblica i pr
 
 ## Architettura
 
-<!-- Punto ideale per un diagramma dell'architettura (Registry ↔ Portal ↔ modelli) -->
-
 | Progetto | Ruolo |
 |---|---|
 | `ChattyDuck.Corpus` | Servizio del corpus (porta 5200): custodisce i contenuti certificati di uno o più enti e li espone. Non conosce alcun CMS. Schema pubblicato su `/schema/corpus-1.0.json`. |
@@ -20,12 +18,13 @@ Prototipo dimostrativo sul Comune di Paperopoli (fittizio). L'ente pubblica i pr
 | `Duckburg.DockerLaunch` | Helper di avvio: esegue `docker compose up -d --build` per la federazione SPID/CIE prima degli altri progetti. Se Docker non è disponibile, avvisa e prosegue. |
 | `ChattyDuck.Quack` | Razor Class Library dell'assistente: UI chat, endpoint `POST /chat`, `GET /chat/usage`, `GET /debug/tools`, orchestrazione dei modelli. |
 | `ChattyDuck.Models` | Implementazioni intercambiabili di `IModelService` (Gemini, Claude), tracking dei consumi. |
-| `ChattyDuck.Mcp` | Client MCP verso il Registry, usato dal bridge Gemini. |
+| `Duckburg.Portal.Cms` | Modello dati del CMS: entità, DbContext e opzioni. Ha due consumatori, il portale che serve le pagine e l'adattatore che le legge. |
+| `ChattyDuck.Mcp` | Client MCP verso il server MCP, usato dal ponte Gemini. |
 
 **Principio architetturale**: il system prompt definisce solo il comportamento del modello; i contenuti risiedono unicamente nel corpus. Il corpus non è la proiezione di un CMS: parla il vocabolario del modello Comuni, che prescrive a ogni ente italiano quali attributi deve avere una scheda servizio. A monte, ogni CMS ha il proprio adattatore; a valle, nessuno sa più da dove i contenuti vengano. Vedi [Dal CMS al corpus](#dal-cms-al-corpus).
 
 ```
-CMS del cliente  ◀──legge── Ingestione ──scrive──▶ Corpus ◀──legge── Registry MCP ◀──── ChattyDuck
+CMS del cliente  ◀──legge── Ingestione ──scrive──▶ Corpus ◀──legge── MCP Server ◀──── ChattyDuck
                             (una per CMS)                                          ◀──── Anthropic
                                                                                    ◀──── client MCP di terzi
 ```
@@ -41,26 +40,45 @@ I due modelli si collegano al corpus in modo diverso:
 
 ```powershell
 # 1. Configurazione: copia i template e inserisci le API key
-Copy-Item Duckburg.Portal\appsettings.template.json Duckburg.Portal\appsettings.json
-Copy-Item ChattyDuck.McpServer\appsettings.template.json ChattyDuck.McpServer\appsettings.json
+Copy-Item Duckburg.Portalppsettings.template.json      Duckburg.Portalppsettings.json
+Copy-Item ChattyDuck.Corpusppsettings.template.json    ChattyDuck.Corpusppsettings.json
+Copy-Item Duckburg.Ingestioneppsettings.template.json  Duckburg.Ingestioneppsettings.json
+Copy-Item ChattyDuck.McpServerppsettings.template.json ChattyDuck.McpServerppsettings.json
+# la stessa chiave in Corpus:Enti[0].ChiaveIngestione e Ingestione:ChiaveCorpus
 
-# 2. Server MCP (porta 5000)
-dotnet run --project ChattyDuck.McpServer
-
-# 3. Portale (porta 5100) -> http://localhost:5100
+# 2. Portale e CMS (porta 5100): al primo avvio crea il database e i contenuti
 dotnet run --project Duckburg.Portal
+
+# 3. Corpus (porta 5200) e adattatore (porta 5250)
+dotnet run --project ChattyDuck.Corpus
+dotnet run --project Duckburg.Ingestione
+
+# 4. Server MCP (porta 5000)
+dotnet run --project ChattyDuck.McpServer
 ```
 
-Avviando il Registry per primo, il portale non è ancora in ascolto: il Registry parte sul corpus statico e passa a quello del CMS al primo riallineamento (entro `Corpus:RefreshMinutes`, oppure subito con `curl -X POST http://localhost:5000/corpus/reload`).
+**L'ordine non conta.** I servizi partono comunque e si allineano da soli: finché il
+corpus non è pronto, il server MCP risponde `503` con stato `allineamento` e i suoi
+strumenti dicono al modello di avvisare l'utente invece di rispondere sul vuoto. Un
+elenco vuoto il modello lo leggerebbe come "questa informazione non esiste".
+
+L'adattatore rilegge il CMS ogni 15 minuti. Per non aspettare dopo una modifica:
+
+```bash
+curl -X POST http://localhost:5250/esegui          # rilegge il CMS
+curl -X POST http://localhost:5000/corpus/reload   # riallinea il server MCP
+```
 
 In Visual Studio i profili di avvio multiplo sono in `DuckburgSmartCity.slnLaunch`:
 
-- **Portal + MCP**: solo Registry e Portal, sufficiente per l'assistente.
-- **Tutto (Docker + servizi)**: `Duckburg.DockerLaunch` (federazione SPID/CIE in Docker) più Registry, Portal, Identity, ServiziOnline e Valutazione.
+- **Assistente**: corpus, adattatore, server MCP e portale. È quello che serve per l'assistente.
+- **Tutto (Docker + servizi)**: aggiunge la federazione SPID/CIE in Docker, identità, servizi online e valutazione.
 
 Verifica senza API key:
 
-- `GET http://localhost:5100/debug/tools`: tool MCP visibili al bridge
+- `GET http://localhost:5000/health`: stato del corpus, contenuti e sezioni indicizzati
+- `GET http://localhost:5250/health`: esito dell'ultima ingestione
+- `GET http://localhost:5100/debug/tools`: strumenti MCP visibili al ponte Gemini
 - `GET http://localhost:5100/chat/usage`: stato dei consumi per modello
 
 ## Configurazione
@@ -94,7 +112,7 @@ I file `appsettings*.json` reali sono esclusi dal versioning: nel repository ci 
 | `Ingestione:Cms` | Ingestione | provider e stringa di connessione del CMS di partenza |
 
 
-**Registry**
+**Server MCP**
 
 | Chiave | Note |
 |---|---|
@@ -130,13 +148,15 @@ L'assistente è disponibile su `http://localhost:5100` (widget) e su `/assistent
 
 **Verifica funzionale**: domande di controllo, valide su ogni client:
 
-1. "Quando scade la prima rata della TARI?" → 30 aprile, cita un passaggio dell'area `tari`
-2. "Quali sono le aliquote IMU?" → valori di Paperopoli, dall'area `imu`, citati
-3. "Che giorno passa l'umido nel quartiere Vesuvio?" → "Questa informazione non è nelle fonti."
-4. "Come prenoto la carta d'identità?" → procedura dall'area della carta d'identità
+1. "Quanto costa il servizio mensa?" → la scheda `servizio:mensa-trasporto-scolastico`, sezione **Costi**
+2. "Quali eventi ci sono?" → l'elenco degli eventi, con quelli passati segnati come non validi
+3. "Quando scade la prima rata della TARI?" → 30 aprile, citando la sezione da cui viene
+4. "Che giorno passa l'umido nel quartiere Vesuvio?" → "Questa informazione non è nelle fonti."
 5. La stessa domanda su client diversi produce la stessa risposta, ancorata al corpus
 
-Gli id dei passaggi dipendono dalla sorgente attiva: con il feed del CMS acceso sono generati dai contenuti del portale (`tari:p08`), con il solo corpus statico sono quelli del file (`tari:p02`). `GET /health` sul Registry dice quale sorgente è in uso.
+Gli id delle sezioni sono nella forma `contenuto#chiave`, per esempio
+`servizio:tari#tempi-e-scadenze`. Sono stabili: cambiarli spezzerebbe le citazioni già
+date, ed è il motivo per cui li compone il corpus e non l'adattatore.
 
 Test diretto del tool `cerca`, senza modelli:
 
