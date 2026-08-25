@@ -4,20 +4,23 @@ using Duckburg.Registry.Mcp;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Sorgenti del corpus, in ordine di autorevolezza: il feed del CMS del portale, se
-// configurato, e il corpus statico su file come ripiego. Con Corpus:Merge = "Merge"
-// i due si sommano invece di escludersi.
+// Server MCP dell'ente: espone il corpus ai modelli.
+//
+// Non possiede i dati. Li legge dal servizio del corpus, che e' l'unico a scriverli, e
+// ne tiene in memoria un indice. Cosi' si possono avere piu' server MCP sullo stesso
+// corpus, e riavviarne uno non tocca nulla.
+//
+// I client sono tre e due non sono nostri: ChattyDuck fa da ponte per Gemini, i server
+// di Anthropic si collegano da soli per Claude, e qualunque client MCP di terzi puo'
+// consumare lo stesso endpoint. Per questo deve essere pubblico.
 builder.Services.AddHttpClient();
-if (!string.IsNullOrWhiteSpace(builder.Configuration["Corpus:FeedUrl"]))
-    builder.Services.AddSingleton<ICorpusSource, HttpFeedCorpusSource>();
-builder.Services.AddSingleton<ICorpusSource, FileCorpusSource>();
-builder.Services.AddSingleton<CorpusService>();
-builder.Services.AddHostedService<CorpusRefreshService>();
+builder.Services.AddSingleton<ServizioCorpus>();
+builder.Services.AddHostedService<RiallineamentoPeriodico>();
 
 builder.Services.AddMcpServer()
     .WithHttpTransport()
-    .WithTools<CorpusTools>()
-    .WithResources<CorpusResources>();
+    .WithTools<StrumentiCorpus>()
+    .WithResources<RisorseCorpus>();
 
 builder.Services.AddRateLimiter(options =>
 {
@@ -25,31 +28,22 @@ builder.Services.AddRateLimiter(options =>
     options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(ctx =>
         RateLimitPartition.GetFixedWindowLimiter(
             ctx.Connection.RemoteIpAddress?.ToString() ?? "anonimo",
-            _ => new FixedWindowRateLimiterOptions
-            {
-                PermitLimit = 120,
-                Window = TimeSpan.FromMinutes(1),
-                QueueLimit = 0,
-            }));
+            _ => new FixedWindowRateLimiterOptions { PermitLimit = 120, Window = TimeSpan.FromMinutes(1), QueueLimit = 0 }));
 });
 
 var app = builder.Build();
 
 app.UseRateLimiter();
 
-// Token di accesso opzionale per i test: attivo solo se Registry:AccessToken e' valorizzato.
+// Token di accesso opzionale: attivo solo se Registry:AccessToken e' valorizzato.
 var accessToken = app.Configuration["Registry:AccessToken"];
 if (!string.IsNullOrWhiteSpace(accessToken))
 {
     app.Use(async (context, next) =>
     {
-        if (context.Request.Path.StartsWithSegments("/health"))
-        {
-            await next(context);
-            return;
-        }
-        var provided = context.Request.Headers.Authorization.ToString();
-        var ok = provided == $"Bearer {accessToken}"
+        if (context.Request.Path.StartsWithSegments("/health")) { await next(context); return; }
+        var fornito = context.Request.Headers.Authorization.ToString();
+        var ok = fornito == $"Bearer {accessToken}"
                  || context.Request.Headers["X-Access-Token"].ToString() == accessToken;
         if (!ok)
         {
@@ -61,36 +55,33 @@ if (!string.IsNullOrWhiteSpace(accessToken))
     });
 }
 
-app.MapGet("/health", (CorpusService corpus) => Results.Ok(new
+app.MapGet("/health", (ServizioCorpus corpus) => Results.Ok(new
 {
-    status = "ok",
-    corpus_version = corpus.Document.CorpusVersion,
-    works = corpus.Works.Count,
-    passages = corpus.PassageCount,
-    sources = corpus.SorgentiAttive,
-    loaded_at = corpus.CaricatoIl,
+    status = corpus.Pronto ? "ok" : "in attesa del corpus",
+    ente = corpus.Pronto ? corpus.Indice.Istantanea.Ente.Id : null,
+    versione = corpus.Versione,
+    contenuti = corpus.Pronto ? corpus.Indice.NumeroContenuti : 0,
+    sezioni = corpus.Pronto ? corpus.Indice.NumeroSezioni : 0,
+    caricato_il = corpus.CaricatoIl,
 }));
 
-// Ricarico a caldo delle sorgenti: dopo una pubblicazione nel CMS rende subito
-// disponibile il contenuto nuovo, senza riavviare il server MCP.
-// Protetto dal middleware di Registry:AccessToken quando il token e' configurato.
-app.MapPost("/corpus/reload", async (CorpusService corpus, CancellationToken ct) =>
+// Riallineamento immediato: dopo una pubblicazione nel CMS evita di aspettare il giro.
+app.MapPost("/corpus/reload", async (ServizioCorpus corpus, CancellationToken ct) =>
 {
-    var ok = await corpus.ReloadAsync(obbligatorio: false, ct);
+    var cambiato = await corpus.Riallinea(obbligatorio: false, ct);
     return Results.Ok(new
     {
-        reloaded = ok,
-        corpus_version = corpus.Document.CorpusVersion,
-        works = corpus.Works.Count,
-        passages = corpus.PassageCount,
-        sources = corpus.SorgentiAttive,
+        aggiornato = cambiato,
+        versione = corpus.Versione,
+        contenuti = corpus.Pronto ? corpus.Indice.NumeroContenuti : 0,
+        sezioni = corpus.Pronto ? corpus.Indice.NumeroSezioni : 0,
     });
 });
 
 app.MapMcp("/mcp");
 
-// Primo caricamento prima di servire richieste: se nessuna sorgente risponde, meglio
-// non partire affatto che rispondere su un corpus vuoto.
-await app.Services.GetRequiredService<CorpusService>().ReloadAsync(obbligatorio: true);
+// Primo caricamento prima di servire: rispondere su un corpus vuoto sarebbe peggio
+// che non partire.
+await app.Services.GetRequiredService<ServizioCorpus>().Riallinea(obbligatorio: true);
 
 app.Run();

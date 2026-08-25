@@ -62,7 +62,7 @@ public sealed class ClaudeModelService(
         usageTracker.Record(Name, response.Usage.InputTokens, response.Usage.OutputTokens);
 
         var reply = new StringBuilder();
-        var passages = new List<SearchHit>();
+        var fonti = new List<Fonte>();
 
         foreach (var block in response.Content)
         {
@@ -76,33 +76,26 @@ public sealed class ClaudeModelService(
             }
             else if (block.TryPickMcpToolResult(out BetaMcpToolResultBlock? result))
             {
-                CollectPassages(result, passages);
+                RaccogliFonti(result, fonti);
             }
         }
 
         return new ChatResult(reply.ToString().Trim(),
-            passages.GroupBy(p => p.Id).Select(g => g.First()).ToList());
+            fonti.GroupBy(f => f.Id).Select(g => g.First()).ToList());
     }
 
-    private static void CollectPassages(BetaMcpToolResultBlock result, List<SearchHit> passages)
+    private static void RaccogliFonti(BetaMcpToolResultBlock result, List<Fonte> fonti)
     {
-        // Il contenuto del tool result e' testo JSON: la lista di SearchHit prodotta dal Registry.
+        // Il contenuto del tool result e' testo JSON: la forma dipende dallo strumento,
+        // e l'estrattore sa riconoscerle tutte.
         var json = JsonSerializer.Serialize(result);
         using var doc = JsonDocument.Parse(json);
         if (!doc.RootElement.TryGetProperty("content", out var content) || content.ValueKind != JsonValueKind.Array)
             return;
         foreach (var item in content.EnumerateArray())
         {
-            if (!item.TryGetProperty("text", out var textProp)) continue;
-            try
-            {
-                var hits = JsonSerializer.Deserialize<List<SearchHit>>(textProp.GetString() ?? "");
-                if (hits is not null) passages.AddRange(hits);
-            }
-            catch (JsonException)
-            {
-                // non era l'array di passaggi: ignora
-            }
+            if (!item.TryGetProperty("text", out var testo)) continue;
+            fonti.AddRange(EstrattoreFonti.Estrai(null, testo.GetString() ?? ""));
         }
     }
 }

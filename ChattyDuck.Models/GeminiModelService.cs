@@ -49,7 +49,7 @@ public sealed class GeminiModelService(
 
         var http = httpClientFactory.CreateClient("gemini");
         var url = $"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={apiKey}";
-        var passages = new List<SearchHit>();
+        var fonti = new List<Fonte>();
 
         for (var round = 0; round <= MaxToolRounds; round++)
         {
@@ -92,7 +92,7 @@ public sealed class GeminiModelService(
             if (functionCalls.Count == 0)
             {
                 var reply = string.Concat(parts.Select(p => p?["text"]?.GetValue<string>() ?? string.Empty)).Trim();
-                return new ChatResult(reply, Distinct(passages));
+                return new ChatResult(reply, Distinte(fonti));
             }
 
             // Riporta il turno del modello, poi esegue le chiamate sul Registry via MCP.
@@ -108,7 +108,7 @@ public sealed class GeminiModelService(
 
                 logger.LogInformation("Ponte Gemini->MCP: {Tool}({Args})", name, JsonSerializer.Serialize(args));
                 var resultText = await gateway.CallToolAsync(name, args, ct);
-                CollectPassages(name, resultText, passages);
+                fonti.AddRange(EstrattoreFonti.Estrai(name, resultText));
 
                 JsonNode resultNode;
                 try { resultNode = JsonNode.Parse(resultText) ?? JsonValue.Create(resultText)!; }
@@ -129,22 +129,8 @@ public sealed class GeminiModelService(
         throw new InvalidOperationException("Gemini non ha prodotto una risposta entro il limite di chiamate tool.");
     }
 
-    private static void CollectPassages(string toolName, string resultText, List<SearchHit> passages)
-    {
-        if (!string.Equals(toolName, "cerca", StringComparison.OrdinalIgnoreCase)) return;
-        try
-        {
-            var hits = JsonSerializer.Deserialize<List<SearchHit>>(resultText);
-            if (hits is not null) passages.AddRange(hits);
-        }
-        catch (JsonException)
-        {
-            // il risultato non e' l'array atteso: nessun passaggio da citare
-        }
-    }
-
-    private static IReadOnlyList<SearchHit> Distinct(List<SearchHit> passages)
-        => passages.GroupBy(p => p.Id).Select(g => g.First()).ToList();
+    private static IReadOnlyList<Fonte> Distinte(List<Fonte> fonti)
+        => fonti.GroupBy(f => f.Id).Select(g => g.First()).ToList();
 
     /// <summary>
     /// Gemini accetta un sottoinsieme OpenAPI dello schema JSON: niente type union

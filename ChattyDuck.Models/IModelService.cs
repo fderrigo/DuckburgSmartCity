@@ -2,7 +2,7 @@ using ChattyDuck.Mcp;
 
 namespace ChattyDuck.Models;
 
-public sealed record ChatResult(string Reply, IReadOnlyList<SearchHit> Passages);
+public sealed record ChatResult(string Reply, IReadOnlyList<Fonte> Fonti);
 
 /// <summary>
 /// Servizio modello intercambiabile: stessa interfaccia, dietro cambia solo il modello.

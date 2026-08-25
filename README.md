@@ -10,7 +10,9 @@ Prototipo dimostrativo sul Comune di Paperopoli (fittizio). L'ente pubblica i pr
 
 | Progetto | Ruolo |
 |---|---|
-| `Duckburg.Registry` | Server MCP dell'ente (porta 5000). Minimal API, trasporto Streamable HTTP su `/mcp`. Espone il tool `cerca(query, limite)` e le risorse del corpus. Il corpus è caricato in memoria in sola lettura dal feed del CMS del portale, con `corpus/out/corpus.json` come ripiego. Access token opzionale. |
+| `ChattyDuck.Corpus` | Servizio del corpus (porta 5200): custodisce i contenuti certificati di uno o più enti e li espone. Non conosce alcun CMS. Schema pubblicato su `/schema/corpus-1.0.json`. |
+| `Duckburg.Ingestione` | Adattatore fra il CMS di Paperopoli e il corpus (porta 5250). È il progetto che si riscrive per ogni CMS. Temporizzato, con innesco manuale su `POST /esegui`. |
+| `Duckburg.Registry` | Server MCP dell'ente (porta 5000). Legge il corpus e lo espone ai modelli con gli strumenti `cerca`, `scheda`, `elenca`. Trasporto Streamable HTTP su `/mcp`. |
 | `Duckburg.Portal` | Portale del Comune (porta 5100), Razor Pages in stile Designers Italia. Assistente come widget su tutte le pagine e a pagina intera su `/assistente`. Il "cittadino informato". |
 | `Duckburg.ServiziOnline` | Portale dei servizi online (porta 5300), stesso layout e assistente del Portal. Il "cittadino attivo" (PNRR Missione 1): Area personale accessibile solo con SPID/CIE tramite Duckburg.Identity. |
 | `Duckburg.Identity` | Sistema di accesso del Comune: Relying Party OpenID Connect Federation 1.0 (profilo SPID/CIE), fork di [SPID-CIE-OIDC](https://github.com/fderrigo/SPID-CIE-OIDC) in stile Paperopoli. Entity id `http://identity.paperopoli.test:8001`; dopo il login rimanda al portale chiamante con un token firmato (SSO). |
@@ -20,7 +22,15 @@ Prototipo dimostrativo sul Comune di Paperopoli (fittizio). L'ente pubblica i pr
 | `ChattyDuck.Models` | Implementazioni intercambiabili di `IModelService` (Gemini, Claude), tracking dei consumi. |
 | `ChattyDuck.Mcp` | Client MCP verso il Registry, usato dal bridge Gemini. |
 
-**Principio architetturale**: il system prompt definisce solo il comportamento del modello; i contenuti risiedono unicamente nel corpus del server MCP. Il corpus, a sua volta, è alimentato dal CMS del portale: la redazione scrive in un posto solo, e l'assistente risponde sugli stessi contenuti che il cittadino legge sulle pagine. Vedi [Dal CMS al corpus MCP](#dal-cms-al-corpus-mcp).
+**Principio architetturale**: il system prompt definisce solo il comportamento del modello; i contenuti risiedono unicamente nel corpus. Il corpus non è la proiezione di un CMS: parla il vocabolario del modello Comuni, che prescrive a ogni ente italiano quali attributi deve avere una scheda servizio. A monte, ogni CMS ha il proprio adattatore; a valle, nessuno sa più da dove i contenuti vengano. Vedi [Dal CMS al corpus](#dal-cms-al-corpus).
+
+```
+CMS del cliente  ◀──legge── Ingestione ──scrive──▶ Corpus ◀──legge── Registry MCP ◀──── ChattyDuck
+                            (una per CMS)                                          ◀──── Anthropic
+                                                                                   ◀──── client MCP di terzi
+```
+
+Ogni freccia indica chi chiama chi. L'ingestione è l'unica che si sveglia da sola, su un proprio temporizzatore. Il server MCP ha tre clienti e due non sono nostri: per questo dev'essere pubblico.
 
 I due modelli si collegano al corpus in modo diverso:
 
@@ -70,14 +80,28 @@ I file `appsettings*.json` reali sono esclusi dal versioning: nel repository ci 
 | `Cms:Database:Provider` | - | `Sqlite` (default), `SqlServer`, `PostgreSql`, `MySql`, `Oracle`; vedi [CMS del portale](#cms-del-portale) |
 | `Cms:Admin:Password` | `Cms__Admin__Password` | password dell'area di amministrazione (l'utente è in `Cms:Admin:Username`) |
 
+**Corpus** e **Ingestione**
+
+| Chiave | Progetto | Note |
+|---|---|---|
+| `Corpus:Database:Provider` | Corpus | `Sqlite` (default), `SqlServer`, `PostgreSql`, `MySql` |
+| `Corpus:Enti[].Id` | Corpus | ente servito; ognuno ha la propria chiave di scrittura |
+| `Corpus:Enti[].ChiaveIngestione` | Corpus | l'adattatore di quell'ente non può toccare il corpus di un altro |
+| `Corpus:ChiaveLettura` | Corpus | vuota significa lettura aperta: il corpus contiene solo ciò che l'ente pubblica già |
+| `Ingestione:UrlCorpus` | Ingestione | dove pubblicare l'istantanea |
+| `Ingestione:ChiaveCorpus` | Ingestione | deve corrispondere a `ChiaveIngestione` dell'ente |
+| `Ingestione:IntervalloMinuti` | Ingestione | ogni quanto rileggere il CMS (default 15, `0` per disattivare) |
+| `Ingestione:Cms` | Ingestione | provider e stringa di connessione del CMS di partenza |
+
+
 **Registry**
 
 | Chiave | Note |
 |---|---|
-| `Corpus:Path` | corpus statico su file (default `../corpus/out/corpus.json`), sorgente di ripiego |
-| `Corpus:FeedUrl` | feed del CMS del portale (default `http://localhost:5100/api/corpus`); vuoto per disattivarlo |
-| `Corpus:Merge` | `Replace` (default): vince la sorgente disponibile più autorevole. `Merge`: le sorgenti si sommano |
-| `Corpus:RefreshMinutes` | intervallo di riallineamento alle sorgenti (default 5, `0` per disattivare) |
+| `Corpus:Url` | servizio del corpus (default `http://localhost:5200`) |
+| `Corpus:Ente` | ente da servire (default `comune-paperopoli`) |
+| `Corpus:Chiave` | chiave di lettura, se il corpus la richiede |
+| `Corpus:RiallineamentoMinuti` | intervallo di riallineamento al corpus (default 5, `0` per disattivare) |
 | `Registry:AccessToken` | opzionale; se valorizzato richiede `Authorization: Bearer <token>` o `X-Access-Token` |
 
 ### Endpoint pubblico
@@ -210,41 +234,51 @@ Esempi di stringa di connessione per gli altri motori:
 
 Lo schema è creato con `EnsureCreated` (provider-agnostico) e le liste sono serializzate in JSON su colonne testo, così il modello resta portabile fra i motori.
 
-### Dal CMS al corpus MCP
+### Dal CMS al corpus
 
-I contenuti pubblicati nel CMS sono anche la fonte su cui risponde l'assistente: quello che la redazione scrive in `/admin` diventa un passaggio citabile del corpus, senza riscriverlo altrove.
+I contenuti pubblicati nel CMS diventano il corpus su cui l'assistente risponde. Fra i due c'è un confine netto, ed è quello che permette di attaccare un CMS qualsiasi.
 
-```
-CMS (Sqlite | SqlServer | PostgreSql | ...)
-      |
-      v
-Portal   GET /api/corpus          proiezione read-only dei contenuti pubblicati
-      |  (HTTP, JSON)
-      v
-Registry  sorgenti del corpus
-      |-- cms:  feed del portale   (priorità alta, sorgente viva)
-      +-- file: corpus.json        (ripiego, la demo gira anche da sola)
-      |
-      v
-  /mcp   tool cerca()
-```
+**Il modello.** Un contenuto porta tre cose distinte:
 
-- **Proiezione, non copia**: `Duckburg.Portal/Cms/CorpusFeed.cs` traduce servizi, uffici, amministratori, novità, eventi, luoghi, documenti, pagine, FAQ e dati dell'ente in aree (`works`) e passaggi. Un passaggio per campo valorizzato, etichettato ("Come fare", "Cosa serve", "Scadenze"), con l'HTML ridotto a testo semplice. Solo contenuti con `IsPublished`: le bozze non finiscono nelle risposte.
-- **Versione e hash per passaggio**: la `version` è l'istante di ultima modifica del contenuto, l'`hash` è lo SHA-256 del testo. La citazione dell'assistente resta verificabile e si vede quando un contenuto è cambiato.
-- **Nessuno schema condiviso**: il Registry non conosce il database del portale, parla solo questo JSON. Restano due servizi indipendenti, e il Registry resta l'unico proprietario dell'indice di ricerca.
-- **Precedenza e ripiego**: con `Corpus:Merge: "Replace"` (default) vince il feed del CMS, e il file resta la rete di sicurezza per quando il portale è spento. Con `"Merge"` le due sorgenti si sommano e, a parità di id dell'area, vince il CMS.
-- **Aggiornamento**: automatico ogni `Corpus:RefreshMinutes` (default 5), oppure subito con `POST http://localhost:5000/corpus/reload`. `GET http://localhost:5000/health` riporta versione, aree, passaggi e sorgente in uso.
+- **attributi**: fatti tipizzati. Una scadenza è una data, una tariffa è una tabella di importi, "prenotabile" è un booleano. *Quanto costa la mensa* smette di essere una ricerca testuale sperata e diventa la lettura di un attributo.
+- **sezioni**: prosa citabile, ognuna con id, versione e impronta SHA-256. È l'unità che una risposta indica come fonte.
+- **relazioni**: il grafo. Da un ufficio si risale ai servizi che eroga, alle novità che lo riguardano, ai documenti che pubblica.
+
+Più la **validità temporale**, che rende riconoscibile un contenuto scaduto invece di lasciarlo citare come attuale.
+
+**L'adattatore.** `Duckburg.Ingestione` è l'unico progetto che conosce le tabelle di partenza. Legge il CMS a intervalli, traduce nel vocabolario del corpus e pubblica un'istantanea intera, non le differenze: un adattatore che gira ogni ora non sa cosa è cambiato, sa solo com'è adesso.
+
+Per un altro CMS si scrive un altro adattatore, anche in un altro linguaggio: il contratto è HTTP più uno schema JSON pubblicato, non un assembly .NET.
 
 ```bash
-# Cosa sta servendo il Registry, e da dove
-curl -s http://localhost:5000/health
-# {"status":"ok","corpus_version":"cms-...","works":44,"passages":333,"sources":["cms:http://localhost:5100/api/corpus"], ...}
-
-# Il feed grezzo, leggibile senza il Registry
-curl -s http://localhost:5100/api/corpus
+cp Duckburg.Ingestione/appsettings.template.json Duckburg.Ingestione/appsettings.json
+dotnet run --project ChattyDuck.Corpus      # porta 5200
+dotnet run --project Duckburg.Ingestione    # porta 5250
+curl -X POST http://localhost:5250/esegui   # senza aspettare il giro
 ```
 
-Il feed espone contenuti già pubblici sulle pagine del portale, quindi non è autenticato. Se il portale è irraggiungibile il Registry non si ferma: tiene l'ultimo corpus caricato e riprova al ciclo successivo.
+**La validazione sta nel corpus, non negli adattatori**, perché il corpus è uno e gli adattatori sono tanti. Distingue errori bloccanti (identificatori duplicati, impronte incoerenti, tipi sconosciuti) da avvisi (relazioni pendenti, chiavi fuori vocabolario): rifiutare un'istantanea intera per un avviso lascerebbe un ente senza assistente per un dettaglio.
+
+Chi scrive un adattatore può provarlo senza toccare il corpus vivo:
+
+```bash
+curl -X POST http://localhost:5200/api/enti/<ente>/istantanea/verifica   -H "X-Corpus-Key: <chiave>" --data-binary @istantanea.json
+```
+
+**Il recupero è in due stadi.** Prima si cerca la scheda, valutando titolo, tipo, fatti e prosa come un documento unico; poi, dentro le schede migliori, si scelgono le sezioni pertinenti e si restituiscono raggruppate. L'unità di significato è il contenuto, non il frammento: una sezione come "Costi: dipende dall'ISEE" non dice a quale servizio appartenga, e ordinare frammenti isolati fa vincere la lunghezza invece della pertinenza.
+
+Il server MCP espone tre strumenti invece di uno:
+
+| Strumento | Quando |
+|---|---|
+| `cerca` | domande in linguaggio naturale; restituisce schede con fatti e sezioni |
+| `scheda` | una scheda intera per id, con collegamenti |
+| `elenca` | "quali eventi ci sono", "quali uffici esistono"; nessuna ricerca per parole |
+
+```bash
+curl -s http://localhost:5000/health
+# {"status":"ok","ente":"comune-paperopoli","contenuti":67,"sezioni":201,...}
+```
 
 ## Conformità al modello Comuni (misura 1.4.1)
 

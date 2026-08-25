@@ -10,7 +10,7 @@ namespace ChattyDuck.Quack;
 
 public sealed record ChatRequest(string Message, string Model);
 
-public sealed record ChatResponse(string Reply, string Model, IReadOnlyList<SearchHit> Passages);
+public sealed record ChatResponse(string Reply, string Model, IReadOnlyList<Fonte> Fonti);
 
 /// <summary>
 /// Montaggio dell'assistente dentro un'applicazione ospite (Duckburg.Portal):
@@ -38,7 +38,7 @@ public static class QuackExtensions
             try
             {
                 var result = await orchestrator.AskAsync(request.Model, request.Message, ct);
-                return Results.Ok(new ChatResponse(result.Reply, request.Model, result.Passages));
+                return Results.Ok(new ChatResponse(result.Reply, request.Model, result.Fonti));
             }
             catch (ArgumentException ex)
             {

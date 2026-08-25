@@ -1,11 +1,46 @@
 [
   {
+    "Name": "Assistente (corpus + ingestione + MCP + portale)",
+    "Projects": [
+      {
+        "Path": "ChattyDuck.Corpus\\ChattyDuck.Corpus.csproj",
+        "Action": "Start",
+        "DebugTarget": "ChattyDuck.Corpus"
+      },
+      {
+        "Path": "Duckburg.Ingestione\\Duckburg.Ingestione.csproj",
+        "Action": "Start",
+        "DebugTarget": "Duckburg.Ingestione"
+      },
+      {
+        "Path": "Duckburg.Registry\\Duckburg.Registry.csproj",
+        "Action": "Start",
+        "DebugTarget": "http"
+      },
+      {
+        "Path": "Duckburg.Portal\\Duckburg.Portal.csproj",
+        "Action": "Start",
+        "DebugTarget": "Duckburg.Portal"
+      }
+    ]
+  },
+  {
     "Name": "Tutto (Docker + servizi)",
     "Projects": [
       {
         "Path": "Duckburg.DockerLaunch\\Duckburg.DockerLaunch.csproj",
         "Action": "StartWithoutDebugging",
         "DebugTarget": "Duckburg.DockerLaunch"
+      },
+      {
+        "Path": "ChattyDuck.Corpus\\ChattyDuck.Corpus.csproj",
+        "Action": "Start",
+        "DebugTarget": "ChattyDuck.Corpus"
+      },
+      {
+        "Path": "Duckburg.Ingestione\\Duckburg.Ingestione.csproj",
+        "Action": "Start",
+        "DebugTarget": "Duckburg.Ingestione"
       },
       {
         "Path": "Duckburg.Registry\\Duckburg.Registry.csproj",
@@ -31,21 +66,6 @@
         "Path": "Duckburg.Valutazione\\Duckburg.Valutazione.csproj",
         "Action": "Start",
         "DebugTarget": "Duckburg.Valutazione"
-      }
-    ]
-  },
-  {
-    "Name": "Portal + MCP",
-    "Projects": [
-      {
-        "Path": "Duckburg.Registry\\Duckburg.Registry.csproj",
-        "Action": "Start",
-        "DebugTarget": "http"
-      },
-      {
-        "Path": "Duckburg.Portal\\Duckburg.Portal.csproj",
-        "Action": "Start",
-        "DebugTarget": "Duckburg.Portal"
       }
     ]
   }

@@ -48,13 +48,6 @@ app.MapRazorPages();
 // Canale chat e diagnostica dell'assistente.
 app.MapQuackEndpoints();
 
-// Feed del corpus: proiezione read-only dei contenuti pubblicati del CMS, nel formato
-// del corpus MCP. Il Registry lo scarica e ne costruisce l'indice di ricerca, cosi' la
-// redazione scrive in un posto solo e l'assistente risponde sugli stessi contenuti.
-// Sono gli stessi dati gia' pubblici sulle pagine del portale: nessuna autenticazione.
-app.MapGet("/api/corpus", async (CorpusFeed feed, CancellationToken ct) =>
-    Results.Ok(await feed.Build(ct)));
-
 // Raccolta delle valutazioni di chiarezza delle pagine (C.SI.2.5 / C.SI.2.6).
 app.MapPost("/api/valutazione", async (ValutazioneDto dto, ContentService cms) =>
 {

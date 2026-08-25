@@ -21,7 +21,6 @@ public static class CmsServiceExtensions
         services.AddScoped<ContentService>();
         services.AddScoped<CmsSeeder>();
         services.AddScoped<Admin.AdminService>();
-        services.AddScoped<CorpusFeed>();
         return services;
     }
 

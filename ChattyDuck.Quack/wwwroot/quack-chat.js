@@ -90,25 +90,54 @@
             return div;
         }
 
-        function addPassages(passages) {
-            if (!passages || passages.length === 0) return;
+        function addFonti(fonti) {
+            if (!fonti || fonti.length === 0) return;
             const box = document.createElement('details');
             box.className = 'fonti-box';
             const summary = document.createElement('summary');
-            summary.textContent = 'Fonti recuperate (' + passages.length + ')';
+            summary.textContent = 'Fonti recuperate (' + fonti.length + ')';
             box.appendChild(summary);
-            for (const p of passages) {
+            for (const f of fonti) {
                 const item = document.createElement('div');
                 item.className = 'passaggio';
+
+                // Titolo della scheda piu' sezione: una sezione da sola non dice a quale
+                // contenuto appartenga, ed e' quello che il cittadino deve poter ritrovare.
                 const pid = document.createElement('span');
                 pid.className = 'pid';
-                pid.textContent = p.id;
+                pid.textContent = f.scheda + (f.etichetta ? ' · ' + f.etichetta : '');
+
                 const meta = document.createElement('span');
                 meta.className = 'pmeta';
-                meta.textContent = 'v' + p.version + ' · hash ' + p.hash.substring(0, 12) + '…';
+                const parti = [f.id];
+                if (f.versione) parti.push('v' + f.versione);
+                if (f.hash) parti.push('hash ' + f.hash.replace('sha256:', '').substring(0, 12) + '…');
+                meta.textContent = parti.join(' · ');
+
                 const txt = document.createElement('p');
-                txt.textContent = p.text;
+                txt.textContent = f.testo;
+
                 item.append(pid, meta, txt);
+
+                // Un contenuto fuori dal periodo di validita' va segnalato: citarlo come
+                // attuale e' il modo peggiore di sbagliare per una fonte certificata.
+                if (f.valido === false) {
+                    const scaduto = document.createElement('span');
+                    scaduto.className = 'pmeta';
+                    scaduto.textContent = '⚠ contenuto non più valido';
+                    item.appendChild(scaduto);
+                }
+
+                if (f.url) {
+                    const link = document.createElement('a');
+                    link.href = f.url;
+                    link.target = '_blank';
+                    link.rel = 'noopener';
+                    link.className = 'pmeta';
+                    link.textContent = 'apri la pagina';
+                    item.appendChild(link);
+                }
+
                 box.appendChild(item);
             }
             messages.appendChild(box);
@@ -135,7 +164,7 @@
                 }
                 pending.classList.remove('pending');
                 pending.lastChild.textContent = data.reply;
-                addPassages(data.passages);
+                addFonti(data.fonti);
             } catch (err) {
                 pending.lastChild.textContent = 'Errore di rete: ' + err;
                 pending.classList.add('errore');
