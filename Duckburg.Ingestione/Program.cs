@@ -21,6 +21,12 @@ builder.Services.AddDbContext<CmsDbContext>(db =>
     var provider = (builder.Configuration["Ingestione:Cms:Provider"] ?? "Sqlite").Trim().ToLowerInvariant();
     var cs = builder.Configuration["Ingestione:Cms:ConnectionString"]
              ?? "Data Source=../Duckburg.Portal/App_Data/paperopoli-cms.db";
+
+    // Un percorso relativo si ancora alla radice del contenuto, non alla directory del
+    // processo: sotto IIS quella e' C:\Windows\System32\inetsrv, e il database non
+    // verrebbe trovato con un errore che sembra di permessi e non lo e'.
+    if (provider == "sqlite") cs = AncoraSqlite(cs, builder.Environment.ContentRootPath);
+
     switch (provider)
     {
         case "sqlite": db.UseSqlite(cs); break;
@@ -92,3 +98,24 @@ app.MapGet("/health", (ServizioIngestione servizio) =>
 });
 
 app.Run();
+
+static string AncoraSqlite(string cs, string contentRoot)
+{
+    const string chiave = "Data Source=";
+    var idx = cs.IndexOf(chiave, StringComparison.OrdinalIgnoreCase);
+    if (idx < 0) return cs;
+
+    var inizio = idx + chiave.Length;
+    var fine = cs.IndexOf(';', inizio);
+    var percorso = (fine >= 0 ? cs[inizio..fine] : cs[inizio..]).Trim();
+
+    // I nomi speciali di SQLite non sono percorsi.
+    if (percorso.Length == 0 ||
+        percorso.Equals(":memory:", StringComparison.OrdinalIgnoreCase) ||
+        percorso.StartsWith("file:", StringComparison.OrdinalIgnoreCase) ||
+        Path.IsPathRooted(percorso))
+        return cs;
+
+    percorso = Path.GetFullPath(Path.Combine(contentRoot, percorso));
+    return string.Concat(cs.AsSpan(0, inizio), percorso, fine >= 0 ? cs.AsSpan(fine) : "");
+}

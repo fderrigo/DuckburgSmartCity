@@ -58,6 +58,50 @@ allineando, che e' la verita'.
 Quando un servizio riparte, gli altri se ne accorgono da soli entro
 `Corpus:RiallineamentoMinuti`. Per non aspettare, `POST /corpus/reload`.
 
+C'e' un caso che l'attesa non risolve, e vale la pena riconoscerlo a colpo d'occhio: il
+corpus raggiungibile ma vuoto. Il server MCP lo dichiara per esteso invece di dire
+genericamente che si sta allineando, perche' li' non c'e' niente da aspettare: manca una
+pubblicazione, e a farla e' un terzo.
+
+```jsonc
+{ "stato": "allineamento", "ultimo_errore": "... 404 (Not Found)." }
+```
+
+Un 404 significa che il corpus risponde: non e' un problema di rete ne' di binding, e'
+l'ingestione che non ha mai pubblicato.
+
+## Servizi temporizzati sotto IIS
+
+L'ingestione lavora da sola, con un `BackgroundService`, e nessuno la chiama mai. Nel
+modello di IIS e' un caso fuori dall'ordinario, perche' IIS presume che il lavoro nasca da
+una richiesta: l'applicazione viene caricata alla prima, scaricata dopo venti minuti di
+silenzio e riavviata ogni ventinove ore. Per un sito che serve pagine e' ragionevole. Per
+un temporizzatore significa che non parte mai.
+
+Tre impostazioni, e sono tutte necessarie:
+
+| Dove | Impostazione | Perche' |
+|---|---|---|
+| App pool | `startMode = AlwaysRunning` | avvia il processo al boot |
+| Sito | `preloadEnabled = true` | carica l'applicazione, che e' un'altra cosa |
+| App pool | `idleTimeout = 0`, `periodicRestart.time = 0` | non scaricarla piu' |
+
+La seconda e' quella che si dimentica, perche' la prima sembra gia' dirlo. `AlwaysRunning`
+avvia `w3wp`; l'applicazione dentro `w3wp` la carica solo una richiesta, o il preload.
+Senza preload il servizio esiste, l'app pool e' verde, e il temporizzatore non ha mai
+girato.
+
+`preloadEnabled` richiede la funzionalita' Application Initialization:
+
+```powershell
+Enable-WindowsOptionalFeature -Online -FeatureName IIS-ApplicationInit -All
+```
+
+`scripts/crea-siti-interni.ps1` imposta tutto e avvisa se la funzionalita' manca.
+
+Lo stesso vale per qualunque altro servizio del progetto che debba lavorare senza essere
+interrogato. Il corpus e il server MCP non ne hanno bisogno: qualcuno li chiama sempre.
+
 ## Corpus
 
 Nessun dato in ingresso senza chiave. Ogni ente ha la propria, e non le permette di

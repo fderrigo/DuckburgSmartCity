@@ -53,8 +53,18 @@ public sealed class ServizioCorpus(IHttpClientFactory http, IConfiguration cfg, 
         StatoCorpus.Pronto => "Corpus allineato.",
         StatoCorpus.ProntoNonAggiornato =>
             "Corpus disponibile ma non aggiornato: l'ultimo riallineamento non e' riuscito.",
-        _ => "Allineamento del corpus in corso: i contenuti non sono ancora disponibili.",
+        _ => SenzaIstantanea
+            ? "Il corpus risponde ma e' ancora vuoto: l'adattatore di ingestione non ha "
+              + "ancora pubblicato i contenuti dell'ente."
+            : "Allineamento del corpus in corso: i contenuti non sono ancora disponibili.",
     };
+
+    /// <summary>
+    /// Vero quando il corpus e' raggiungibile ma non contiene nulla per questo ente.
+    /// Distinzione che vale la pena tenere: nel primo caso si guarda la rete, nel secondo
+    /// l'ingestione. Sono due indagini diverse.
+    /// </summary>
+    public bool SenzaIstantanea { get; private set; }
 
     private string UrlIstantanea =>
         $"{(cfg["Corpus:Url"] ?? "http://localhost:5200").TrimEnd('/')}/api/enti/{cfg["Corpus:Ente"] ?? "comune-paperopoli"}/istantanea";
@@ -82,8 +92,17 @@ public sealed class ServizioCorpus(IHttpClientFactory http, IConfiguration cfg, 
             {
                 UltimoErrore = null;
                 TentativiFalliti = 0;
+                SenzaIstantanea = false;
                 return false;
             }
+
+            // Un 404 non e' un guasto ed e' bene non farlo somigliare a uno: il corpus
+            // risponde, ma nessun adattatore ha ancora pubblicato per questo ente. Chi
+            // legge la diagnostica deve sapere dove guardare, e non e' il corpus.
+            if (risposta.StatusCode == HttpStatusCode.NotFound)
+                throw new CorpusSenzaIstantanea(
+                    $"Il corpus risponde ma non ha ancora un'istantanea per l'ente " +
+                    $"'{cfg["Corpus:Ente"] ?? "comune-paperopoli"}': l'ingestione non ha mai pubblicato.");
 
             risposta.EnsureSuccessStatusCode();
 
@@ -98,6 +117,7 @@ public sealed class ServizioCorpus(IHttpClientFactory http, IConfiguration cfg, 
             CaricatoIl = DateTimeOffset.UtcNow;
             UltimoErrore = null;
             TentativiFalliti = 0;
+            SenzaIstantanea = false;
 
             log.LogInformation(
                 "Corpus di {Ente} caricato: versione {Versione}, {Contenuti} contenuti, {Sezioni} sezioni (prima: {Prima})",
@@ -111,6 +131,19 @@ public sealed class ServizioCorpus(IHttpClientFactory http, IConfiguration cfg, 
         {
             UltimoErrore = ex.Message;
             TentativiFalliti++;
+            SenzaIstantanea = ex is CorpusSenzaIstantanea;
+
+            // Un corpus vuoto non si risolve da solo: nessun numero di tentativi lo
+            // riempie, perche' a riempirlo e' un terzo. Va detto subito e per esteso,
+            // altrimenti si passa il pomeriggio a cercare un guasto di rete che non c'e'.
+            if (SenzaIstantanea)
+            {
+                log.LogWarning(
+                    "{Messaggio} Il riallineamento continua, ma finche' l'adattatore non "
+                    + "pubblica non cambia nulla: controlla il servizio di ingestione.",
+                    ex.Message);
+                return false;
+            }
 
             // Al primo avvio e' normale: il corpus potrebbe non essere ancora su. Si
             // registra come informazione finche' i tentativi sono pochi, poi come avviso.
@@ -166,3 +199,9 @@ public sealed class Allineatore(
         }
     }
 }
+
+/// <summary>
+/// Il corpus c'e' ma non ha nulla per questo ente. Tipo proprio, non per eleganza: e' la
+/// sola condizione in cui l'attesa non si risolve da sola, perche' aspetta un terzo.
+/// </summary>
+public sealed class CorpusSenzaIstantanea(string messaggio) : Exception(messaggio);

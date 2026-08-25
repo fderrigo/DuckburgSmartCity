@@ -32,7 +32,7 @@ public sealed class StrumentiCorpus
     /// </summary>
     private static IndiceCorpus Disponibile(ServizioCorpus corpus) =>
         corpus.Indice ?? throw new McpException(
-            "Il corpus dell'ente non e' ancora disponibile: allineamento in corso. " +
+            corpus.Descrizione + " " +
             "Dillo all'utente e invitalo a riprovare fra qualche istante. " +
             "Non rispondere con informazioni che non provengono dal corpus.");
 
