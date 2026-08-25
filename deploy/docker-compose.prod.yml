@@ -28,6 +28,10 @@
 name: paperopoli
 
 services:
+  # Nota su --insecure nel comando: con DEBUG=False il server di sviluppo di
+  # Django non serve i file statici, e la pagina di login arriva senza CSS ne'
+  # JavaScript. --insecure li rimette in servizio senza riattivare le pagine di
+  # errore dettagliate, che con DEBUG=True mostrerebbero la configurazione.
   trust-anchor:
     # pinned by digest for reproducibility (i dump in runtime/ devono corrispondere)
     image: ghcr.io/italia/spid-cie-oidc-django@sha256:80b594f122139f9264a2ef035d975e29ef49dbf766b087a78f54f67dce24c5be
@@ -42,7 +46,7 @@ services:
       bash -c "cd /django-project/ &&
       python3 manage.py migrate &&
       python3 manage.py loaddata dumps/example.json &&
-      python3 manage.py runserver 0.0.0.0:8000"
+      python3 manage.py runserver --insecure 0.0.0.0:8000"
 
   cie-provider:
     image: ghcr.io/italia/spid-cie-oidc-django@sha256:80b594f122139f9264a2ef035d975e29ef49dbf766b087a78f54f67dce24c5be
@@ -59,7 +63,7 @@ services:
       bash -c "cd /django-project/ &&
       python3 manage.py migrate &&
       python3 manage.py loaddata dumps/example.json &&
-      python3 manage.py runserver 0.0.0.0:8002"
+      python3 manage.py runserver --insecure 0.0.0.0:8002"
 
   identity:
     build:
