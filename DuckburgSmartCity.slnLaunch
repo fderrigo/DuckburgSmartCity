@@ -13,7 +13,7 @@
         "DebugTarget": "Duckburg.Ingestione"
       },
       {
-        "Path": "Duckburg.Registry\\Duckburg.Registry.csproj",
+        "Path": "ChattyDuck.McpServer\\ChattyDuck.McpServer.csproj",
         "Action": "Start",
         "DebugTarget": "http"
       },
@@ -43,7 +43,7 @@
         "DebugTarget": "Duckburg.Ingestione"
       },
       {
-        "Path": "Duckburg.Registry\\Duckburg.Registry.csproj",
+        "Path": "ChattyDuck.McpServer\\ChattyDuck.McpServer.csproj",
         "Action": "Start",
         "DebugTarget": "http"
       },

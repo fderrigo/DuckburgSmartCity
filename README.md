@@ -12,7 +12,7 @@ Prototipo dimostrativo sul Comune di Paperopoli (fittizio). L'ente pubblica i pr
 |---|---|
 | `ChattyDuck.Corpus` | Servizio del corpus (porta 5200): custodisce i contenuti certificati di uno o più enti e li espone. Non conosce alcun CMS. Schema pubblicato su `/schema/corpus-1.0.json`. |
 | `Duckburg.Ingestione` | Adattatore fra il CMS di Paperopoli e il corpus (porta 5250). È il progetto che si riscrive per ogni CMS. Temporizzato, con innesco manuale su `POST /esegui`. |
-| `Duckburg.Registry` | Server MCP dell'ente (porta 5000). Legge il corpus e lo espone ai modelli con gli strumenti `cerca`, `scheda`, `elenca`. Trasporto Streamable HTTP su `/mcp`. |
+| `ChattyDuck.McpServer` | Server MCP dell'ente (porta 5000). Legge il corpus e lo espone ai modelli con gli strumenti `cerca`, `scheda`, `elenca`. Trasporto Streamable HTTP su `/mcp`. |
 | `Duckburg.Portal` | Portale del Comune (porta 5100), Razor Pages in stile Designers Italia. Assistente come widget su tutte le pagine e a pagina intera su `/assistente`. Il "cittadino informato". |
 | `Duckburg.ServiziOnline` | Portale dei servizi online (porta 5300), stesso layout e assistente del Portal. Il "cittadino attivo" (PNRR Missione 1): Area personale accessibile solo con SPID/CIE tramite Duckburg.Identity. |
 | `Duckburg.Identity` | Sistema di accesso del Comune: Relying Party OpenID Connect Federation 1.0 (profilo SPID/CIE), fork di [SPID-CIE-OIDC](https://github.com/fderrigo/SPID-CIE-OIDC) in stile Paperopoli. Entity id `http://identity.paperopoli.test:8001`; dopo il login rimanda al portale chiamante con un token firmato (SSO). |
@@ -42,10 +42,10 @@ I due modelli si collegano al corpus in modo diverso:
 ```powershell
 # 1. Configurazione: copia i template e inserisci le API key
 Copy-Item Duckburg.Portal\appsettings.template.json Duckburg.Portal\appsettings.json
-Copy-Item Duckburg.Registry\appsettings.template.json Duckburg.Registry\appsettings.json
+Copy-Item ChattyDuck.McpServer\appsettings.template.json ChattyDuck.McpServer\appsettings.json
 
 # 2. Server MCP (porta 5000)
-dotnet run --project Duckburg.Registry
+dotnet run --project ChattyDuck.McpServer
 
 # 3. Portale (porta 5100) -> http://localhost:5100
 dotnet run --project Duckburg.Portal

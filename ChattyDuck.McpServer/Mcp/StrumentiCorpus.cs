@@ -1,9 +1,9 @@
 using System.ComponentModel;
-using Duckburg.Registry.Corpus;
+using ChattyDuck.McpServer.Corpus;
 using ModelContextProtocol;
 using ModelContextProtocol.Server;
 
-namespace Duckburg.Registry.Mcp;
+namespace ChattyDuck.McpServer.Mcp;
 
 /// <summary>
 /// Gli strumenti che l'ente mette a disposizione dei modelli.

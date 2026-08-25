@@ -4,8 +4,8 @@
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>Duckburg.Registry</RootNamespace>
-    <AssemblyName>Duckburg.Registry</AssemblyName>
+    <RootNamespace>ChattyDuck.McpServer</RootNamespace>
+    <AssemblyName>ChattyDuck.McpServer</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

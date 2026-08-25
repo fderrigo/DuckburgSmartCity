@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Duckburg.Registry.Corpus;
+namespace ChattyDuck.McpServer.Corpus;
 
 // Il contratto del corpus visto da chi legge, ridichiarato leggendo lo schema pubblicato.
 // Il server MCP e' un consumatore del corpus come lo sarebbe un client di terzi: non

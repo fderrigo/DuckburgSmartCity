@@ -4,7 +4,7 @@ using ModelContextProtocol.Client;
 namespace ChattyDuck.Mcp;
 
 /// <summary>
-/// Client MCP verso Duckburg.Registry. Usato dal percorso Gemini per il ponte tool-MCP.
+/// Client MCP verso ChattyDuck.McpServer. Usato dal percorso Gemini per il ponte tool-MCP.
 /// Il percorso Claude non passa da qui: Claude e' MCP-nativo e si collega da solo.
 /// Confine di rete: l'assistente parla con la fonte dell'ente solo via Streamable HTTP.
 /// </summary>
@@ -25,7 +25,7 @@ public sealed class McpGateway(IConfiguration configuration) : IAsyncDisposable
                 new HttpClientTransport(new HttpClientTransportOptions
                 {
                     Endpoint = new Uri(_endpoint),
-                    Name = "Duckburg.Registry",
+                    Name = "ChattyDuck.McpServer",
                     TransportMode = HttpTransportMode.StreamableHttp,
                 }),
                 cancellationToken: ct);

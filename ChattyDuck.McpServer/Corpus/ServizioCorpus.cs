@@ -1,7 +1,7 @@
 using System.Net;
 using System.Text.Json;
 
-namespace Duckburg.Registry.Corpus;
+namespace ChattyDuck.McpServer.Corpus;
 
 /// <summary>
 /// Tiene in memoria l'indice del corpus e lo riallinea al servizio che lo custodisce.

@@ -55,7 +55,7 @@ public static class QuackExtensions
         app.MapGet("/chat/usage", (ChatOrchestrator orchestrator, ModelUsageTracker tracker) =>
             Results.Ok(orchestrator.AvailableModels.Select(tracker.Snapshot)));
 
-        // Diagnostica: verifica che il ponte MCP verso Duckburg.Registry funzioni, senza chiavi API.
+        // Diagnostica: verifica che il ponte MCP verso ChattyDuck.McpServer funzioni, senza chiavi API.
         app.MapGet("/debug/tools", async (McpGateway gateway, CancellationToken ct) =>
         {
             var tools = await gateway.ListToolsAsync(ct);

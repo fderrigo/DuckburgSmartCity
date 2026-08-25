@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Text;
 using System.Text.Json;
 
-namespace Duckburg.Registry.Corpus;
+namespace ChattyDuck.McpServer.Corpus;
 
 /// <summary>
 /// L'indice in memoria del corpus, e il recupero in due stadi.

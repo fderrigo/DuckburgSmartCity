@@ -1,6 +1,6 @@
 using System.Threading.RateLimiting;
-using Duckburg.Registry.Corpus;
-using Duckburg.Registry.Mcp;
+using ChattyDuck.McpServer.Corpus;
+using ChattyDuck.McpServer.Mcp;
 
 var builder = WebApplication.CreateBuilder(args);
 
