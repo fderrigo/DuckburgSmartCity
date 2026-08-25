@@ -95,9 +95,48 @@ public static class CmsServiceExtensions
             percorso = Path.GetFullPath(Path.Combine(contentRoot, percorso));
 
         var dir = Path.GetDirectoryName(percorso);
-        if (!string.IsNullOrEmpty(dir)) Directory.CreateDirectory(dir);
+        if (!string.IsNullOrEmpty(dir)) PreparaCartellaDati(dir);
 
         return string.Concat(cs.AsSpan(0, inizio), percorso, fine >= 0 ? cs.AsSpan(fine) : "");
+    }
+
+    /// <summary>
+    /// Si assicura che la cartella del database esista e sia scrivibile, e se non lo e'
+    /// lo dice in modo che si capisca cosa fare.
+    /// <para>
+    /// Due errori diversi arrivano qui, e nessuno dei due si spiega da solo. Se la
+    /// cartella manca, CreateDirectory fallisce con "Access to the path is denied" e uno
+    /// stack che parla di IO. Se la cartella c'e' ma non e' scrivibile, l'avvio riesce e
+    /// il guasto arriva molto dopo, come "SQLite Error 14: unable to open database file",
+    /// che sembra un percorso sbagliato. In tutti e due i casi la causa e' la stessa e la
+    /// soluzione e' una riga di icacls.
+    /// </para>
+    /// <para>
+    /// Vale la pena ricordarlo nel messaggio: ricopiare la cartella dell'applicazione
+    /// durante un deploy azzera i permessi concessi a mano, quindi lo stesso guasto
+    /// tende a tornare a ogni pubblicazione.
+    /// </para>
+    /// </summary>
+    private static void PreparaCartellaDati(string cartella)
+    {
+        try
+        {
+            if (!Directory.Exists(cartella)) Directory.CreateDirectory(cartella);
+
+            // Esistere non basta: il database va scritto. Meglio scoprirlo adesso.
+            var prova = Path.Combine(cartella, ".permessi-" + Environment.ProcessId);
+            File.WriteAllText(prova, "");
+            File.Delete(prova);
+        }
+        catch (Exception ex) when (ex is UnauthorizedAccessException or IOException)
+        {
+            throw new InvalidOperationException(
+                $"La cartella dei dati '{cartella}' non e' scrivibile dal processo, che gira " +
+                $"come '{Environment.UserName}'. Sotto IIS concedi la scrittura all'identita' " +
+                $"dell'app pool, per esempio: icacls \"{cartella}\" /grant \"IIS_IUSRS:(OI)(CI)M\". " +
+                "Ricorda che ricopiare la cartella dell'applicazione azzera i permessi dati prima.",
+                ex);
+        }
     }
 
     /// <summary>Crea lo schema (se assente) e popola i contenuti di default.</summary>

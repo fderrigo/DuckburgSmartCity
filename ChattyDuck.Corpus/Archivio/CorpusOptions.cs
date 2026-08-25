@@ -91,9 +91,41 @@ public static class CorpusServiceExtensions
         if (!Path.IsPathRooted(percorso)) percorso = Path.GetFullPath(Path.Combine(contentRoot, percorso));
 
         var cartella = Path.GetDirectoryName(percorso);
-        if (!string.IsNullOrEmpty(cartella)) Directory.CreateDirectory(cartella);
+        if (!string.IsNullOrEmpty(cartella)) PreparaCartellaDati(cartella);
 
         return string.Concat(cs.AsSpan(0, inizio), percorso, fine >= 0 ? cs.AsSpan(fine) : "");
+    }
+
+    /// <summary>
+    /// Si assicura che la cartella del database esista e sia scrivibile, e altrimenti lo
+    /// dice in modo utilizzabile.
+    /// <para>
+    /// Senza questo controllo il guasto arriva o come "Access to the path is denied" con
+    /// uno stack che parla di IO, o molto piu' tardi come "SQLite Error 14: unable to open
+    /// database file", che sembra un percorso sbagliato e non lo e'. La causa e' la stessa
+    /// e si risolve con una riga di icacls.
+    /// </para>
+    /// </summary>
+    private static void PreparaCartellaDati(string cartella)
+    {
+        try
+        {
+            if (!Directory.Exists(cartella)) Directory.CreateDirectory(cartella);
+
+            // Esistere non basta: il corpus ci scrive le istantanee.
+            var prova = Path.Combine(cartella, ".permessi-" + Environment.ProcessId);
+            File.WriteAllText(prova, "");
+            File.Delete(prova);
+        }
+        catch (Exception ex) when (ex is UnauthorizedAccessException or IOException)
+        {
+            throw new InvalidOperationException(
+                $"La cartella dei dati '{cartella}' non e' scrivibile dal processo, che gira " +
+                $"come '{Environment.UserName}'. Sotto IIS concedi la scrittura all'identita' " +
+                $"dell'app pool, per esempio: icacls \"{cartella}\" /grant \"IIS_IUSRS:(OI)(CI)M\". " +
+                "Ricorda che ricopiare la cartella dell'applicazione azzera i permessi dati prima.",
+                ex);
+        }
     }
 
     public static async Task InizializzaCorpusAsync(this IServiceProvider services)

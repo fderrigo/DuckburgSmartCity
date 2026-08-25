@@ -203,9 +203,29 @@ Tre punti che si scoprono solo sbagliandoli:
 portale, servizi online e valutazione: lasciati ai valori di sviluppo, in produzione
 puntano a `localhost`.
 
-**Il CMS e il corpus hanno bisogno di scrivere.** Permessi sull'identita' dell'app pool
-per `Duckburg.Portal/App_Data`, `Duckburg.Portal/wwwroot/media` e
-`ChattyDuck.Corpus/App_Data`. Senza, il database non viene creato e il sito non parte.
+**Il CMS e il corpus hanno bisogno di scrivere**, su `Duckburg.Portal/App_Data`,
+`Duckburg.Portal/wwwroot/media` e `ChattyDuck.Corpus/App_Data`.
+
+```powershell
+.\scripts\permessi-dati.ps1
+```
+
+Va rilanciato **dopo ogni pubblicazione che ricopia le cartelle**. Non e' una svista dello
+script: copiare una cartella sopra un'altra ne sostituisce anche le liste di controllo, e i
+permessi dati a mano spariscono con i file vecchi. E' il motivo per cui lo stesso errore di
+accesso negato torna a ogni deploy, sempre uguale, sempre inatteso.
+
+Le applicazioni ora lo dicono in chiaro all'avvio, con il percorso, l'identita' con cui
+girano e il comando da eseguire, invece di fallire dentro `Directory.CreateDirectory`.
+Controllano anche di poter scrivere davvero: una cartella che esiste ma non e' scrivibile
+non fa fallire l'avvio, fa fallire SQLite molto piu' tardi con `unable to open database
+file`, che sembra un percorso sbagliato.
+
+Il modo per non ripetere il passo e' portare i dati fuori dall'albero delle applicazioni,
+per esempio sotto `C:\ProgramData\DuckburgSmartCity`, e puntarci le stringhe di
+connessione: quelle cartelle le pubblicazioni non le toccano. Vale soprattutto per
+`wwwroot/media`, dove una pubblicazione fatta sostituendo la cartella cancella i file
+caricati dalla redazione.
 
 **L'area `/admin` e' raggiungibile da Internet.** Cambia la password di default e, se
 puoi, limitala per indirizzo IP.
