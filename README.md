@@ -1,8 +1,10 @@
 # ChattyDuck - Duckburg Smart City
 
-> **TL;DR**: Assistente al cittadino che risponde esclusivamente sui contenuti certificati dell'ente, esposti tramite **Model Context Protocol (MCP)**. Il contenuto vive nel server MCP, mai nel prompt del modello.
+> **TL;DR**: Assistente al cittadino che risponde esclusivamente sui contenuti certificati dell'ente, esposti tramite **Model Context Protocol (MCP)**. Il contenuto non sta nel prompt del modello, e non sta nemmeno in due posti: nasce nel CMS dell'ente e arriva al modello attraverso un corpus con vocabolario, identificatori, versioni e impronte.
 
-Prototipo dimostrativo sul Comune di Paperopoli (fittizio). L'ente pubblica i propri contenuti attraverso un server MCP; i modelli AI (Gemini e Claude) rispondono solo sulla base di quei contenuti, citando id e versione dei passaggi recuperati.
+Prototipo dimostrativo sul Comune di Paperopoli (fittizio). I modelli AI (Gemini e Claude) rispondono solo sulla base di quei contenuti, citando la sezione da cui prendono ogni informazione.
+
+Il corpus non è legato a questo CMS: parla il vocabolario del modello Comuni, che prescrive a ogni ente italiano quali attributi deve avere una scheda servizio. Per attaccare un altro gestore di contenuti si scrive un adattatore, anche in un altro linguaggio, e il resto non cambia.
 
 ## Architettura
 
@@ -297,8 +299,80 @@ Il server MCP espone tre strumenti invece di uno:
 
 ```bash
 curl -s http://localhost:5000/health
-# {"status":"ok","ente":"comune-paperopoli","contenuti":67,"sezioni":201,...}
+# {"stato":"pronto","pronto":true,"messaggio":"Corpus allineato.",
+#  "ente":"comune-paperopoli","contenuti":67,"sezioni":201, ...}
 ```
+
+### Attaccare un altro CMS
+
+È il caso per cui il corpus esiste come servizio separato. Serve solo un adattatore: un
+programma qualsiasi, in qualsiasi linguaggio, che legga il gestore di contenuti di
+partenza e pubblichi un'istantanea. Non deve referenziare nulla di questo repository.
+
+**Il contratto** è lo schema JSON servito dal corpus stesso:
+
+```bash
+curl -s http://localhost:5200/schema/corpus-1.0.json
+```
+
+Le motivazioni delle scelte stanno dentro le descrizioni dello schema, non solo la forma
+dei campi.
+
+**Gli endpoint** che un adattatore usa:
+
+| Metodo | Percorso | A cosa serve |
+|---|---|---|
+| `POST` | `/api/enti/{ente}/istantanea/verifica` | prova un'istantanea senza pubblicarla |
+| `PUT` | `/api/enti/{ente}/istantanea` | pubblica, sostituendo per intero |
+| `GET` | `/api/enti/{ente}/istantanea` | rilegge l'ultima pubblicata, con ETag |
+| `GET` | `/api/enti/{ente}/versioni` | la storia delle pubblicazioni |
+
+La chiave va nell'intestazione `X-Corpus-Key` ed è per ente: non permette di scrivere sul
+corpus di un altro.
+
+**Si comincia dalla verifica.** L'endpoint di prova restituisce l'elenco puntuale dei
+problemi, con il percorso di ognuno, senza toccare il corpus vivo:
+
+```json
+{
+  "valida": false,
+  "errori": [
+    { "percorso": "contenuti[3].sezioni[1].hash",
+      "messaggio": "Impronta dichiarata non corrispondente al testo." }
+  ],
+  "avvisi": [
+    { "percorso": "contenuti[7].relazioni[0].verso",
+      "messaggio": "Relazione verso un contenuto assente dall'istantanea." }
+  ]
+}
+```
+
+Errori bloccanti e avvisi sono cose diverse: i primi rendono il corpus non verificabile,
+i secondi ne riducono la qualità. Un'istantanea con soli avvisi viene pubblicata, e gli
+avvisi tornano nella risposta come lista di cose da migliorare.
+
+**Tre cose che un adattatore non deve fare.**
+
+Non deve calcolare le impronte: se le omette le calcola il corpus. Reimplementare SHA-256
+in ogni adattatore è un modo di sbagliare che spezzerebbe la verificabilità di ogni
+risposta senza che nessuno se ne accorga.
+
+Non deve comporre gli id delle sezioni: bastano `id` del contenuto e `chiave` della
+sezione.
+
+Non deve inventare fatti. Un campo va negli `attributi` **solo se nel CMS di partenza è
+già strutturato**: una data che è una data, un booleano che è un booleano. Se nel CMS è
+prosa libera, resta una `sezione`. Estrarre fatti dalla prosa con espressioni regolari
+significa indovinare, e un corpus che si dichiara certificato non può contenere fatti
+indovinati. La ricchezza del corpus resta così limitata da quella della sorgente, e il
+modello lo rende visibile invece di nasconderlo.
+
+**Per una sorgente che non si controlla**, dove nessuno espone un'API, il modello prevede
+già `provenienza.metodo: "estrazione"` con una `confidenza` dichiarata, in alternativa a
+`"mappatura"`. È il gancio per un adattatore che ricavi i contenuti dalle pagine
+pubblicate: stesso corpus, stessa citabilità, con l'incertezza dichiarata invece che
+nascosta.
+
 
 ## Conformità al modello Comuni (misura 1.4.1)
 
@@ -316,6 +390,17 @@ La pagina "Deviazioni dichiarate" documenta i criteri che la demo non supera per
 
 ## Note
 
-Prototipo dimostrativo, non pronto per la produzione. I dettagli implementativi (bridge Gemini, gestione rate limit, formato del corpus) sono candidati a una futura cartella `docs/`.
+Prototipo dimostrativo, non pronto per la produzione. Il deploy è documentato in
+[`docs/DEPLOY.md`](docs/DEPLOY.md).
+
+**Cosa non c'è, dichiarato.** La ricerca nel corpus è lessicale, non semantica: nessun
+indice vettoriale. Migliorerebbe il richiamo sulle parafrasi, ma non risolve nessuno dei
+problemi che il modello del corpus affronta, e un indice di embedding è opaco e non
+riproducibile fra versioni del modello. Per un progetto la cui tesi è la verificabilità
+delle risposte, è un costo da pagare dopo la struttura, non prima.
+
+Il tracker dei consumi vive in memoria e si azzera al riavvio. Le credenziali della demo
+stanno nella configurazione. Il modello dati del CMS copre l'architettura
+dell'informazione del modello Comuni, non i flussi di back office di un ente reale.
 
 **Licenze**: il codice originale è sotto Apache 2.0 (`LICENSE.txt`). I componenti di terze parti inclusi nel repository (configurazione Django della federazione in `infra/`, Bootstrap Italia, pulsanti SPID/CIE, font) restano sotto le rispettive licenze: l'elenco è in `NOTICE-spid-cie-oidc.txt`.
