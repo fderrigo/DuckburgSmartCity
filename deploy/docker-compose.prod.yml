@@ -1,0 +1,104 @@
+# Federazione SPID/CIE in produzione, su 217.61.62.212 (KundividiSQL).
+#
+# Differenze dal docker-compose.yml di sviluppo:
+#   - nessuna porta pubblicata dai tre servizi: si raggiungono solo tramite Caddy,
+#     altrimenti Django resterebbe esposto in chiaro su 217.61.62.212:8000
+#   - Caddy davanti, che termina il TLS per i tre hostname
+#   - Identity in Production, con le chiavi private montate da fuori dal repository
+#   - limiti di memoria e oom_score_adj su ogni container
+#
+# Perche' i limiti di memoria: la macchina ha 3,8 GB e ospita SQL Server. Senza
+# limiti, quando la memoria finisce il kernel sceglie da solo chi uccidere, e la
+# vittima naturale e' il processo piu' grosso, cioe' sqlservr. Con mem_limit i
+# container non possono crescere oltre la loro quota, e con oom_score_adj positivo
+# sono loro i primi candidati. Il risultato voluto: se qualcosa deve morire, muore
+# la demo, non il database di sviluppo.
+#
+# Uso:
+#   cd /opt/paperopoli
+#   docker compose -f deploy/docker-compose.prod.yml up -d --build
+
+name: paperopoli
+
+services:
+  trust-anchor.paperopoli.derrigo.it:
+    # pinned by digest for reproducibility (the committed infra/ dumps must match this image)
+    image: ghcr.io/italia/spid-cie-oidc-django@sha256:80b594f122139f9264a2ef035d975e29ef49dbf766b087a78f54f67dce24c5be
+    restart: unless-stopped
+    mem_limit: 220m
+    oom_score_adj: 500
+    volumes:
+      - ../infra/federation_authority:/django-project
+    networks:
+      - oidcfed
+    command: >
+      bash -c "cd /django-project/ &&
+      python3 manage.py migrate &&
+      python3 manage.py loaddata dumps/example.json &&
+      python3 manage.py runserver 0.0.0.0:8000"
+
+  cie-provider.paperopoli.derrigo.it:
+    image: ghcr.io/italia/spid-cie-oidc-django@sha256:80b594f122139f9264a2ef035d975e29ef49dbf766b087a78f54f67dce24c5be
+    restart: unless-stopped
+    mem_limit: 220m
+    oom_score_adj: 500
+    volumes:
+      - ../infra/provider:/django-project
+    networks:
+      - oidcfed
+    depends_on:
+      - trust-anchor.paperopoli.derrigo.it
+    command: >
+      bash -c "cd /django-project/ &&
+      python3 manage.py migrate &&
+      python3 manage.py loaddata dumps/example.json &&
+      python3 manage.py runserver 0.0.0.0:8002"
+
+  identity.paperopoli.derrigo.it:
+    build:
+      context: ../Duckburg.Identity
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    mem_limit: 260m
+    oom_score_adj: 500
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      # Le chiavi private stanno FUORI dal repository, montate in sola lettura.
+      # Sono chiavi nuove, non quelle demo versionate su GitHub.
+      - Rp__PrivateKeysFile=/secrets/rp_private_keys.json
+      # Il GC di .NET legge da solo il limite del cgroup e dimensiona l'heap su
+      # quello, quindi mem_limit basta: niente DOTNET_GCHeapHardLimit a mano,
+      # che con un valore esadecimale sbagliato impedirebbe l'avvio.
+    volumes:
+      - /opt/paperopoli-secrets:/secrets:ro
+    networks:
+      - oidcfed
+    depends_on:
+      - trust-anchor.paperopoli.derrigo.it
+      - cie-provider.paperopoli.derrigo.it
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    mem_limit: 96m
+    oom_score_adj: 300
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - oidcfed
+    depends_on:
+      - trust-anchor.paperopoli.derrigo.it
+      - cie-provider.paperopoli.derrigo.it
+      - identity.paperopoli.derrigo.it
+
+networks:
+  oidcfed:
+
+volumes:
+  caddy_data:
+  caddy_config:

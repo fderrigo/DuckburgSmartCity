@@ -42,7 +42,7 @@ app.MapRazorPages();
 // Canale chat e diagnostica dell'assistente.
 app.MapQuackEndpoints();
 
-var identityBaseUrl = app.Configuration["Sso:IdentityBaseUrl"] ?? "http://identity.paperopoli.derrigo.it:8001";
+var identityBaseUrl = app.Configuration["Sso:IdentityBaseUrl"] ?? "https://identity.paperopoli.derrigo.it";
 var callbackUrl = app.Configuration["Sso:CallbackUrl"] ?? "http://localhost:5300/auth/callback";
 var postLogoutUrl = app.Configuration["Sso:PostLogoutUrl"] ?? "http://localhost:5300/";
 

@@ -43,3 +43,8 @@ Duckburg.Valutazione/reports/
 
 # File caricati dagli utenti (libreria media, segnalazioni)
 Duckburg.Portal/wwwroot/media/
+
+# Documentazione AgID di riferimento: consultata, non parte del progetto
+/lg1-4-1.pdf
+/slide1-4-1.pdf
+/app-valutazione-modelli-docs.pdf

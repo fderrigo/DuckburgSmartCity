@@ -1,0 +1,47 @@
+# TLS e reverse proxy per la federazione SPID/CIE, su 217.61.62.212.
+#
+# I nomi dei servizi nel compose coincidono con gli hostname pubblici, quindi il
+# DNS interno di Docker li risolve senza bisogno di indirizzi o porte pubblicate.
+#
+# Caddy ottiene i certificati da Let's Encrypt in automatico al primo avvio: i
+# record DNS devono gia' puntare qui e le porte 80 e 443 devono essere aperte,
+# altrimenti la richiesta fallisce e si consumano tentativi.
+
+{
+	# Indirizzo per gli avvisi di scadenza dei certificati.
+	email filippo.derrigo@gmail.com
+}
+
+# Intestazioni comuni a tutti e tre gli host.
+(comuni) {
+	header {
+		# La demo non deve finire nei motori di ricerca: una pagina di login
+		# raggiunta senza contesto e' l'unico modo in cui puo' essere fraintesa.
+		X-Robots-Tag "noindex, nofollow"
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		-Server
+	}
+}
+
+trust-anchor.paperopoli.derrigo.it {
+	import comuni
+	reverse_proxy trust-anchor.paperopoli.derrigo.it:8000
+}
+
+cie-provider.paperopoli.derrigo.it {
+	import comuni
+	reverse_proxy cie-provider.paperopoli.derrigo.it:8002
+}
+
+identity.paperopoli.derrigo.it {
+	import comuni
+	reverse_proxy identity.paperopoli.derrigo.it:8001
+}
+
+# Chi arriva sull'IP nudo in http non deve vedere nulla.
+# Su 443 non serve un blocco: Caddy chiude da solo le connessioni con SNI
+# sconosciuto, e dichiarare :443 lo farebbe tentare un certificato senza nome.
+:80 {
+	respond "Not found" 404
+}
