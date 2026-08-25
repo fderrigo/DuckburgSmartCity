@@ -42,10 +42,10 @@ I due modelli si collegano al corpus in modo diverso:
 
 ```powershell
 # 1. Configurazione: copia i template e inserisci le API key
-Copy-Item Duckburg.Portalppsettings.template.json      Duckburg.Portalppsettings.json
-Copy-Item ChattyDuck.Corpusppsettings.template.json    ChattyDuck.Corpusppsettings.json
-Copy-Item Duckburg.Ingestioneppsettings.template.json  Duckburg.Ingestioneppsettings.json
-Copy-Item ChattyDuck.McpServerppsettings.template.json ChattyDuck.McpServerppsettings.json
+Copy-Item Duckburg.Portal\appsettings.template.json      Duckburg.Portal\appsettings.json
+Copy-Item ChattyDuck.Corpus\appsettings.template.json    ChattyDuck.Corpus\appsettings.json
+Copy-Item Duckburg.Ingestione\appsettings.template.json  Duckburg.Ingestione\appsettings.json
+Copy-Item ChattyDuck.McpServer\appsettings.template.json ChattyDuck.McpServer\appsettings.json
 # la stessa chiave in Corpus:Enti[0].ChiaveIngestione e Ingestione:ChiaveCorpus
 
 # 2. Portale e CMS (porta 5100): al primo avvio crea il database e i contenuti
