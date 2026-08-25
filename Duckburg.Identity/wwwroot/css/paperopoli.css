@@ -290,7 +290,7 @@ main section { padding: 2.4rem 0; }
 .btn-fumetto {
     font-family: 'Bangers', cursive; letter-spacing: .06em;
     font-size: 1.15rem;
-    background: var(--rosso); color: #fff;
+    background: var(--rosso-scuro); color: #fff;
     border: var(--bordo); border-radius: 10px;
     padding: .5rem 1.3rem;
     box-shadow: 4px 4px 0 var(--inchiostro);
@@ -560,7 +560,7 @@ a.card-fumetto:hover { transform: translate(2px, 2px); box-shadow: 4px 4px 0 var
 .widget-pannello .chat-messaggi { min-height: 220px; max-height: 45vh; }
 .widget-chiudi {
     margin-left: .4rem;
-    background: var(--rosso); color: #fff;
+    background: var(--rosso-scuro); color: #fff;
     border: 2px solid var(--inchiostro); border-radius: 8px;
     font-weight: 700; font-size: .9rem; line-height: 1;
     width: 28px; height: 28px;
