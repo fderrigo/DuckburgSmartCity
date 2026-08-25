@@ -37,9 +37,7 @@ services:
     volumes:
       - ./runtime/federation_authority:/django-project
     networks:
-      oidcfed:
-        aliases:
-          - ${TRUST_ANCHOR_HOST}
+      - oidcfed
     command: >
       bash -c "cd /django-project/ &&
       python3 manage.py migrate &&
@@ -54,9 +52,7 @@ services:
     volumes:
       - ./runtime/provider:/django-project
     networks:
-      oidcfed:
-        aliases:
-          - ${CIE_PROVIDER_HOST}
+      - oidcfed
     depends_on:
       - trust-anchor
     command: >
@@ -100,9 +96,7 @@ services:
       - ./runtime/rp_public.json:/config/rp_public.json:ro
       - ${RP_SECRETS_DIR}:/secrets:ro
     networks:
-      oidcfed:
-        aliases:
-          - ${IDENTITY_HOST}
+      - oidcfed
     depends_on:
       - trust-anchor
       - cie-provider
@@ -125,7 +119,16 @@ services:
       - caddy_data:/data
       - caddy_config:/config
     networks:
-      - oidcfed
+      oidcfed:
+        # Gli hostname pubblici risolvono a Caddy anche DENTRO la rete.
+        # Senza questo, un container che chiama https://trust-anchor.../ finisce
+        # sul container Django, che ascolta in chiaro sulla 8000 e non sulla 443:
+        # connection refused. Con l'alias qui, il traffico interno percorre la
+        # stessa strada di quello esterno, TLS e certificati compresi.
+        aliases:
+          - ${TRUST_ANCHOR_HOST}
+          - ${CIE_PROVIDER_HOST}
+          - ${IDENTITY_HOST}
     depends_on:
       - trust-anchor
       - cie-provider
