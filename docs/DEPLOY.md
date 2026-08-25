@@ -19,7 +19,7 @@ Ogni freccia indica chi chiama chi. L'ingestione e' l'unica che si sveglia da so
 | Componente | Porta locale | Pubblico | Note |
 |---|---|---|---|
 | `ChattyDuck.Corpus` | 5200 | no | custodisce i contenuti, multi-ente |
-| `Duckburg.Ingestione` | 5250 | no | adattatore per un CMS, temporizzato |
+| `Duckburg.Ingestione` | 5250 | no | adattatore per un CMS, servizio Windows |
 | `ChattyDuck.McpServer` | 5000 | **si'** | i client MCP di Anthropic si collegano da soli |
 | `Duckburg.Portal` | 5100 | si' | portale informativo e CMS |
 | `Duckburg.ServiziOnline` | 5300 | si' | portale servizi, area personale |
@@ -32,6 +32,8 @@ e le serve al server MCP: entrambi i suoi interlocutori stanno dentro. Esporlo a
 una superficie di scrittura senza dare nulla in cambio.
 
 Le prime sette sono applicazioni .NET: girano ovunque giri ASP.NET Core, IIS compreso.
+L'ingestione fa eccezione e non va ospitata in IIS: e' un temporizzatore, non un sito. Il
+perche' sta piu' sotto.
 Le ultime due richiedono Docker.
 
 ## Avvio: nessun ordine richiesto
@@ -70,37 +72,49 @@ pubblicazione, e a farla e' un terzo.
 Un 404 significa che il corpus risponde: non e' un problema di rete ne' di binding, e'
 l'ingestione che non ha mai pubblicato.
 
-## Servizi temporizzati sotto IIS
+## L'ingestione non e' un sito
 
-L'ingestione lavora da sola, con un `BackgroundService`, e nessuno la chiama mai. Nel
-modello di IIS e' un caso fuori dall'ordinario, perche' IIS presume che il lavoro nasca da
-una richiesta: l'applicazione viene caricata alla prima, scaricata dopo venti minuti di
-silenzio e riavviata ogni ventinove ore. Per un sito che serve pagine e' ragionevole. Per
-un temporizzatore significa che non parte mai.
+Sotto IIS un servizio temporizzato non parte. Vale la pena capire perche', perche' il
+guasto non somiglia a un guasto.
 
-Tre impostazioni, e sono tutte necessarie:
+IIS presume che il lavoro nasca da una richiesta: carica l'applicazione alla prima, la
+scarica dopo venti minuti di silenzio, la ricicla ogni ventinove ore. Per un sito che
+serve pagine e' ragionevole. L'ingestione pero' si sveglia da sola e non la chiama
+nessuno: sotto quelle regole non viene caricata mai. L'app pool e' verde, il sito
+risponde se lo interroghi, e il pianificatore non ha mai girato. La logica di ritentativo
+scritta dentro e' corretta e non viene mai eseguita.
 
-| Dove | Impostazione | Perche' |
-|---|---|---|
-| App pool | `startMode = AlwaysRunning` | avvia il processo al boot |
-| Sito | `preloadEnabled = true` | carica l'applicazione, che e' un'altra cosa |
-| App pool | `idleTimeout = 0`, `periodicRestart.time = 0` | non scaricarla piu' |
+`preloadEnabled` lo aggira, ma resta un rimedio: dipende da una funzionalita' IIS
+opzionale, e basta perderla per tornare al punto di prima.
 
-La seconda e' quella che si dimentica, perche' la prima sembra gia' dirlo. `AlwaysRunning`
-avvia `w3wp`; l'applicazione dentro `w3wp` la carica solo una richiesta, o il preload.
-Senza preload il servizio esiste, l'app pool e' verde, e il temporizzatore non ha mai
-girato.
-
-`preloadEnabled` richiede la funzionalita' Application Initialization:
+Quindi l'ingestione si installa come servizio Windows:
 
 ```powershell
-Enable-WindowsOptionalFeature -Online -FeatureName IIS-ApplicationInit -All
+.\scripts\installa-servizio-ingestione.ps1
 ```
 
-`scripts/crea-siti-interni.ps1` imposta tutto e avvisa se la funzionalita' manca.
+Parte al boot, si riavvia da sola se cade, non ha idle timeout ne' riciclo. Tiene il suo
+Kestrel su `127.0.0.1:5250` per l'innesco manuale, ma non dipende da nessuno che lo
+chiami. Se c'era un sito IIS dal deploy precedente, `-RimuoviSitoIis` lo toglie: due
+sorgenti che pubblicano lo stesso corpus non si danneggiano, ma rendono illeggibile
+qualunque diagnosi.
 
-Lo stesso vale per qualunque altro servizio del progetto che debba lavorare senza essere
-interrogato. Il corpus e il server MCP non ne hanno bisogno: qualcuno li chiama sempre.
+Per un'esecuzione singola, da un'attivita' pianificata o per vedere subito cosa succede:
+
+```powershell
+.\Duckburg.Ingestione.exe --una-volta
+```
+
+Esegue, stampa l'esito ed esce, con codice 1 se non e' riuscita.
+
+Un dettaglio sui permessi che costa un pomeriggio: l'account del servizio vuole
+**Modify** sulla cartella del CMS, non solo lettura, anche se dal CMS legge soltanto. Il
+database del portale e' in WAL, e per leggerlo SQLite apre in scrittura il file `-shm`.
+Con i soli permessi di lettura fallisce con `unable to open database file`, che sembra un
+percorso sbagliato e non lo e'.
+
+Corpus e server MCP restano su IIS: quelli le richieste le ricevono, ed e' il loro
+mestiere.
 
 ## Corpus
 

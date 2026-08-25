@@ -15,6 +15,7 @@
          CMS che deve leggere, e per un altro CMS sarebbero altri. -->
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.11" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.11" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="9.0.11" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0" />
   </ItemGroup>

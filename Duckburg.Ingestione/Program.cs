@@ -3,7 +3,28 @@ using Duckburg.Ingestione.Mappatura;
 using Duckburg.Portal.Cms;
 using Microsoft.EntityFrameworkCore;
 
+var unaVolta = args.Contains("--una-volta", StringComparer.OrdinalIgnoreCase);
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Un temporizzatore non e' un sito.
+//
+// IIS presume che il lavoro nasca da una richiesta: carica l'applicazione alla prima,
+// la scarica dopo qualche minuto di silenzio, la ricicla ogni notte. Per un servizio
+// che si sveglia da solo e che nessuno chiama mai, quelle regole significano non
+// partire affatto. La resilienza scritta nel Pianificatore e' corretta e non verrebbe
+// mai eseguita.
+//
+// Come servizio Windows invece parte al boot, si riavvia se cade, e non ha nessuno che
+// decida di scaricarlo. UseWindowsService non fa nulla quando il processo non e' un
+// servizio, quindi lo stesso binario resta eseguibile da console e ospitabile in IIS.
+builder.Host.UseWindowsService(opzioni => opzioni.ServiceName = "Duckburg Ingestione");
+
+// Fuori da IIS nessuno assegna l'indirizzo. Loopback: l'unico endpoint esposto e'
+// l'innesco manuale, e non deve uscire dalla macchina.
+if (string.IsNullOrWhiteSpace(builder.Configuration["Urls"]) &&
+    string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("ASPNETCORE_URLS")))
+    builder.WebHost.UseUrls("http://127.0.0.1:5250");
 
 // Adattatore fra il CMS di Paperopoli e il corpus.
 //
@@ -41,9 +62,23 @@ builder.Services.AddDbContext<CmsDbContext>(db =>
 builder.Services.AddScoped<MappaturaDuckburgCms>();
 builder.Services.AddHttpClient();
 builder.Services.AddSingleton<ServizioIngestione>();
-builder.Services.AddHostedService<Pianificatore>();
+if (!unaVolta) builder.Services.AddHostedService<Pianificatore>();
 
 var app = builder.Build();
+
+// Esecuzione singola: per un'attivita' pianificata dall'esterno, o per vedere subito
+// cosa succede senza aprire un log. Esce con 1 se l'ingestione non e' riuscita, cosi'
+// chi la pianifica se ne accorge.
+if (unaVolta)
+{
+    var servizioUnaVolta = app.Services.GetRequiredService<ServizioIngestione>();
+    var esitoUnaVolta = await servizioUnaVolta.Esegui(CancellationToken.None);
+    Console.WriteLine(esitoUnaVolta.Riuscita
+        ? $"Riuscita: versione {esitoUnaVolta.Versione}, {esitoUnaVolta.Contenuti} contenuti, "
+          + $"{esitoUnaVolta.Sezioni} sezioni, {esitoUnaVolta.Avvisi.Count} avvisi."
+        : $"Fallita: {esitoUnaVolta.Errore}");
+    return esitoUnaVolta.Riuscita ? 0 : 1;
+}
 
 // Innesco manuale: senza, chi pubblica una scheda aspetta il giro successivo senza
 // sapere quando arriva.
@@ -98,6 +133,7 @@ app.MapGet("/health", (ServizioIngestione servizio) =>
 });
 
 app.Run();
+return 0;
 
 static string AncoraSqlite(string cs, string contentRoot)
 {
