@@ -13,10 +13,7 @@ publish/
 appsettings.json
 appsettings.*.json
 !appsettings.template.json
-
-# Duckburg.Identity: la config del RP non contiene segreti, va versionata.
-!Duckburg.Identity/appsettings.json
-!Duckburg.Identity/appsettings.Development.json
+!appsettings.*.template.json
 
 # SEGRETI federazione SPID/CIE: mai committare le chiavi private reali del RP.
 # Restano tracciati solo *.sample.json (chiavi demo) e il README.
