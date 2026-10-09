@@ -78,7 +78,7 @@ app.MapGet("/", (ScanService s) =>
         """);
     }
 
-    sb.Append("""
+    sb.Append($$"""
     <div class="card">
         <h2>Nuova scansione</h2>
         <p>Esegue l'App di valutazione ufficiale (Lighthouse + Puppeteer) sul portale e produce
