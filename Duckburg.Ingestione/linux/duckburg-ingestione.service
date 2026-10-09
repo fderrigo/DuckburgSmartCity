@@ -1,0 +1,42 @@
+# Unità systemd di riferimento per Duckburg.Ingestione su Linux (equivalente del servizio Windows
+# "Duckburg Ingestione"). Installazione:
+#   1. dotnet publish Duckburg.Ingestione -c Release -r linux-x64 --self-contained false -o /srv/www/duckburg-ingestione
+#   2. configurazione in /etc/migrazione/app-duckburg-ingestione.env (variabili Sezione__Chiave) o in appsettings.json
+#      accanto alla dll; in particolare:
+#        Ingestione__Cms__ConnectionString=Data Source=/srv/data/duckburg-portal/App_Data/paperopoli-cms.db
+#        Ingestione__UrlCorpus=http://127.0.0.1:5200
+#        Ingestione__ChiaveCorpus=<chiave del Corpus>
+#        Ingestione__UrlPortale=https://paperopoli.derrigo.it
+#   3. cp duckburg-ingestione.service /etc/systemd/system/ && systemctl daemon-reload
+#      && systemctl enable --now duckburg-ingestione
+# Esecuzione singola, per prova: dotnet Duckburg.Ingestione.dll --una-volta (esce con 1 se non riesce).
+# Stato e ultima esecuzione: curl http://127.0.0.1:5250/ ; innesco manuale: curl -X POST http://127.0.0.1:5250/esegui
+
+[Unit]
+Description=Duckburg Ingestione (CMS di Paperopoli -> Corpus)
+# il Corpus deve essere già in ascolto; il CMS è un file SQLite del Portale
+After=network.target app-duckburg-corpus.service
+Wants=app-duckburg-corpus.service
+
+[Service]
+# UseSystemd: il servizio segnala da solo quando è pronto
+Type=notify
+WorkingDirectory=/srv/www/duckburg-ingestione
+ExecStart=/usr/bin/dotnet /srv/www/duckburg-ingestione/Duckburg.Ingestione.dll
+EnvironmentFile=-/etc/migrazione/app-duckburg-ingestione.env
+Environment=ASPNETCORE_URLS=http://127.0.0.1:5250
+Environment=DOTNET_CLI_TELEMETRY_OPTOUT=1
+User=svc-web
+Group=svc-web
+Restart=always
+RestartSec=10
+TimeoutStartSec=120
+TimeoutStopSec=30
+SyslogIdentifier=duckburg-ingestione
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target

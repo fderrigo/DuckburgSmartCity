@@ -20,6 +20,13 @@ var builder = WebApplication.CreateBuilder(args);
 // servizio, quindi lo stesso binario resta eseguibile da console e ospitabile in IIS.
 builder.Host.UseWindowsService(opzioni => opzioni.ServiceName = "Duckburg Ingestione");
 
+// Su Linux lo stesso ruolo lo fa systemd (unita' di riferimento in linux/duckburg-ingestione.service).
+// UseSystemd segnala a systemd quando il servizio e' pronto (Type=notify: chi dipende da lui parte dopo, e un
+// avvio fallito si vede subito), scrive i log nel formato di journald con il livello riconosciuto, e chiude in
+// modo ordinato su SIGTERM. Come UseWindowsService, non fa nulla quando il processo non e' sotto systemd:
+// lo stesso binario gira come servizio Windows, come unita' systemd o da console.
+builder.Host.UseSystemd();
+
 // Fuori da IIS nessuno assegna l'indirizzo. Loopback: l'unico endpoint esposto e'
 // l'innesco manuale, e non deve uscire dalla macchina.
 if (string.IsNullOrWhiteSpace(builder.Configuration["Urls"]) &&
